@@ -111,7 +111,7 @@ double AGM::NavierStokesFunction::initialTime() {
 }
 
 double AGM::NavierStokesFunction::terminalTime() {
-    return 30.0;
+    return 10.0;
 }
 
 double AGM::NavierStokesFunction::deltaTime() {

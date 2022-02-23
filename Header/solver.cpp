@@ -400,7 +400,8 @@ void AGM::solver::NavierStokesSolver() {
     };
     auto updateTime = []() -> void {
         pointHeat::setTime(pointHeat::getTime() + pointHeat::getDelta());
-        std::cout << "current time = " << pointHeat::getTime() << "\n";
+        std::cout << "current time = [" << pointHeat::getTime() << " / " << AGM::NavierStokesFunction::terminalTime()
+                  << "]\n";
     };
     copyPointInformation();
     assignInitial();
