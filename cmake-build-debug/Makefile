@@ -130,17 +130,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named AGM
+# Target rules for targets named AGM2D
 
 # Build rule for target.
-AGM: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 AGM
-.PHONY : AGM
+AGM2D: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 AGM2D
+.PHONY : AGM2D
 
 # fast build rule for target.
-AGM/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/build
-.PHONY : AGM/fast
+AGM2D/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/build
+.PHONY : AGM2D/fast
 
 Header/Greenfunction.o: Header/Greenfunction.cpp.o
 
@@ -148,7 +148,7 @@ Header/Greenfunction.o: Header/Greenfunction.cpp.o
 
 # target to build an object file
 Header/Greenfunction.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/Greenfunction.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/Greenfunction.cpp.o
 .PHONY : Header/Greenfunction.cpp.o
 
 Header/Greenfunction.i: Header/Greenfunction.cpp.i
@@ -157,7 +157,7 @@ Header/Greenfunction.i: Header/Greenfunction.cpp.i
 
 # target to preprocess a source file
 Header/Greenfunction.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/Greenfunction.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/Greenfunction.cpp.i
 .PHONY : Header/Greenfunction.cpp.i
 
 Header/Greenfunction.s: Header/Greenfunction.cpp.s
@@ -166,7 +166,7 @@ Header/Greenfunction.s: Header/Greenfunction.cpp.s
 
 # target to generate assembly for a file
 Header/Greenfunction.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/Greenfunction.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/Greenfunction.cpp.s
 .PHONY : Header/Greenfunction.cpp.s
 
 Header/GreenfunctionReactionDiffusion.o: Header/GreenfunctionReactionDiffusion.cpp.o
@@ -175,7 +175,7 @@ Header/GreenfunctionReactionDiffusion.o: Header/GreenfunctionReactionDiffusion.c
 
 # target to build an object file
 Header/GreenfunctionReactionDiffusion.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/GreenfunctionReactionDiffusion.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/GreenfunctionReactionDiffusion.cpp.o
 .PHONY : Header/GreenfunctionReactionDiffusion.cpp.o
 
 Header/GreenfunctionReactionDiffusion.i: Header/GreenfunctionReactionDiffusion.cpp.i
@@ -184,7 +184,7 @@ Header/GreenfunctionReactionDiffusion.i: Header/GreenfunctionReactionDiffusion.c
 
 # target to preprocess a source file
 Header/GreenfunctionReactionDiffusion.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/GreenfunctionReactionDiffusion.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/GreenfunctionReactionDiffusion.cpp.i
 .PHONY : Header/GreenfunctionReactionDiffusion.cpp.i
 
 Header/GreenfunctionReactionDiffusion.s: Header/GreenfunctionReactionDiffusion.cpp.s
@@ -193,7 +193,7 @@ Header/GreenfunctionReactionDiffusion.s: Header/GreenfunctionReactionDiffusion.c
 
 # target to generate assembly for a file
 Header/GreenfunctionReactionDiffusion.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/GreenfunctionReactionDiffusion.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/GreenfunctionReactionDiffusion.cpp.s
 .PHONY : Header/GreenfunctionReactionDiffusion.cpp.s
 
 Header/axialLine.o: Header/axialLine.cpp.o
@@ -202,7 +202,7 @@ Header/axialLine.o: Header/axialLine.cpp.o
 
 # target to build an object file
 Header/axialLine.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/axialLine.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/axialLine.cpp.o
 .PHONY : Header/axialLine.cpp.o
 
 Header/axialLine.i: Header/axialLine.cpp.i
@@ -211,7 +211,7 @@ Header/axialLine.i: Header/axialLine.cpp.i
 
 # target to preprocess a source file
 Header/axialLine.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/axialLine.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/axialLine.cpp.i
 .PHONY : Header/axialLine.cpp.i
 
 Header/axialLine.s: Header/axialLine.cpp.s
@@ -220,7 +220,7 @@ Header/axialLine.s: Header/axialLine.cpp.s
 
 # target to generate assembly for a file
 Header/axialLine.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/axialLine.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/axialLine.cpp.s
 .PHONY : Header/axialLine.cpp.s
 
 Header/coordinate.o: Header/coordinate.cpp.o
@@ -229,7 +229,7 @@ Header/coordinate.o: Header/coordinate.cpp.o
 
 # target to build an object file
 Header/coordinate.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/coordinate.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/coordinate.cpp.o
 .PHONY : Header/coordinate.cpp.o
 
 Header/coordinate.i: Header/coordinate.cpp.i
@@ -238,7 +238,7 @@ Header/coordinate.i: Header/coordinate.cpp.i
 
 # target to preprocess a source file
 Header/coordinate.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/coordinate.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/coordinate.cpp.i
 .PHONY : Header/coordinate.cpp.i
 
 Header/coordinate.s: Header/coordinate.cpp.s
@@ -247,7 +247,7 @@ Header/coordinate.s: Header/coordinate.cpp.s
 
 # target to generate assembly for a file
 Header/coordinate.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/coordinate.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/coordinate.cpp.s
 .PHONY : Header/coordinate.cpp.s
 
 Header/function.o: Header/function.cpp.o
@@ -256,7 +256,7 @@ Header/function.o: Header/function.cpp.o
 
 # target to build an object file
 Header/function.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/function.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/function.cpp.o
 .PHONY : Header/function.cpp.o
 
 Header/function.i: Header/function.cpp.i
@@ -265,7 +265,7 @@ Header/function.i: Header/function.cpp.i
 
 # target to preprocess a source file
 Header/function.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/function.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/function.cpp.i
 .PHONY : Header/function.cpp.i
 
 Header/function.s: Header/function.cpp.s
@@ -274,7 +274,7 @@ Header/function.s: Header/function.cpp.s
 
 # target to generate assembly for a file
 Header/function.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/function.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/function.cpp.s
 .PHONY : Header/function.cpp.s
 
 Header/matrix.o: Header/matrix.cpp.o
@@ -283,7 +283,7 @@ Header/matrix.o: Header/matrix.cpp.o
 
 # target to build an object file
 Header/matrix.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/matrix.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/matrix.cpp.o
 .PHONY : Header/matrix.cpp.o
 
 Header/matrix.i: Header/matrix.cpp.i
@@ -292,7 +292,7 @@ Header/matrix.i: Header/matrix.cpp.i
 
 # target to preprocess a source file
 Header/matrix.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/matrix.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/matrix.cpp.i
 .PHONY : Header/matrix.cpp.i
 
 Header/matrix.s: Header/matrix.cpp.s
@@ -301,7 +301,7 @@ Header/matrix.s: Header/matrix.cpp.s
 
 # target to generate assembly for a file
 Header/matrix.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/matrix.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/matrix.cpp.s
 .PHONY : Header/matrix.cpp.s
 
 Header/matrixMulti.o: Header/matrixMulti.cpp.o
@@ -310,7 +310,7 @@ Header/matrixMulti.o: Header/matrixMulti.cpp.o
 
 # target to build an object file
 Header/matrixMulti.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/matrixMulti.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/matrixMulti.cpp.o
 .PHONY : Header/matrixMulti.cpp.o
 
 Header/matrixMulti.i: Header/matrixMulti.cpp.i
@@ -319,7 +319,7 @@ Header/matrixMulti.i: Header/matrixMulti.cpp.i
 
 # target to preprocess a source file
 Header/matrixMulti.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/matrixMulti.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/matrixMulti.cpp.i
 .PHONY : Header/matrixMulti.cpp.i
 
 Header/matrixMulti.s: Header/matrixMulti.cpp.s
@@ -328,7 +328,7 @@ Header/matrixMulti.s: Header/matrixMulti.cpp.s
 
 # target to generate assembly for a file
 Header/matrixMulti.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/matrixMulti.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/matrixMulti.cpp.s
 .PHONY : Header/matrixMulti.cpp.s
 
 Header/matrixNormal.o: Header/matrixNormal.cpp.o
@@ -337,7 +337,7 @@ Header/matrixNormal.o: Header/matrixNormal.cpp.o
 
 # target to build an object file
 Header/matrixNormal.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/matrixNormal.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/matrixNormal.cpp.o
 .PHONY : Header/matrixNormal.cpp.o
 
 Header/matrixNormal.i: Header/matrixNormal.cpp.i
@@ -346,7 +346,7 @@ Header/matrixNormal.i: Header/matrixNormal.cpp.i
 
 # target to preprocess a source file
 Header/matrixNormal.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/matrixNormal.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/matrixNormal.cpp.i
 .PHONY : Header/matrixNormal.cpp.i
 
 Header/matrixNormal.s: Header/matrixNormal.cpp.s
@@ -355,7 +355,7 @@ Header/matrixNormal.s: Header/matrixNormal.cpp.s
 
 # target to generate assembly for a file
 Header/matrixNormal.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/matrixNormal.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/matrixNormal.cpp.s
 .PHONY : Header/matrixNormal.cpp.s
 
 Header/matrixRow.o: Header/matrixRow.cpp.o
@@ -364,7 +364,7 @@ Header/matrixRow.o: Header/matrixRow.cpp.o
 
 # target to build an object file
 Header/matrixRow.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/matrixRow.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/matrixRow.cpp.o
 .PHONY : Header/matrixRow.cpp.o
 
 Header/matrixRow.i: Header/matrixRow.cpp.i
@@ -373,7 +373,7 @@ Header/matrixRow.i: Header/matrixRow.cpp.i
 
 # target to preprocess a source file
 Header/matrixRow.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/matrixRow.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/matrixRow.cpp.i
 .PHONY : Header/matrixRow.cpp.i
 
 Header/matrixRow.s: Header/matrixRow.cpp.s
@@ -382,7 +382,7 @@ Header/matrixRow.s: Header/matrixRow.cpp.s
 
 # target to generate assembly for a file
 Header/matrixRow.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/matrixRow.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/matrixRow.cpp.s
 .PHONY : Header/matrixRow.cpp.s
 
 Header/point.o: Header/point.cpp.o
@@ -391,7 +391,7 @@ Header/point.o: Header/point.cpp.o
 
 # target to build an object file
 Header/point.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/point.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/point.cpp.o
 .PHONY : Header/point.cpp.o
 
 Header/point.i: Header/point.cpp.i
@@ -400,7 +400,7 @@ Header/point.i: Header/point.cpp.i
 
 # target to preprocess a source file
 Header/point.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/point.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/point.cpp.i
 .PHONY : Header/point.cpp.i
 
 Header/point.s: Header/point.cpp.s
@@ -409,7 +409,7 @@ Header/point.s: Header/point.cpp.s
 
 # target to generate assembly for a file
 Header/point.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/point.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/point.cpp.s
 .PHONY : Header/point.cpp.s
 
 Header/pointHeat.o: Header/pointHeat.cpp.o
@@ -418,7 +418,7 @@ Header/pointHeat.o: Header/pointHeat.cpp.o
 
 # target to build an object file
 Header/pointHeat.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/pointHeat.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/pointHeat.cpp.o
 .PHONY : Header/pointHeat.cpp.o
 
 Header/pointHeat.i: Header/pointHeat.cpp.i
@@ -427,7 +427,7 @@ Header/pointHeat.i: Header/pointHeat.cpp.i
 
 # target to preprocess a source file
 Header/pointHeat.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/pointHeat.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/pointHeat.cpp.i
 .PHONY : Header/pointHeat.cpp.i
 
 Header/pointHeat.s: Header/pointHeat.cpp.s
@@ -436,7 +436,7 @@ Header/pointHeat.s: Header/pointHeat.cpp.s
 
 # target to generate assembly for a file
 Header/pointHeat.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/pointHeat.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/pointHeat.cpp.s
 .PHONY : Header/pointHeat.cpp.s
 
 Header/readFile.o: Header/readFile.cpp.o
@@ -445,7 +445,7 @@ Header/readFile.o: Header/readFile.cpp.o
 
 # target to build an object file
 Header/readFile.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/readFile.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/readFile.cpp.o
 .PHONY : Header/readFile.cpp.o
 
 Header/readFile.i: Header/readFile.cpp.i
@@ -454,7 +454,7 @@ Header/readFile.i: Header/readFile.cpp.i
 
 # target to preprocess a source file
 Header/readFile.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/readFile.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/readFile.cpp.i
 .PHONY : Header/readFile.cpp.i
 
 Header/readFile.s: Header/readFile.cpp.s
@@ -463,7 +463,7 @@ Header/readFile.s: Header/readFile.cpp.s
 
 # target to generate assembly for a file
 Header/readFile.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/readFile.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/readFile.cpp.s
 .PHONY : Header/readFile.cpp.s
 
 Header/solver.o: Header/solver.cpp.o
@@ -472,7 +472,7 @@ Header/solver.o: Header/solver.cpp.o
 
 # target to build an object file
 Header/solver.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/solver.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/solver.cpp.o
 .PHONY : Header/solver.cpp.o
 
 Header/solver.i: Header/solver.cpp.i
@@ -481,7 +481,7 @@ Header/solver.i: Header/solver.cpp.i
 
 # target to preprocess a source file
 Header/solver.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/solver.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/solver.cpp.i
 .PHONY : Header/solver.cpp.i
 
 Header/solver.s: Header/solver.cpp.s
@@ -490,7 +490,7 @@ Header/solver.s: Header/solver.cpp.s
 
 # target to generate assembly for a file
 Header/solver.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/solver.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/solver.cpp.s
 .PHONY : Header/solver.cpp.s
 
 Header/util.o: Header/util.cpp.o
@@ -499,7 +499,7 @@ Header/util.o: Header/util.cpp.o
 
 # target to build an object file
 Header/util.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/util.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/util.cpp.o
 .PHONY : Header/util.cpp.o
 
 Header/util.i: Header/util.cpp.i
@@ -508,7 +508,7 @@ Header/util.i: Header/util.cpp.i
 
 # target to preprocess a source file
 Header/util.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/util.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/util.cpp.i
 .PHONY : Header/util.cpp.i
 
 Header/util.s: Header/util.cpp.s
@@ -517,7 +517,7 @@ Header/util.s: Header/util.cpp.s
 
 # target to generate assembly for a file
 Header/util.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/util.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/util.cpp.s
 .PHONY : Header/util.cpp.s
 
 Header/value.o: Header/value.cpp.o
@@ -526,7 +526,7 @@ Header/value.o: Header/value.cpp.o
 
 # target to build an object file
 Header/value.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/value.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/value.cpp.o
 .PHONY : Header/value.cpp.o
 
 Header/value.i: Header/value.cpp.i
@@ -535,7 +535,7 @@ Header/value.i: Header/value.cpp.i
 
 # target to preprocess a source file
 Header/value.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/value.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/value.cpp.i
 .PHONY : Header/value.cpp.i
 
 Header/value.s: Header/value.cpp.s
@@ -544,7 +544,7 @@ Header/value.s: Header/value.cpp.s
 
 # target to generate assembly for a file
 Header/value.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/value.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/value.cpp.s
 .PHONY : Header/value.cpp.s
 
 Header/writeFile.o: Header/writeFile.cpp.o
@@ -553,7 +553,7 @@ Header/writeFile.o: Header/writeFile.cpp.o
 
 # target to build an object file
 Header/writeFile.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/writeFile.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/writeFile.cpp.o
 .PHONY : Header/writeFile.cpp.o
 
 Header/writeFile.i: Header/writeFile.cpp.i
@@ -562,7 +562,7 @@ Header/writeFile.i: Header/writeFile.cpp.i
 
 # target to preprocess a source file
 Header/writeFile.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/writeFile.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/writeFile.cpp.i
 .PHONY : Header/writeFile.cpp.i
 
 Header/writeFile.s: Header/writeFile.cpp.s
@@ -571,7 +571,7 @@ Header/writeFile.s: Header/writeFile.cpp.s
 
 # target to generate assembly for a file
 Header/writeFile.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/writeFile.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/writeFile.cpp.s
 .PHONY : Header/writeFile.cpp.s
 
 Header/writeFileMultiple.o: Header/writeFileMultiple.cpp.o
@@ -580,7 +580,7 @@ Header/writeFileMultiple.o: Header/writeFileMultiple.cpp.o
 
 # target to build an object file
 Header/writeFileMultiple.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/writeFileMultiple.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/writeFileMultiple.cpp.o
 .PHONY : Header/writeFileMultiple.cpp.o
 
 Header/writeFileMultiple.i: Header/writeFileMultiple.cpp.i
@@ -589,7 +589,7 @@ Header/writeFileMultiple.i: Header/writeFileMultiple.cpp.i
 
 # target to preprocess a source file
 Header/writeFileMultiple.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/writeFileMultiple.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/writeFileMultiple.cpp.i
 .PHONY : Header/writeFileMultiple.cpp.i
 
 Header/writeFileMultiple.s: Header/writeFileMultiple.cpp.s
@@ -598,7 +598,7 @@ Header/writeFileMultiple.s: Header/writeFileMultiple.cpp.s
 
 # target to generate assembly for a file
 Header/writeFileMultiple.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/Header/writeFileMultiple.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/writeFileMultiple.cpp.s
 .PHONY : Header/writeFileMultiple.cpp.s
 
 main.o: main.cpp.o
@@ -607,7 +607,7 @@ main.o: main.cpp.o
 
 # target to build an object file
 main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/main.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/main.cpp.o
 .PHONY : main.cpp.o
 
 main.i: main.cpp.i
@@ -616,7 +616,7 @@ main.i: main.cpp.i
 
 # target to preprocess a source file
 main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/main.cpp.i
 .PHONY : main.cpp.i
 
 main.s: main.cpp.s
@@ -625,7 +625,7 @@ main.s: main.cpp.s
 
 # target to generate assembly for a file
 main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/main.cpp.s
 .PHONY : main.cpp.s
 
 # Help Target
@@ -636,7 +636,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... AGM"
+	@echo "... AGM2D"
 	@echo "... Header/Greenfunction.o"
 	@echo "... Header/Greenfunction.i"
 	@echo "... Header/Greenfunction.s"

@@ -14,6 +14,8 @@ namespace AGM {
     public:
         writeFileMultiple();
 
+        virtual ~writeFileMultiple();
+
         writeFileMultiple(std::vector<T0> *pts0, std::vector<T1> *pts1, std::vector<T2> *pts2);
 
         void writeResult(const std::string &string);

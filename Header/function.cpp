@@ -111,7 +111,7 @@ double AGM::NavierStokesFunction::initialTime() {
 }
 
 double AGM::NavierStokesFunction::terminalTime() {
-    return 10.0;
+    return 1.5e2;
 }
 
 double AGM::NavierStokesFunction::deltaTime() {
@@ -120,16 +120,22 @@ double AGM::NavierStokesFunction::deltaTime() {
 
 double AGM::NavierStokesFunction::u(double t, const AGM::point &pt) {
     double x{pt[0]}, y{pt[1]};
-    if (isclose(y, UNITVALUE)) {
-        return UNITVALUE;
-    } else {
+    // Kalman vortex
+    double a{HALFVALUE};
+    if (pow(x, 2) + pow(y, 2) < pow(0.51, 2)) {
         return ZEROVALUE;
     }
+    return UNITVALUE - pow(a, 2) / (pow(x, 2) + pow(y, 2)) + 2 * pow(a * y, 2) / pow(pow(x, 2) + pow(y, 2), 2);
 }
 
 double AGM::NavierStokesFunction::v(double t, const AGM::point &pt) {
     double x{pt[0]}, y{pt[1]};
-    return 0;
+    // Kalman vortex
+    double a{HALFVALUE};
+    if (pow(x, 2) + pow(y, 2) < pow(0.51, 2)) {
+        return ZEROVALUE;
+    }
+    return -2 * pow(a, 2) * x * y / pow(pow(x, 2) + pow(y, 2), 2);
 }
 
 double AGM::NavierStokesFunction::p(double t, const AGM::point &pt) {
@@ -219,7 +225,7 @@ void AGM::NavierStokesFunction::assignBoundaryValue(AGM::point &uvel, AGM::point
         vvel["bdv"] = vx(pointHeat::getTime() + pointHeat::getDelta(), vvel) * vvel.getNormal()[0] +
                       vy(pointHeat::getTime() + pointHeat::getDelta(), vvel) * vvel.getNormal()[1];
     }
-    vvel["rhs"] = f1(pointHeat::getTime() + pointHeat::getDelta(), vvel);
+    vvel["rhs"] = f2(pointHeat::getTime() + pointHeat::getDelta(), vvel);
 }
 
 AGM::NavierStokesFunction::~NavierStokesFunction() = default;

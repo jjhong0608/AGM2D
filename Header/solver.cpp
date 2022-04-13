@@ -398,16 +398,22 @@ void AGM::solver::NavierStokesSolver() {
             ppvel.at(i) = pts->at(i).getValue();
         }
     };
-    auto updateTime = []() -> void {
+    auto wf{writeFileMultiple<pointHeat, pointHeat, point>(&uvel, &vvel, pts)};
+    auto updateTime = [&wf]() -> void {
         pointHeat::setTime(pointHeat::getTime() + pointHeat::getDelta());
         std::cout << "current time = [" << pointHeat::getTime() << " / " << AGM::NavierStokesFunction::terminalTime()
                   << "]\n";
+        if (isclose(std::floor(pointHeat::getTime() + HALFVALUE * pointHeat::getDelta()), pointHeat::getTime())) {
+            wf.writeResult("/home/jjhong0608/docker/AGM2D/Navier-Stokes/External_flow/Re5/AGM_Result_" +
+                           std::to_string(pointHeat::getTime()));
+        }
     };
     copyPointInformation();
     assignInitial();
     makeMatrixVelocity();
     auto matrixVelocity{AGM::matrixMulti<pointHeat>(&uvel, &vvel)};
-    auto matrixPressure{AGM::matrixNormal<point>(pts, fixedPointIndex)};
+    auto matrixPressure{AGM::matrix<point>(pts)};
+//    auto matrixPressure{AGM::matrixNormal<point>(pts, fixedPointIndex)};
     matrixVelocity.makeMatrix();
     matrixVelocity.factorizeMatrix();
     matrixVelocity.calculateMatrix();
@@ -442,6 +448,5 @@ void AGM::solver::NavierStokesSolver() {
     matrixVelocity.releaseMatrix();
     matrixPressure.releaseMatrix();
 
-    auto wf{writeFileMultiple<pointHeat, pointHeat, point>(&uvel, &vvel, pts)};
-    wf.writeResult("/home/jjhong0608/docker/AGM2D/AGM_Result");
+    wf.writeResult("/home/jjhong0608/docker/AGM2D/Navier-Stokes/External_flow/Re5/AGM_Result");
 }

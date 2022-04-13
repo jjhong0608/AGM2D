@@ -39,4 +39,8 @@ void AGM::writeFileMultiple<T0, T1, T2>::writeResult(const std::string &string) 
     f.close();
 }
 
-template class AGM::writeFileMultiple<AGM::pointHeat, AGM::pointHeat, AGM::point>;
+template<typename T0, typename T1, typename T2>
+AGM::writeFileMultiple<T0, T1, T2>::~writeFileMultiple() = default;
+
+template
+class AGM::writeFileMultiple<AGM::pointHeat, AGM::pointHeat, AGM::point>;

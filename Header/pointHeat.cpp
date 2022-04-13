@@ -111,8 +111,10 @@ AGM::matrixRow AGM::pointHeat::calculateRepresentationFormulaNeumannOnAxial(char
         printError("AGM::pointHeat::calculateRepresentationFormulaNeumannOnAxial", "nullptr");
         return ZEROVALUE;
     };
-    point *ptc = getAxialLine(axis)->front()->getIdx() == getIdx() ? getAxialLine(axis)->at(1) :
-                 getAxialLine(axis)->back()->getIdx() == getIdx() ? *std::prev(getAxialLine(axis)->end() - 1) : nullptr;
+    point *ptc = getAxialLine(axis)->front()->getIdx() == getIdx() ? getAxialLine(axis)->at(1)
+                                                                   : getAxialLine(axis)->back()->getIdx() == getIdx()
+                                                                     ? *std::prev(getAxialLine(axis)->end() - 1)
+                                                                     : nullptr;
     point *ptl =
             getAxialLine(axis)->front()->getIdx() == getIdx() ? this : getAxialLine(axis)->back()->getIdx() == getIdx()
                                                                        ? *std::prev(getAxialLine(axis)->end() - 2)
@@ -256,8 +258,9 @@ void AGM::pointHeat::calculateRepresentationFormulaInterface() {
             printError("AGM::pointHeat::calculateRepresentationFormulaInterface", "getEachMp");
             return ZEROVALUE;
         };
-        double rtv = pt ? pt->getMp() : ptr->getCondition() == 'C' ? ptr->getMp() : ptl->getCondition() == 'C'
-                                                                                    ? ptl->getMp() : Error();
+        double rtv = pt ? pt->getMp() : ptr->getCondition() == 'C' ?
+                                        ptr->getMp() : ptl->getCondition() == 'C' ?
+                                                       ptl->getMp() : Error();
         return rtv;
     };
     double mpe{getEachMp(getElement()[E], getElement()[EN], getElement()[ES])};
@@ -322,10 +325,10 @@ void AGM::pointHeat::calculateRepresentationFormulaInterface() {
         double sign = i0 ? -UNITVALUE : UNITVALUE;
         if (pt) {
             row[i0][pt->getIdx()] += mp0 * func->green_function_t(d);
-            row[i0][pt->getIdx() + getNPts()] += isInterface ? sign * func->green_integral(C) : sign *
-                                                                                                func->green_integral(c);
-            row[i0][pt->getIdx() + (i0 + 2) * getNPts()] = func->green_integral(c);
-            row[i0][pt->getIdx() + (i0 + 4) * getNPts()] = func->green_integral_t(c);
+            row[i0][pt->getIdx() + getNPts()] += isInterface ? sign * func->green_integral(C)
+                                                             : sign * func->green_integral(c);
+            row[i0][pt->getIdx() + (i0 + 2) * getNPts()] += func->green_integral(c);
+            row[i0][pt->getIdx() + (i0 + 4) * getNPts()] += func->green_integral_t(c);
         } else {
             row[i0] += approximateSol(ptr, ptl, mp0 * func->green_function_t(d), i, std::abs(mp0));
             row[i0] += isInterface ? linearApproximation(ptr, ptl, sign * func->green_integral(C), i, 1)
@@ -342,7 +345,7 @@ void AGM::pointHeat::calculateRepresentationFormulaInterface() {
     assignMatrix(getElement()[W], getElement()[WN], getElement()[WS], mpw, &gFuncX, xm, 1, 0, 'l', 'L');
 
     row[1][getIdx()] = -UNITVALUE;
-    if (!isInterface) row[1][getIdx() + getNPts()] = gFuncY.green_integral('c');
+    if (!isInterface) row[1][getIdx() + getNPts()] = -gFuncY.green_integral('c');
     row[1][getIdx() + 3 * getNPts()] = gFuncY.green_integral('c');
     row[1][getIdx() + 5 * getNPts()] = gFuncY.green_integral_t('c');
     assignMatrix(getElement()[N], getElement()[NE], getElement()[NW], -mpn, &gFuncY, yp, 0, 1, 'r', 'R');
@@ -420,8 +423,9 @@ void AGM::pointHeat::makeDerivativesInterface() {
             printError("AGM::point::calculateRepresentationFormulaInterface", "getEachMp");
             return ZEROVALUE;
         };
-        double rtv = pt ? pt->getMp() : ptr->getCondition() == 'C' ? ptr->getMp() : ptl->getCondition() == 'C'
-                                                                                    ? ptl->getMp() : Error();
+        double rtv = pt ? pt->getMp() : ptr->getCondition() == 'C' ?
+                                        ptr->getMp() : ptl->getCondition() == 'C' ?
+                                                       ptl->getMp() : Error();
         return rtv;
     };
     double mpe{getEachMp(getElement()[E], getElement()[EN], getElement()[ES])};
@@ -485,17 +489,16 @@ void AGM::pointHeat::makeDerivativesInterface() {
         double sign = i0 ? -UNITVALUE : UNITVALUE;
         if (pt) {
             deriMatrixRow[i0][pt->getIdx()] += mp0 * func->green_function_ttau(d);
-            deriMatrixRow[i0][pt->getIdx() + getNPts()] += isInterface ? sign * func->green_integral_tau(C) : sign *
-                                                                                                              func->green_integral_tau(
-                                                                                                                      c);
-            deriMatrixRow[i0][pt->getIdx() + (i0 + 2) * getNPts()] = func->green_integral_tau(c);
-            deriMatrixRow[i0][pt->getIdx() + (i0 + 4) * getNPts()] = func->green_integral_ttau(c);
+            deriMatrixRow[i0][pt->getIdx() + getNPts()] += isInterface ? sign * func->green_integral_tau(C)
+                                                                       : sign * func->green_integral_tau(c);
+            deriMatrixRow[i0][pt->getIdx() + (i0 + 2) * getNPts()] += func->green_integral_tau(c);
+            deriMatrixRow[i0][pt->getIdx() + (i0 + 4) * getNPts()] += func->green_integral_ttau(c);
         } else {
             deriMatrixRow[i0] += approximateSol(ptr, ptl, mp0 * func->green_function_ttau(d), i, std::abs(mp0));
             deriMatrixRow[i0] += isInterface ? linearApproximation(ptr, ptl, sign * func->green_integral_tau(C), i, 1)
                                              : linearApproximation(ptr, ptl, sign * func->green_integral_tau(c), i, 1);
-            deriMatrixRow[i0] += linearApproximation(ptr, ptl, func->green_integral_tau(c), i, i + 2);
-            deriMatrixRow[i0] += linearApproximation(ptr, ptl, func->green_integral_ttau(c), i, i + 4);
+            deriMatrixRow[i0] += linearApproximation(ptr, ptl, func->green_integral_tau(c), i, i0 + 2);
+            deriMatrixRow[i0] += linearApproximation(ptr, ptl, func->green_integral_ttau(c), i, i0 + 4);
         }
     };
     if (!isInterface) deriMatrixRow[0][getIdx() + getNPts()] = gFuncX.green_integral_tau('c');
@@ -504,7 +507,7 @@ void AGM::pointHeat::makeDerivativesInterface() {
     assignMatrix(getElement()[E], getElement()[EN], getElement()[ES], -mpe, &gFuncX, xp, 1, 0, 'r', 'R');
     assignMatrix(getElement()[W], getElement()[WN], getElement()[WS], mpw, &gFuncX, xm, 1, 0, 'l', 'L');
 
-    if (!isInterface) deriMatrixRow[1][getIdx() + getNPts()] = gFuncY.green_integral_tau('c');
+    if (!isInterface) deriMatrixRow[1][getIdx() + getNPts()] = -gFuncY.green_integral_tau('c');
     deriMatrixRow[1][getIdx() + 3 * getNPts()] = gFuncY.green_integral_tau('c');
     deriMatrixRow[1][getIdx() + 5 * getNPts()] = gFuncY.green_integral_ttau('c') + UNITVALUE / mp;
     assignMatrix(getElement()[N], getElement()[NE], getElement()[NW], -mpn, &gFuncY, yp, 0, 1, 'r', 'R');
