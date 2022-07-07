@@ -2,11 +2,14 @@
 // Created by NIMS-JUNHONG on 2022/01/21.
 //
 
+#include <vector>
 #include "point.h"
 
 int AGM::point::nPts;
 std::vector<AGM::axialLine> *AGM::point::xline;
 std::vector<AGM::axialLine> *AGM::point::yline;
+std::vector<AGM::boundaryLine2D> *AGM::point::bdLine;
+std::vector<AGM::point> *AGM::point::pts;
 
 AGM::point::point() = default;
 
@@ -142,6 +145,22 @@ void AGM::point::setAxialLines(std::vector<AGM::axialLine> *line, char i) {
     if (i == 'y') yline = line;
 }
 
+std::vector<AGM::boundaryLine2D> *AGM::point::getBdLine() {
+    return bdLine;
+}
+
+void AGM::point::setBdLine(std::vector<AGM::boundaryLine2D> *line) {
+    point::bdLine = line;
+}
+
+std::vector<AGM::point> *AGM::point::getPts() {
+    return pts;
+}
+
+void AGM::point::setPts(std::vector<AGM::point> *vector) {
+    point::pts = vector;
+}
+
 double &AGM::point::operator[](int i) {
     return xy[i];
 }
@@ -164,6 +183,16 @@ const double &AGM::point::operator[](const std::string &string) const {
 
 double AGM::point::operator-(const AGM::point &src) {
     return (xy - src.xy).norm();
+}
+
+double AGM::point::operator-(axialLine &src) {
+    if (src.getMark() == 'x') {
+        return xy[1] - src[2];
+    } else if (src.getMark() == 'y') {
+        return xy[0] - src[0];
+    } else {
+        printError("AGM::point::operator-", "axialLine mark (which is %c) error", src.getMark());
+    }
 }
 
 AGM::point &AGM::point::operator=(const AGM::point &src) {
@@ -189,6 +218,10 @@ void AGM::point::findStencil() {
         case 'D':
         case 'N':
             findStencilBoundary();
+            break;
+        case 'd':
+        case 'n':
+            findStencilAppendBoundary();
             break;
         case 'I':
             findStencilInterface();
@@ -297,7 +330,108 @@ void AGM::point::findStencilBoundary() {
     if (!element[S]) assignStencil(S, SE, SW, findLeftLine, 'x', 0, xy[0], -UNITVALUE, normal[1]);
 }
 
+void AGM::point::findStencilAppendBoundary() {
+    auto isContainLine = [](axialLine *aln, int lineIdx, double pt) -> bool {
+        return isnegativezero((*aln)[lineIdx] - pt) && ispositivezero((*aln)[lineIdx + 1] - pt);
+    };
+    auto findLeftLine = [this, &isContainLine](char lineChar, int lineIdx, double pt) -> axialLine * {
+        auto vec = std::vector<axialLine *>{};
+        for (auto &item: *getAxialLines(lineChar)) {
+            if (isContainLine(&item, 2 * lineIdx, pt) && ispositive(*this - item)) {
+                vec.emplace_back(&item);
+            }
+        }
+        if (vec.empty()) return nullptr;
+        std::sort(vec.begin(), vec.end(), [](axialLine *a, axialLine *b) -> bool {
+            return ispositivezero(*b - *a);
+        });
+        return vec.back();
+    };
+    auto findRightLine = [this, &isContainLine](char lineChar, int lineIdx, double pt) -> axialLine * {
+        auto vec = std::vector<axialLine *>{};
+        for (auto &item: *getAxialLines(lineChar)) {
+            if (isContainLine(&item, 2 * lineIdx, pt) && isnegative(*this - item)) {
+                vec.emplace_back(&item);
+            }
+        }
+        if (vec.empty()) return nullptr;
+        std::sort(vec.begin(), vec.end(), [](axialLine *a, axialLine *b) -> bool {
+            return ispositivezero(*b - *a);
+        });
+        return vec.front();
+    };
+    auto findLeftPt = [this](axialLine *aln, int ptIdx) -> point * {
+        auto vec = std::vector<point *>{};
+        std::copy_if(aln->begin(), aln->end(), std::back_inserter(vec), [this, &ptIdx](point *pt) -> bool {
+            return isnegativezero((*pt)[ptIdx] - xy[ptIdx]);
+        });
+        return vec.back();
+    };
+    auto findRightPt = [this](axialLine *aln, int ptIdx) -> point * {
+        auto vec = std::vector<point *>{};
+        std::copy_if(aln->begin(), aln->end(), std::back_inserter(vec), [this, &ptIdx](point *pt) -> bool {
+            return ispositivezero((*pt)[ptIdx] - xy[ptIdx]);
+        });
+        return vec.front();
+    };
+    auto assignStencil = [&](EWNS ewns, EWNS ewns0, EWNS ewns1, auto func, char lineChar, int lineIdx, double pt,
+                             double sign, double &n) -> void {
+        if (element[ewns] == this && ispositive(sign * n)) return;
+        auto alin = func(lineChar, lineIdx, pt);
+        if (alin) {
+            auto leftPt = findLeftPt(alin, lineIdx);
+            auto rightPt = findRightPt(alin, lineIdx);
+            if (leftPt && rightPt && leftPt == rightPt) {
+                element[ewns] = leftPt;
+                leftPt = nullptr;
+                rightPt = nullptr;
+                return;
+            }
+            if (rightPt) {
+                element[ewns0] = rightPt;
+                element[ewns] = nullptr;
+            }
+            if (leftPt) {
+                element[ewns1] = leftPt;
+                element[ewns] = nullptr;
+            }
+
+            if (!(rightPt || leftPt)) {
+                printError("assignStencil in findStencil", "rightPt & leftPt do not exist");
+            }
+        } else {
+            n = ZEROVALUE;
+            double norm{std::sqrt(std::pow(normal[0], 2) + std::pow(normal[1], 2))};
+            for (int i = 0; i < 2; ++i) {
+                normal[i] /= norm;
+            }
+            element[ewns] = this;
+        }
+    };
+    if (!element[E]) assignStencil(E, EN, ES, findRightLine, 'y', 1, xy[1], UNITVALUE, normal[0]);
+    if (!element[W]) assignStencil(W, WN, WS, findLeftLine, 'y', 1, xy[1], -UNITVALUE, normal[0]);
+
+    if (!element[N]) assignStencil(N, NE, NW, findRightLine, 'x', 0, xy[0], UNITVALUE, normal[1]);
+    if (!element[S]) assignStencil(S, SE, SW, findLeftLine, 'x', 0, xy[0], -UNITVALUE, normal[1]);
+}
+
 void AGM::point::findStencilInterface() {
+    auto assignDist = [this]() -> double {
+        double vv{};
+        for (const auto &item: {E, W, N, S}) {
+            if (getElement()[item]) {
+                if (2e0 * (*getElement()[item] - *this) > vv) {
+                    vv = 2e0 * (*getElement()[item] - *this);
+                }
+            }
+        }
+        if (!iszero(vv)) {
+            return vv;
+        }
+        printError("AGM::point::findStencilInterface, assignDist");
+        return ZEROVALUE;
+    };
+    double dist{assignDist()};
     auto isContainLine = [](axialLine *aln, int lineIdx, double pt) -> bool {
         return isnegativezero((*aln)[lineIdx] - pt) && ispositivezero((*aln)[lineIdx + 1] - pt);
     };
@@ -353,9 +487,40 @@ void AGM::point::findStencilInterface() {
         });
         return vec.front();
     };
+    auto lineEndPt = [this, &dist](EWNS ewns) -> std::vector<double> {
+        if (ewns == E) {
+            return std::vector<double>{getXy()[0] + dist, getXy()[1]};
+        } else if (ewns == W) {
+            return std::vector<double>{getXy()[0] - dist, getXy()[1]};
+        } else if (ewns == N) {
+            return std::vector<double>{getXy()[0], getXy()[1] + dist};
+        } else if (ewns == S) {
+            return std::vector<double>{getXy()[0], getXy()[1] - dist};
+        }
+        printError("AGM::point::findStencilInterface, lineEndPt");
+        return std::vector<double>{};
+    };
+    auto assignAppendElement = [this](point &pt, EWNS ewns, const coordinate &coordinate) -> void {
+        auto func = [this, &pt, &coordinate](EWNS ewns0, EWNS ewns1, EWNS ewns2, EWNS ewns3, int i) -> void {
+            pt[ewns1] = this;
+            pt[ewns0] = &pt;
+            if (ispositive(coordinate[i])) pt[ewns2] = &pt;
+            else if (isnegative(coordinate[i])) pt[ewns3] = &pt;
+            else pt[ewns2] = pt[ewns3] = &pt;
+        };
+        if (ewns == E) func(ewns, W, N, S, 1);
+        else if (ewns == W) func(ewns, E, N, S, 1);
+        else if (ewns == N) func(ewns, S, E, W, 0);
+        else if (ewns == S) func(ewns, N, E, W, 0);
+        else printError("AGM::point::findStencilInterface", "assignAppendElement");
+    };
     auto assignStencil = [&](EWNS ewns, EWNS ewns0, EWNS ewns1, auto func, char lineChar, int lineIdx,
                              double pt) -> void {
         auto alin = func(lineChar, lineIdx, pt);
+        if (getCondition() == 'd') {
+            printError("this");
+        }
+        if (alin && std::fabs((*this) - *alin) > dist) alin = nullptr;
         if (alin) {
             auto leftPt = findLeftPt(alin, lineIdx);
             auto rightPt = findRightPt(alin, lineIdx);
@@ -378,9 +543,50 @@ void AGM::point::findStencilInterface() {
                 printError("assignStencil in findStencil", "rightPt & leftPt do not exist");
             }
         } else {
-            std::cout << "(x, y) = (" << xy[0] << ", " << xy[1] << "), condition = " << condition << ", lineChar = "
-                      << lineChar << "\n";
-            printError("AGM::point::findStencilInterface", "there is no axial line");
+            auto line{line2D{}};
+            auto start{vector{std::vector<double>{getXy()[0], getXy()[1]}}};
+            auto end{vector{lineEndPt(ewns)}};
+            auto vec{vector{}};
+            vec.resize(2);
+            auto crossLine{std::vector<point>{}};
+            line.setStart(start);
+            line.setAnEnd(end);
+            line.calcProperties();
+            for (const auto &item: *(getBdLine())) {
+                if (line.iscross(item, vec) && item.getCondition() != 'I') {
+                    crossLine.emplace_back(point(coordinate(vec[0], vec[1]), getMp()));
+                    crossLine.back().setCondition(std::tolower(item.getCondition()));
+                    crossLine.back().setNormal(coordinate(item.getNormal()[0], item.getNormal()[1]));
+                    crossLine.back()["bdv"] = item.getBoundaryValue();
+                }
+            }
+            if (crossLine.size() > 1) {
+                printError("AGM::point::findStencilInterface",
+                           "The size of crossLine (which is %d) more than 1, should be corrected later. (using sort algorithm)",
+                           crossLine.size());
+            } else if (crossLine.empty()) {
+                std::cout << "(x, y) = (" << getXy()[0] << ", " << getXy()[1] << ")\n";
+                printError("AGM::point::findStencilInterface",
+                           "The size of crossLine is empty");
+            }
+            getPts()->emplace_back(crossLine[0]);
+            getPts()->back().setIdx(int(getPts()->size()) - 1);
+            assignAppendElement(getPts()->back(), ewns, getPts()->back().getNormal());
+            element[ewns] = &(getPts()->back());
+
+            std::cout << "\nAppend point\n";
+            std::cout << "idx = " << getPts()->back().getIdx() << "\n";
+            std::cout << "xy = (" << getPts()->back().getXy()[0] << ", " << getPts()->back().getXy()[1] << ")\n";
+            std::cout << "condition = " << getPts()->back().getCondition() << "\n";
+            std::cout << "boundary value = " << getPts()->back()["bdv"] << "\n";
+            std::cout << "normal = (" << getPts()->back().getNormal()[0] << ", " << getPts()->back().getNormal()[1]
+                      << ")\n\n";
+//            std::cout << "ewns = " << ewns << "\n";
+//            std::cout << "E = " << getPts()->back()[E]->getIdx() << "\n";
+//            std::cout << "W = " << getPts()->back()[W]->getIdx() << "\n";
+//            std::cout << "N = " << getPts()->back()[N]->getIdx() << "\n";
+//            std::cout << "S = " << getPts()->back()[S]->getIdx() << "\n";
+//            printError("AGM::point::findStencilInterface", "there is no axial line");
         }
     };
     if (!element[E]) assignStencil(E, EN, ES, findRightLine, 'y', 1, xy[1]);
@@ -406,9 +612,11 @@ void AGM::point::calculateRepresentationFormula() {
             calculateRepresentationFormulaCross();
             break;
         case 'D':
+        case 'd':
             calculateRepresentationFormulaDirichlet();
             break;
         case 'N':
+        case 'n':
             calculateRepresentationFormulaNeumann();
             break;
         case 'I':
@@ -494,7 +702,8 @@ void AGM::point::calculateRepresentationFormulaCross() {
 
 void AGM::point::calculateRepresentationFormulaDirichlet() {
     solMatrixRow[0][getIdx()] = UNITVALUE;
-    approximatePhiAtBoundary(1);
+    if (getCondition() == 'D') approximatePhiAtBoundary(1);
+    else if (getCondition() == 'd') approximatePhiAtAppend();
 }
 
 void AGM::point::calculateRepresentationFormulaNeumann() {
@@ -516,7 +725,8 @@ void AGM::point::calculateRepresentationFormulaNeumann() {
             solMatrixRow[0] += row[i] * normal[i];
         }
     }
-    approximatePhiAtBoundary(1);
+    if (getCondition() == 'N') approximatePhiAtBoundary(1);
+    else if (getCondition() == 'n') approximatePhiAtAppend();
 }
 
 AGM::matrixRow AGM::point::calculateRepresentationFormulaNeumannOnAxial(char axis, int axisInt) {
@@ -877,15 +1087,31 @@ void AGM::point::approximatePhiAtBoundary(int order) {
     }
 }
 
+void AGM::point::approximatePhiAtAppend() {
+    for (const auto &item: {E, W, N, S}) {
+        if (getElement()[item] && getIdx() != getElement()[item]->getIdx()) {
+            solMatrixRow[1][getElement()[item]->getIdx() + getNPts()] = UNITVALUE;
+            solMatrixRow[1][getIdx() + getNPts()] = -UNITVALUE;
+
+            std::cout << "this point = " << getIdx() << "\n";
+            std::cout << "near point = " << getElement()[item]->getIdx() << "\n\n";
+
+            return;
+        }
+    }
+}
+
 void AGM::point::updateRightHandSide(const std::function<double(int)> &f, const std::function<double(int)> &g) {
     switch (condition) {
         case 'C':
             updateRightHandSideCross(f, g);
             break;
         case 'D':
+        case 'd':
             updateRightHandSideDirichlet(f, g);
             break;
         case 'N':
+        case 'n':
             updateRightHandSideNeumann(f, g);
             break;
         case 'I':
@@ -962,9 +1188,11 @@ void AGM::point::updateRightHandSidePart(const std::function<double(int)> &f, co
             updateRightHandSideCrossPart(f, g);
             break;
         case 'D':
+        case 'd':
             updateRightHandSideDirichletPart(f, g);
             break;
         case 'N':
+        case 'n':
             updateRightHandSideNeumannPart(f, g);
             break;
         case 'I':
@@ -1040,7 +1268,9 @@ void AGM::point::makeDerivatives() {
             makeDerivativesCross();
             break;
         case 'D':
+        case 'd':
         case 'N':
+        case 'n':
             makeDerivativesBoundary();
             break;
         case 'I':
@@ -1230,6 +1460,14 @@ void AGM::point::calculateDerivatives(const std::vector<point> *points, const st
 
 void AGM::point::approximateNaNDerivatives(std::vector<AGM::point> *points) {
     auto findInnerPointOfBoundary = [this]() -> point * {
+        if (getCondition() == 'd' || getCondition() == 'n') {
+            for (const auto &item: {E, W, N, S}) {
+                if (getElement()[item] && getIdx() != getElement()[item]->getIdx()) {
+                    return getElement()[item];
+                }
+            }
+        }
+
         for (const auto &item: {'x', 'y'}) {
             if (getAxialLine(item) && getAxialLine(item)->front()->getIdx() == getIdx()) {
                 return getAxialLine(item)->at(1);

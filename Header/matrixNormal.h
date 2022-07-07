@@ -7,7 +7,7 @@
 
 #include "matrixMulti.h"
 #include "StdVector"
-#include <Eigen/Sparse>
+#include "Eigen/Sparse"
 
 namespace AGM {
     template<typename pt>

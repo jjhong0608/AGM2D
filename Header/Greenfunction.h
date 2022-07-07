@@ -6,7 +6,7 @@
 #ifndef AGM_GREENFUNCTION_H
 #define AGM_GREENFUNCTION_H
 
-#include "util.h"
+#include "vector.h"
 
 namespace AGM {
     class Greenfunction {

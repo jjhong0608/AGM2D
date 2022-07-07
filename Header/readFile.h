@@ -12,6 +12,8 @@ namespace AGM {
     public:
         static void loadData(const std::string &filename, std::vector<point> *pts, std::vector<axialLine> *alineX,
                              std::vector<axialLine> *alineY);
+
+        static void loadBoundaryData(const std::string &filename, std::vector<boundaryLine2D> *bdLine);
     };
 
 }

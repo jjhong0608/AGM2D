@@ -184,3 +184,48 @@ void AGM::readFile::loadData(const std::string &filename, std::vector<point> *pt
         }
     }
 }
+
+void AGM::readFile::loadBoundaryData(const std::string &filename, std::vector<AGM::boundaryLine2D> *bdLine) {
+    std::ifstream f(filename);
+    std::string word{}, name{};
+    auto readSectionLine = [&f, &bdLine]() -> void {
+        std::string word{}, name{}, sx{}, sy{}, ex{}, ey{}, bc{}, bv{};
+        auto start{vector{}}, end{vector{}};
+        auto line{boundaryLine2D{}};
+
+        start.resize(2);
+        end.resize(2);
+
+        f >> name;
+        while (word != "ENDSECTION") {
+            if (word == "LINE") {
+                f >> sx >> sy >> ex >> ey >> bc;
+                if (bc != "I") f >> bv;
+                start[0] = std::stod(sx);
+                start[1] = std::stod(sy);
+                end[0] = std::stod(ex);
+                end[1] = std::stod(ey);
+                line.setStart(start);
+                line.setAnEnd(end);
+                line.setCondition(bc.c_str()[0]);
+                if (line.getCondition() != 'I') line.setBoundaryValue(std::stod(bv));
+                line.calcProperties();
+                bdLine->emplace_back(line);
+            }
+            f >> word;
+        }
+    };
+    if (!f.is_open()) {
+        printError("AGM::readFile::loadBoundaryData", "No Boundary Data file: \"%s\"\n Please check file name",
+                   filename.c_str());
+    }
+    std::cout << "Boundary Data file: \"" << filename << "\" open" << "\n";
+    while (!f.eof()) {
+        f >> word;
+        if (word == "SECTION") {
+            readSectionLine();
+        }
+        word = "";
+    }
+    f.close();
+}

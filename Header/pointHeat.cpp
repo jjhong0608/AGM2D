@@ -544,6 +544,14 @@ void AGM::pointHeat::calculateDerivatives(const std::vector<pointHeat> *points, 
 
 void AGM::pointHeat::approximateNaNDerivatives(std::vector<AGM::pointHeat> *points) {
     auto findInnerPointOfBoundary = [this]() -> point * {
+        if (getCondition() == 'd' || getCondition() == 'n') {
+            for (const auto &item: {E, W, N, S}) {
+                if (getElement()[item] && getIdx() != getElement()[item]->getIdx()) {
+                    return getElement()[item];
+                }
+            }
+        }
+
         for (const auto &item: {'x', 'y'}) {
             if (getAxialLine(item) && getAxialLine(item)->front()->getIdx() == getIdx()) {
                 return getAxialLine(item)->at(1);

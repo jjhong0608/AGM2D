@@ -1,4 +1,4 @@
-/usr/local/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/local/intel/bin/icc -DCMAKE_CXX_COMPILER=/usr/local/intel/bin/icpc -G "CodeBlocks - Unix Makefiles" /home/jjhong0608/AGM2D
+/usr/local/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/local/intel/bin/icc -DCMAKE_CXX_COMPILER=/usr/local/intel/bin/icpc -G "CodeBlocks - Unix Makefiles" -S /home/jjhong0608/AGM2D -B /home/jjhong0608/AGM2D/cmake-build-debug
 -- Configuring done
 -- Generating done
 -- Build files have been written to: /home/jjhong0608/AGM2D/cmake-build-debug

@@ -5,7 +5,7 @@
 #ifndef AGM_MATRIXROW_H
 #define AGM_MATRIXROW_H
 
-#include "axialLine.h"
+#include "boundaryLine.h"
 
 namespace AGM {
     struct matrixElement {

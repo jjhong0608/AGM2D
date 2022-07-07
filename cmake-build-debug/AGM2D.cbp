@@ -114,6 +114,12 @@
 		<Unit filename="/home/jjhong0608/AGM2D/Header/axialLine.h">
 			<Option target="AGM2D"/>
 		</Unit>
+		<Unit filename="/home/jjhong0608/AGM2D/Header/boundaryLine.cpp">
+			<Option target="AGM2D"/>
+		</Unit>
+		<Unit filename="/home/jjhong0608/AGM2D/Header/boundaryLine.h">
+			<Option target="AGM2D"/>
+		</Unit>
 		<Unit filename="/home/jjhong0608/AGM2D/Header/coordinate.cpp">
 			<Option target="AGM2D"/>
 		</Unit>
@@ -184,6 +190,12 @@
 			<Option target="AGM2D"/>
 		</Unit>
 		<Unit filename="/home/jjhong0608/AGM2D/Header/value.h">
+			<Option target="AGM2D"/>
+		</Unit>
+		<Unit filename="/home/jjhong0608/AGM2D/Header/vector.cpp">
+			<Option target="AGM2D"/>
+		</Unit>
+		<Unit filename="/home/jjhong0608/AGM2D/Header/vector.h">
 			<Option target="AGM2D"/>
 		</Unit>
 		<Unit filename="/home/jjhong0608/AGM2D/Header/writeFile.cpp">

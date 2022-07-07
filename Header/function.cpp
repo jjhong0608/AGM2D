@@ -120,6 +120,22 @@ double AGM::NavierStokesFunction::deltaTime() {
 
 double AGM::NavierStokesFunction::u(double t, const AGM::point &pt) {
     double x{pt[0]}, y{pt[1]};
+    // Air Foil
+    if (isclose(x, -2)) {
+        return UNITVALUE;
+    } else if (isclose(y, -1)) {
+        return UNITVALUE;
+    } else if (isclose(y, 1)) {
+        return UNITVALUE;
+    }
+    return ZEROVALUE;
+
+    // Saccular aneurysm
+    double c{-3. / 32};
+    if (isclose(x, -12.)) {
+        return c * y * (y - 4.);
+    }
+    return ZEROVALUE;
     // Kalman vortex
     double a{HALFVALUE};
     if (pow(x, 2) + pow(y, 2) < pow(0.51, 2)) {
@@ -130,6 +146,7 @@ double AGM::NavierStokesFunction::u(double t, const AGM::point &pt) {
 
 double AGM::NavierStokesFunction::v(double t, const AGM::point &pt) {
     double x{pt[0]}, y{pt[1]};
+    return ZEROVALUE;
     // Kalman vortex
     double a{HALFVALUE};
     if (pow(x, 2) + pow(y, 2) < pow(0.51, 2)) {

@@ -72,7 +72,7 @@ CMAKE_BINARY_DIR = /home/jjhong0608/AGM2D/cmake-build-debug
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/AGM.dir/all
+all: CMakeFiles/AGM2D.dir/all
 
 .PHONY : all
 
@@ -82,36 +82,36 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/AGM.dir/clean
+clean: CMakeFiles/AGM2D.dir/clean
 
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/AGM.dir
+# Target rules for target CMakeFiles/AGM2D.dir
 
 # All Build rule for target.
-CMakeFiles/AGM.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/jjhong0608/AGM2D/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19 "Built target AGM"
-.PHONY : CMakeFiles/AGM.dir/all
+CMakeFiles/AGM2D.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/jjhong0608/AGM2D/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21 "Built target AGM2D"
+.PHONY : CMakeFiles/AGM2D.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/AGM.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/jjhong0608/AGM2D/cmake-build-debug/CMakeFiles 19
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/AGM.dir/all
+CMakeFiles/AGM2D.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/jjhong0608/AGM2D/cmake-build-debug/CMakeFiles 21
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/AGM2D.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/jjhong0608/AGM2D/cmake-build-debug/CMakeFiles 0
-.PHONY : CMakeFiles/AGM.dir/rule
+.PHONY : CMakeFiles/AGM2D.dir/rule
 
 # Convenience name for target.
-AGM: CMakeFiles/AGM.dir/rule
+AGM2D: CMakeFiles/AGM2D.dir/rule
 
-.PHONY : AGM
+.PHONY : AGM2D
 
 # clean rule for target.
-CMakeFiles/AGM.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM.dir/build.make CMakeFiles/AGM.dir/clean
-.PHONY : CMakeFiles/AGM.dir/clean
+CMakeFiles/AGM2D.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/clean
+.PHONY : CMakeFiles/AGM2D.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

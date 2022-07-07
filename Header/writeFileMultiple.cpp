@@ -44,3 +44,6 @@ AGM::writeFileMultiple<T0, T1, T2>::~writeFileMultiple() = default;
 
 template
 class AGM::writeFileMultiple<AGM::pointHeat, AGM::pointHeat, AGM::point>;
+
+template
+class AGM::writeFileMultiple<AGM::point, AGM::point, AGM::point>;

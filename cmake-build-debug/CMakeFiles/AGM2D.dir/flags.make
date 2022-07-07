@@ -4,7 +4,7 @@
 # compile CXX with /usr/local/intel/bin/icpc
 CXX_DEFINES = 
 
-CXX_INCLUDES = 
+CXX_INCLUDES = -I/home/jjhong0608/AGM2D/Header -I/usr/local/intel/compilers_and_libraries_2018.5.274/linux/mkl/include -I/home/jjhong0608/AGM2D/Header/Eigen
 
-CXX_FLAGS = -g -std=gnu++17
+CXX_FLAGS =  -qopenmp -g -xCOMMON-AVX512 -std=gnu++17
 

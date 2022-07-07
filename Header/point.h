@@ -5,6 +5,7 @@
 #ifndef AGM_POINT_H
 #define AGM_POINT_H
 
+#include <vector>
 #include "value.h"
 
 namespace AGM {
@@ -25,6 +26,8 @@ namespace AGM {
         std::array<axialLine *, 2> aline{};
         static int nPts;
         static std::vector<axialLine> *xline, *yline;
+        static std::vector<boundaryLine2D> *bdLine;
+        static std::vector<point> *pts;
 
     public:
         point();
@@ -97,6 +100,14 @@ namespace AGM {
 
         static void setAxialLines(std::vector<axialLine> *line, char i);
 
+        static std::vector<boundaryLine2D> *getBdLine();
+
+        static void setBdLine(std::vector<boundaryLine2D> *line);
+
+        static std::vector<point> *getPts();
+
+        static void setPts(std::vector<point> *vector);
+
         double &operator[](int i);
 
         const double &operator[](int i) const;
@@ -109,11 +120,15 @@ namespace AGM {
 
         double operator-(const point &src);
 
+        double operator-(axialLine &src);
+
         point &operator=(const point &src);
 
         void findStencil();
 
         void findStencilBoundary();
+
+        void findStencilAppendBoundary();
 
         void findStencilInterface();
 
@@ -134,6 +149,8 @@ namespace AGM {
         virtual void calculateRepresentationFormulaInterface();
 
         void approximatePhiAtBoundary(int order);
+
+        void approximatePhiAtAppend();
 
         void updateRightHandSide(const std::function<double(int)> &f, const std::function<double(int)> &g);
 

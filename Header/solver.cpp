@@ -275,6 +275,12 @@ void AGM::solver::NavierStokesSolver() {
             } else if (pts->at(i).getCondition() == 'N') {
                 pts->at(i).setCondition('D');
                 pts->at(i)["bdv"] = ZEROVALUE;
+            } else if (pts->at(i).getCondition() == 'd') {
+                pts->at(i).setCondition('n');
+                pts->at(i)["bdv"] = ZEROVALUE;
+            } else if (pts->at(i).getCondition() == 'n') {
+                pts->at(i).setCondition('d');
+                pts->at(i)["bdv"] = ZEROVALUE;
             }
             f.assignPreviousValue(puvel.at(i), pvvel.at(i), ppvel.at(i), uvel.at(i), vvel.at(i), pts->at(i));
             f.assignBoundaryValue(uvel.at(i), vvel.at(i));
@@ -404,7 +410,7 @@ void AGM::solver::NavierStokesSolver() {
         std::cout << "current time = [" << pointHeat::getTime() << " / " << AGM::NavierStokesFunction::terminalTime()
                   << "]\n";
         if (isclose(std::floor(pointHeat::getTime() + HALFVALUE * pointHeat::getDelta()), pointHeat::getTime())) {
-            wf.writeResult("/home/jjhong0608/docker/AGM2D/Navier-Stokes/External_flow/Re5/AGM_Result_" +
+            wf.writeResult("/home/jjhong0608/docker/AGM2D/air_foil/adaptive/AGM_Result_" +
                            std::to_string(pointHeat::getTime()));
         }
     };
@@ -448,5 +454,5 @@ void AGM::solver::NavierStokesSolver() {
     matrixVelocity.releaseMatrix();
     matrixPressure.releaseMatrix();
 
-    wf.writeResult("/home/jjhong0608/docker/AGM2D/Navier-Stokes/External_flow/Re5/AGM_Result");
+    wf.writeResult("/home/jjhong0608/docker/AGM2D/air_foil/adaptive/AGM_Result");
 }
