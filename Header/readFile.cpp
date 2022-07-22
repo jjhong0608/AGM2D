@@ -59,6 +59,11 @@ void AGM::readFile::loadData(const std::string &filename, std::vector<point> *pt
                         }
                         pt.setCondition(bc);
                         pt["bdv"] = bv;
+
+                        if (isclose(pt[1], 130.0)) {
+                            pt.setCondition('N');
+                        }
+
                         pt.setNormal(normal);
                         pt.setIdx(index++);
                         pts->emplace_back(pt);

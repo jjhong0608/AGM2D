@@ -8,32 +8,33 @@ AGM::ellipticFunction::ellipticFunction() = default;
 
 double AGM::ellipticFunction::u(const AGM::point &pt) {
     double x{pt[0]}, y{pt[1]};
-    return sin(x) + cos(y) + y;
+    return UNITVALUE / std::sqrt(x * x + y * y);
 }
 
 double AGM::ellipticFunction::phi(const AGM::point &pt) {
     double x{pt[0]}, y{pt[1]};
-    return sin(x) - HALFVALUE * f(pt);
+    return ZEROVALUE;
 }
 
 double AGM::ellipticFunction::f(const AGM::point &pt) {
     double x{pt[0]}, y{pt[1]};
-//    return ZEROVALUE;
-    return sin(x) + cos(y);
+    return ZEROVALUE;
 }
 
 double AGM::ellipticFunction::ux(const AGM::point &pt) {
     double x{pt[0]}, y{pt[1]};
-    return cos(x);
+    return ZEROVALUE;
 }
 
 double AGM::ellipticFunction::uy(const AGM::point &pt) {
     double x{pt[0]}, y{pt[1]};
-    return -sin(y) + UNITVALUE;
+    return ZEROVALUE;
 }
 
 void AGM::ellipticFunction::assignBoundaryValue(AGM::point &pt) {
 //    return;
+//    double x{pt[0]}, y{pt[1]};
+
     if (pt.getCondition() == 'D') {
         pt["bdv"] = u(pt);
     } else if (pt.getCondition() == 'N') {
@@ -115,17 +116,21 @@ double AGM::NavierStokesFunction::terminalTime() {
 }
 
 double AGM::NavierStokesFunction::deltaTime() {
-    return 1e-2;
+    return 1e-3;
+}
+
+double AGM::NavierStokesFunction::writeTime() {
+    return 1e-1;
 }
 
 double AGM::NavierStokesFunction::u(double t, const AGM::point &pt) {
     double x{pt[0]}, y{pt[1]};
     // Air Foil
-    if (isclose(x, -2)) {
+    if (isclose(x, -5)) {
         return UNITVALUE;
-    } else if (isclose(y, -1)) {
+    } else if (isclose(y, -7)) {
         return UNITVALUE;
-    } else if (isclose(y, 1)) {
+    } else if (isclose(y, 7)) {
         return UNITVALUE;
     }
     return ZEROVALUE;

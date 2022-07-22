@@ -92,11 +92,11 @@ namespace AGM {
 
         [[nodiscard]] virtual double integrate_const_tau_ND(char i) const;
 
-        [[nodiscard]] static double integrate_square_ttau_ND(char i);
+        [[nodiscard]] virtual double integrate_square_ttau_ND(char i) const;
 
-        [[nodiscard]] static double integrate_linear_ttau_ND(char i);
+        [[nodiscard]] virtual double integrate_linear_ttau_ND(char i) const;
 
-        [[nodiscard]] static double integrate_const_ttau_ND(char i);
+        [[nodiscard]] virtual double integrate_const_ttau_ND(char i) const;
 
         [[nodiscard]] virtual double green_function_ND(double t) const;
 
@@ -148,11 +148,11 @@ namespace AGM {
 
         [[nodiscard]] virtual double integrate_const_tau_DN(char i) const;
 
-        [[nodiscard]] static double integrate_square_ttau_DN(char i);
+        [[nodiscard]] virtual double integrate_square_ttau_DN(char i) const;
 
-        [[nodiscard]] static double integrate_linear_ttau_DN(char i);
+        [[nodiscard]] virtual double integrate_linear_ttau_DN(char i) const;
 
-        [[nodiscard]] static double integrate_const_ttau_DN(char i);
+        [[nodiscard]] virtual double integrate_const_ttau_DN(char i) const;
 
         [[nodiscard]] virtual double green_function_DN(double t) const;
 

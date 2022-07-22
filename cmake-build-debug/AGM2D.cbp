@@ -102,6 +102,12 @@
 		<Unit filename="/home/jjhong0608/AGM2D/Header/Greenfunction.h">
 			<Option target="AGM2D"/>
 		</Unit>
+		<Unit filename="/home/jjhong0608/AGM2D/Header/GreenfunctionAxisymmetric.cpp">
+			<Option target="AGM2D"/>
+		</Unit>
+		<Unit filename="/home/jjhong0608/AGM2D/Header/GreenfunctionAxisymmetric.h">
+			<Option target="AGM2D"/>
+		</Unit>
 		<Unit filename="/home/jjhong0608/AGM2D/Header/GreenfunctionReactionDiffusion.cpp">
 			<Option target="AGM2D"/>
 		</Unit>
@@ -160,6 +166,12 @@
 			<Option target="AGM2D"/>
 		</Unit>
 		<Unit filename="/home/jjhong0608/AGM2D/Header/point.h">
+			<Option target="AGM2D"/>
+		</Unit>
+		<Unit filename="/home/jjhong0608/AGM2D/Header/pointAxisymmetric.cpp">
+			<Option target="AGM2D"/>
+		</Unit>
+		<Unit filename="/home/jjhong0608/AGM2D/Header/pointAxisymmetric.h">
 			<Option target="AGM2D"/>
 		</Unit>
 		<Unit filename="/home/jjhong0608/AGM2D/Header/pointHeat.cpp">

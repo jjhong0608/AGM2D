@@ -6,7 +6,7 @@
 #define AGM_GREENFUNCTIONREACTIONDIFFUSION_H
 
 
-#include "Greenfunction.h"
+#include "GreenfunctionAxisymmetric.h"
 
 namespace AGM {
     class GreenfunctionReactionDiffusion : public Greenfunction {

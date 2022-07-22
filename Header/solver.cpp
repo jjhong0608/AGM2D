@@ -58,6 +58,111 @@ void AGM::solver::ellipticSolver() {
     for (auto item = pts->begin(); item != pts->end(); ++item) {
         item->approximateNaNDerivatives(pts);
     }
+
+    auto wf{AGM::writeFile<point>(pts)};
+    wf.writeResult("/home/jjhong0608/docker/AGM2D/Axisymmetric/AGM_Result");
+}
+
+void AGM::solver::axisymmetricEllipticSolver() {
+    auto f{AGM::ellipticFunction()};
+    point::setNPts(int(pts->size()));
+    auto ptsAxis{std::vector<pointAxisymmetric>(point::getNPts())};
+    auto rhsX = [&](int i) -> double {
+        return HALFVALUE * ptsAxis.at(i)[0] * f.f(ptsAxis.at(i));
+    };
+    auto rhsY = [&](int i) -> double {
+        return HALFVALUE * ptsAxis.at(i)[0] * f.f(ptsAxis.at(i));
+    };
+    auto rhsXp = [&](int i) -> double {
+        return ZEROVALUE;
+    };
+    auto rhsYp = [&](int i) -> double {
+        return ZEROVALUE;
+    };
+    auto copyPointInformation = [this, &ptsAxis]() -> void {
+        for (int j = 0; j < point::getNPts(); ++j) {
+            ptsAxis.at(j).point::operator=(pts->at(j));
+            ptsAxis.at(j).findStencil(&(pts->at(j).getElement()), &ptsAxis);
+        }
+    };
+    auto assignBoundaryValue = [&f, &ptsAxis]() -> void {
+        #pragma omp parallel for
+        for (auto item = ptsAxis.begin(); item != ptsAxis.end(); ++item) {
+            f.assignBoundaryValue(*item);
+        }
+    };
+    auto makeMatrix = [&rhsX, &rhsY, &rhsXp, &rhsYp, &ptsAxis]() -> void {
+        #pragma omp parallel for
+        for (auto item = ptsAxis.begin(); item != ptsAxis.end(); ++item) {
+            item->checkOnAxis();
+            item->calculateRepresentationFormula();
+            item->makeDerivatives();
+            item->updateRightHandSide(rhsX, rhsY);
+            item->updateRightHandSidePart(rhsXp, rhsYp);
+        }
+        #pragma omp parallel for
+        for (auto item = ptsAxis.begin(); item != ptsAxis.end(); ++item) {
+            item->EquationOnAxis();
+        }
+    };
+    auto calculateDifferentiation = [&rhsX, &rhsY, &rhsXp, &rhsYp, &ptsAxis]() -> void {
+        #pragma omp parallel for
+        for (auto item = ptsAxis.begin(); item != ptsAxis.end(); ++item) {
+            item->calculateDerivatives(&ptsAxis, rhsX, rhsY, rhsXp, rhsYp);
+        }
+        #pragma omp parallel for
+        for (auto item = ptsAxis.begin(); item != ptsAxis.end(); ++item) {
+            item->approximateNaNDerivatives(&ptsAxis);
+        }
+    };
+
+    copyPointInformation();
+    assignBoundaryValue();
+    makeMatrix();
+
+    for (auto item = ptsAxis.begin(); item != ptsAxis.end(); ++item) {
+        for (const auto &row: item->getSolMatrixRow()[0]) {
+            if (std::isnan(row.value)) {
+                std::cout << "(x, y) = (" << item->getXy()[0] << ", " << item->getXy()[1] << ")\n";
+                std::cout << "condition = " << item->getCondition() << "\n";
+                printError("find NaN value");
+            }
+        }
+        for (const auto &row: item->getSolMatrixRow()[1]) {
+            if (std::isnan(row.value)) {
+                std::cout << "(x, y) = (" << item->getXy()[0] << ", " << item->getXy()[1] << ")\n";
+                std::cout << "condition = " << item->getCondition() << "\n";
+                printError("find NaN value1");
+            }
+        }
+        if (std::isnan(item->getRb()[0])) {
+            std::cout << "(x, y) = (" << item->getXy()[0] << ", " << item->getXy()[1] << ")\n";
+            std::cout << "condition = " << item->getCondition() << "\n";
+            printError("rb0 error");
+        }
+        if (std::isnan(item->getRb()[1])) {
+            std::cout << "(x, y) = (" << item->getXy()[0] << ", " << item->getXy()[1] << ")\n";
+            std::cout << "condition = " << item->getCondition() << "\n";
+            printError("rb1 error");
+        }
+    }
+
+    auto matrix = AGM::matrix<pointAxisymmetric>(&ptsAxis);
+    matrix.makeMatrix();
+    matrix.factorizeMatrix();
+    matrix.calculateMatrix();
+    matrix.releaseMatrix();
+
+//    for (const auto &item: ptsAxis) {
+//        std::cout << "condition = " << item.getCondition() << ", " << "value = " << item["sol"] << "\n";
+//    }
+
+//    calculateDifferentiation();
+    auto wf{AGM::writeFile<pointAxisymmetric>(&ptsAxis)};
+    wf.writeResult("/home/jjhong0608/docker/AGM2D/Axisymmetric/AGM_Result");
+    std::cout << "Relative L2-error = " << wf.calculateError("sol") << "\n";
+
+
 }
 
 void AGM::solver::heatSolver() {
@@ -188,7 +293,7 @@ void AGM::solver::NavierStokesSolver() {
                pvvel.at(i)["sol"] / pointHeat::getDelta() + 2 * pvvel.at(i)["sol"] * puvel.at(i)["dx"];
     };
     auto vRhsY = [&](int i) -> double {
-        return HALFVALUE * (vvel.at(i)["rhs"] = pvvel.at(i)["rhs"]) - pvvel.at(i)["phi"] +
+        return HALFVALUE * (vvel.at(i)["rhs"] + pvvel.at(i)["rhs"]) - pvvel.at(i)["phi"] +
                pvvel.at(i)["sol"] / pointHeat::getDelta();
     };
     auto pRhsX = [&](int i) -> double {
@@ -410,7 +515,7 @@ void AGM::solver::NavierStokesSolver() {
         std::cout << "current time = [" << pointHeat::getTime() << " / " << AGM::NavierStokesFunction::terminalTime()
                   << "]\n";
         if (isclose(std::floor(pointHeat::getTime() + HALFVALUE * pointHeat::getDelta()), pointHeat::getTime())) {
-            wf.writeResult("/home/jjhong0608/docker/AGM2D/air_foil/adaptive/AGM_Result_" +
+            wf.writeResult("/home/jjhong0608/docker/AGM2D/air_foil/test4/AGM_Result_" +
                            std::to_string(pointHeat::getTime()));
         }
     };
@@ -454,5 +559,5 @@ void AGM::solver::NavierStokesSolver() {
     matrixVelocity.releaseMatrix();
     matrixPressure.releaseMatrix();
 
-    wf.writeResult("/home/jjhong0608/docker/AGM2D/air_foil/adaptive/AGM_Result");
+    wf.writeResult("/home/jjhong0608/docker/AGM2D/air_foil/test4/AGM_Result");
 }

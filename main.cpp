@@ -1,6 +1,13 @@
 #include "solver.h"
+#include <sys/resource.h>
 
 int main() {
+    struct rlimit rlim{};
+    getrlimit(RLIMIT_STACK, &rlim);
+    rlim.rlim_cur = -1;
+    rlim.rlim_max = -1;
+    setrlimit(RLIMIT_STACK, &rlim);
+
     auto pts{std::vector<AGM::point>{}};
     auto xline{std::vector<AGM::axialLine>{}};
     auto yline{std::vector<AGM::axialLine>{}};
@@ -21,8 +28,13 @@ int main() {
             std::cout << "condition = " << item.getCondition() << "\n";
         }
     }
+
+    std::cout << "Total Points number = " << pts.size() << "\n";
+    std::cout << "Reynols number = " << UNITVALUE / pts[0].getMp() << "\n";
+
     auto solver{AGM::solver(&pts)};
-    solver.NavierStokesSolver();
+    solver.axisymmetricEllipticSolver();
+//    solver.NavierStokesSolver();
 //    auto wf{AGM::writeFile<AGM::point>(&pts)};
 //    std::cout << "Relative L-2 Error = " << wf.calculateError("sol") << "\n";
 //    wf.writeResult("/home/jjhong0608/docker/AGM2D/air_foil/adaptive/AGM_Result");

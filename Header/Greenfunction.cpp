@@ -540,15 +540,15 @@ double AGM::Greenfunction::integrate_const_tau_ND(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_square_ttau_ND(char i) {
+double AGM::Greenfunction::integrate_square_ttau_ND(char i) const {
     return ZEROVALUE;
 }
 
-double AGM::Greenfunction::integrate_linear_ttau_ND(char i) {
+double AGM::Greenfunction::integrate_linear_ttau_ND(char i) const {
     return ZEROVALUE;
 }
 
-double AGM::Greenfunction::integrate_const_ttau_ND(char i) {
+double AGM::Greenfunction::integrate_const_ttau_ND(char i) const {
     return ZEROVALUE;
 }
 
@@ -564,13 +564,13 @@ double AGM::Greenfunction::green_function_t_ND(double t) const {
     if (t < tau || isclose(tm, t)) {
         return ZEROVALUE;
     } else {
-        return -1 / mpr;
+        return -UNITVALUE / mpr;
     }
 }
 
 double AGM::Greenfunction::green_function_tau_ND(double t) const {
     if (t < tau || isclose(tm, t)) {
-        return -1 / mpr;
+        return -UNITVALUE / mpr;
     } else {
         return ZEROVALUE;
     }
@@ -1038,15 +1038,15 @@ double AGM::Greenfunction::integrate_const_tau_DN(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_square_ttau_DN(char i) {
+double AGM::Greenfunction::integrate_square_ttau_DN(char i) const {
     return ZEROVALUE;
 }
 
-double AGM::Greenfunction::integrate_linear_ttau_DN(char i) {
+double AGM::Greenfunction::integrate_linear_ttau_DN(char i) const {
     return ZEROVALUE;
 }
 
-double AGM::Greenfunction::integrate_const_ttau_DN(char i) {
+double AGM::Greenfunction::integrate_const_ttau_DN(char i) const {
     return ZEROVALUE;
 }
 

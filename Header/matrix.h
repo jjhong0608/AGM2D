@@ -53,6 +53,8 @@ namespace AGM {
 
         virtual void calculateMatrix();
 
+        void calculateResidual(const double *x, const double *rb);
+
         void releaseMatrix();
     };
 

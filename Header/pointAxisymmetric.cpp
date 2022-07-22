@@ -1,0 +1,996 @@
+//
+// Created by NIMS-JUNHONG on 2022/07/20.
+//
+
+#include "pointAxisymmetric.h"
+
+bool AGM::pointAxisymmetric::isOnAxis() const {
+    return is_on_axis;
+}
+
+void AGM::pointAxisymmetric::setIsOnAxis(bool isOnAxis) {
+    is_on_axis = isOnAxis;
+}
+
+void
+AGM::pointAxisymmetric::findStencil(const AGM::axialElement *axialElement1, std::vector<pointAxisymmetric> *vector) {
+    int n{};
+    for (const auto &item: *axialElement1) {
+        if (item) {
+            element.at(n) = &(vector->at(item->getIdx()));
+        }
+        ++n;
+    }
+}
+
+void AGM::pointAxisymmetric::checkOnAxis() {
+    if (iszero(getXy()[0])) {
+        setIsOnAxis(true);
+    }
+}
+
+void AGM::pointAxisymmetric::EquationOnAxis() {
+    if (!isOnAxis()) return;
+    std::array<matrixRow, 2> rows{}, rows0{};
+    matrixRow row{};
+
+    row[getIdx()] = -UNITVALUE;
+    row[getElement()[E]->getIdx()] = UNITVALUE;
+
+    rows[0] = row;
+    rows[1] = getSolMatrixRow()[1];
+
+    setSolMatrixRow(rows);
+    rhsMatrixRow = rows0;
+    partMatrixRow = rows0;
+    rb[0] = ZEROVALUE;
+    rb[1] = ZEROVALUE;
+}
+
+void AGM::pointAxisymmetric::calculateRepresentationFormulaCross() {
+    std::array<matrixRow, 2> row{};
+    row[0] = iszero(getElement()[W]->getXy()[0]) ? calculateRepresentationFormulaCrossSymmetricNearAxis()
+                                                 : calculateRepresentationFormulaCrossSymmetric();
+    row[1] = calculateRepresentationFormulaCrossNonSymmetric();
+
+    solMatrixRow[0] = row[0] + row[1];
+    solMatrixRow[1] = row[0] - row[1];
+}
+
+AGM::matrixRow AGM::pointAxisymmetric::calculateRepresentationFormulaCrossSymmetric() {
+    double xm = element[W]->getXy()[0];
+    double xb = getXy()[0];
+    double xp = element[E]->getXy()[0];
+    auto gfunc{GreenfunctionAxisymmetric(xm, xb, xp, mp, mp)};
+    matrixRow row{};
+    auto eraseInterface = [this, &row](point *pt, int i) -> void {
+        auto checkInterface = [](point *pt) -> bool {
+            auto getEachMp = [](point *pt, point *ptr, point *ptl) -> double {
+                auto Error = []() -> double {
+                    printError("AGM::point::calculateRepresentationFormulaCross", "getEachMp");
+                    return ZEROVALUE;
+                };
+                double rtv = pt ? pt->getMp() : ptr->getCondition() == 'C' ? ptr->getMp() : ptl->getCondition() == 'C'
+                                                                                            ? ptl->getMp() : Error();
+                return rtv;
+            };
+            double mpe{getEachMp(pt->getElement()[E], pt->getElement()[EN], pt->getElement()[ES])};
+            double mpw{getEachMp(pt->getElement()[W], pt->getElement()[WN], pt->getElement()[WS])};
+            double mpn{getEachMp(pt->getElement()[N], pt->getElement()[NE], pt->getElement()[NW])};
+            double mps{getEachMp(pt->getElement()[S], pt->getElement()[SE], pt->getElement()[SW])};
+            return pt->getCondition() == 'I' && !(isclose(mpe, mpw) && isclose(mpn, mps) && isclose(mpe, mps));
+        };
+        if (checkInterface(pt)) {
+            row[getIdx() + getNPts()] += row[pt->getIdx() + getNPts()];
+            row.remove(pt->getIdx() + getNPts());
+        }
+    };
+
+    row[getIdx()] = -UNITVALUE;
+    row[element[W]->getIdx()] = mp * xm * gfunc.green_function_t(xm);
+    row[element[E]->getIdx()] = -mp * xp * gfunc.green_function_t(xp);
+
+    row[element[W]->getIdx() + getNPts()] = gfunc.green_integral('l');
+    row[getIdx() + getNPts()] = gfunc.green_integral('c');
+    row[element[E]->getIdx() + getNPts()] = gfunc.green_integral('r');
+
+    rhsMatrixRow[0][element[W]->getIdx()] = gfunc.green_integral('l');
+    rhsMatrixRow[0][getIdx()] = gfunc.green_integral('c');
+    rhsMatrixRow[0][element[E]->getIdx()] = gfunc.green_integral('r');
+
+    partMatrixRow[0][element[W]->getIdx()] = gfunc.green_integral_t('l');
+    partMatrixRow[0][getIdx()] = gfunc.green_integral_t('c');
+    partMatrixRow[0][element[E]->getIdx()] = gfunc.green_integral_t('r');
+
+    eraseInterface(element[E], 0);
+    eraseInterface(element[W], 0);
+
+    return row;
+}
+
+AGM::matrixRow AGM::pointAxisymmetric::calculateRepresentationFormulaCrossSymmetricNearAxis() {
+    double xm = element[W]->getXy()[0];
+    double xb = getXy()[0];
+    double xp = element[E]->getXy()[0];
+    auto gFunc{GreenfunctionAxisymmetric(xm, xb, xp, mp, mp)};
+    matrixRow row{};
+    auto eraseInterface = [this, &row](point *pt, int i) -> void {
+        auto checkInterface = [](point *pt) -> bool {
+            auto getEachMp = [](point *pt, point *ptr, point *ptl) -> double {
+                auto Error = []() -> double {
+                    printError("AGM::point::calculateRepresentationFormulaCross", "getEachMp");
+                    return ZEROVALUE;
+                };
+                double rtv = pt ? pt->getMp() : ptr->getCondition() == 'C' ? ptr->getMp() : ptl->getCondition() == 'C'
+                                                                                            ? ptl->getMp() : Error();
+                return rtv;
+            };
+            double mpe{getEachMp(pt->getElement()[E], pt->getElement()[EN], pt->getElement()[ES])};
+            double mpw{getEachMp(pt->getElement()[W], pt->getElement()[WN], pt->getElement()[WS])};
+            double mpn{getEachMp(pt->getElement()[N], pt->getElement()[NE], pt->getElement()[NW])};
+            double mps{getEachMp(pt->getElement()[S], pt->getElement()[SE], pt->getElement()[SW])};
+            return pt->getCondition() == 'I' && !(isclose(mpe, mpw) && isclose(mpn, mps) && isclose(mpe, mps));
+        };
+        if (checkInterface(pt)) {
+            row[getIdx() + getNPts()] += row[pt->getIdx() + getNPts()];
+            row.remove(pt->getIdx() + getNPts());
+        }
+    };
+    row[getIdx()] = -UNITVALUE;
+    row[element[E]->getIdx()] = UNITVALUE;
+
+    row[element[W]->getIdx() + getNPts()] = gFunc.green_integral_ND('l');
+    row[getIdx() + getNPts()] = gFunc.green_integral_ND('c');
+    row[element[E]->getIdx() + getNPts()] = gFunc.green_integral_ND('r');
+
+    rhsMatrixRow[0][element[W]->getIdx()] = gFunc.green_integral_ND('l');
+    rhsMatrixRow[0][getIdx()] = gFunc.green_integral_ND('c');
+    rhsMatrixRow[0][element[E]->getIdx()] = gFunc.green_integral_ND('r');
+
+    partMatrixRow[0][element[W]->getIdx()] = gFunc.green_integral_t_ND('l') + gFunc.green_function_ND(xm);
+    partMatrixRow[0][getIdx()] = gFunc.green_integral_t_ND('c');
+    partMatrixRow[0][element[E]->getIdx()] = gFunc.green_integral_t_ND('r');
+
+    eraseInterface(element[E], 0);
+    eraseInterface(element[W], 0);
+
+    return row;
+}
+
+AGM::matrixRow AGM::pointAxisymmetric::calculateRepresentationFormulaCrossNonSymmetric() {
+    double ym = element[S]->getXy()[1];
+    double yb = getXy()[1];
+    double yp = element[N]->getXy()[1];
+    auto gfunc{Greenfunction(ym, yb, yp, mp * getXy()[0], mp * getXy()[0])};
+    matrixRow row{};
+    auto eraseInterface = [this, &row](point *pt, int i) -> void {
+        auto checkInterface = [](point *pt) -> bool {
+            auto getEachMp = [](point *pt, point *ptr, point *ptl) -> double {
+                auto Error = []() -> double {
+                    printError("AGM::point::calculateRepresentationFormulaCross", "getEachMp");
+                    return ZEROVALUE;
+                };
+                double rtv = pt ? pt->getMp() : ptr->getCondition() == 'C' ? ptr->getMp() : ptl->getCondition() == 'C'
+                                                                                            ? ptl->getMp() : Error();
+                return rtv;
+            };
+            double mpe{getEachMp(pt->getElement()[E], pt->getElement()[EN], pt->getElement()[ES])};
+            double mpw{getEachMp(pt->getElement()[W], pt->getElement()[WN], pt->getElement()[WS])};
+            double mpn{getEachMp(pt->getElement()[N], pt->getElement()[NE], pt->getElement()[NW])};
+            double mps{getEachMp(pt->getElement()[S], pt->getElement()[SE], pt->getElement()[SW])};
+            return pt->getCondition() == 'I' && !(isclose(mpe, mpw) && isclose(mpn, mps) && isclose(mpe, mps));
+        };
+        if (checkInterface(pt)) {
+            row[getIdx() + getNPts()] += row[pt->getIdx() + getNPts()];
+            row.remove(pt->getIdx() + getNPts());
+        }
+    };
+
+    row[getIdx()] = -UNITVALUE;
+    row[element[S]->getIdx()] = mp * getXy()[0] * gfunc.green_function_t(ym);
+    row[element[N]->getIdx()] = -mp * getXy()[0] * gfunc.green_function_t(yp);
+
+    row[element[S]->getIdx() + getNPts()] = -gfunc.green_integral('l');
+    row[getIdx() + getNPts()] = -gfunc.green_integral('c');
+    row[element[N]->getIdx() + getNPts()] = -gfunc.green_integral('r');
+
+    rhsMatrixRow[1][element[S]->getIdx() + getNPts()] = gfunc.green_integral('l');
+    rhsMatrixRow[1][getIdx() + getNPts()] = gfunc.green_integral('c');
+    rhsMatrixRow[1][element[N]->getIdx() + getNPts()] = gfunc.green_integral('r');
+
+    partMatrixRow[1][element[S]->getIdx() + getNPts()] = gfunc.green_integral_t('l');
+    partMatrixRow[1][getIdx() + getNPts()] = gfunc.green_integral_t('c');
+    partMatrixRow[1][element[N]->getIdx() + getNPts()] = gfunc.green_integral_t('r');
+
+    eraseInterface(element[N], 1);
+    eraseInterface(element[S], 1);
+
+    return row;
+}
+
+AGM::matrixRow AGM::pointAxisymmetric::calculateRepresentationFormulaNeumannOnAxial(char axis, int axisInt) {
+    if (axis == 'x') return calculateRepresentationFormulaNeumannOnAxialSymmetric();
+    else if (axis == 'y') return calculateRepresentationFormulaNeumannOnAxialNonSymmetric();
+    else
+        printError("AGM::pointAxisymmetric::calculateRepresentationFormulaNeumannOnAxial", "axis (which is %c) error",
+                   axis);
+    return {};
+}
+
+AGM::matrixRow AGM::pointAxisymmetric::calculateRepresentationFormulaNeumannOnAxialSymmetric() {
+    auto Error = []() -> double {
+        printError("AGM::point::calculateRepresentationFormulaNeumannOnAxialSymmetric", "nullptr");
+        return ZEROVALUE;
+    };
+    point *ptc = getAxialLine('x')->front()->getIdx() == getIdx() ? getAxialLine('x')->at(1) :
+                 getAxialLine('x')->back()->getIdx() == getIdx() ? *std::prev(getAxialLine('x')->end() - 1) : nullptr;
+    point *ptl =
+            getAxialLine('x')->front()->getIdx() == getIdx() ? this : getAxialLine('x')->back()->getIdx() == getIdx()
+                                                                      ? *std::prev(getAxialLine('x')->end() - 2)
+                                                                      : nullptr;
+    point *ptr = getAxialLine('x')->front()->getIdx() == getIdx() ? getAxialLine('x')->at(2) :
+                 getAxialLine('x')->back()->getIdx() == getIdx() ? this : nullptr;
+    std::string string =
+            getAxialLine('x')->front()->getIdx() == getIdx() ? "ND" : getAxialLine('x')->back()->getIdx() == getIdx()
+                                                                      ? "DN" : "";
+    double tm = ptl ? ptl->getXy()[0] : Error();
+    double tb = ptc ? ptc->getXy()[0] : Error();
+    double tp = ptr ? ptr->getXy()[0] : Error();
+    auto gFunc{GreenfunctionAxisymmetric(tm, tb, tp, mp, mp)};
+
+    matrixRow row{};
+    if (string == "ND") {
+        row[ptl->getIdx()] = -mp * tm * gFunc.green_function_ND(tm);
+        row[ptc->getIdx()] = -UNITVALUE;
+        row[ptr->getIdx()] = UNITVALUE;
+
+        row[ptl->getIdx() + getNPts()] = gFunc.green_integral_ND('l');
+        row[ptc->getIdx() + getNPts()] = gFunc.green_integral_ND('c');
+        row[ptr->getIdx() + getNPts()] = gFunc.green_integral_ND('r');
+
+        row[ptl->getIdx() + 2 * getNPts()] = gFunc.green_integral_ND('l');
+        row[ptc->getIdx() + 2 * getNPts()] = gFunc.green_integral_ND('c');
+        row[ptr->getIdx() + 2 * getNPts()] = gFunc.green_integral_ND('r');
+
+        row[ptl->getIdx() + 4 * getNPts()] = gFunc.green_integral_t_ND('l') + gFunc.green_function_ND(tm);
+        row[ptc->getIdx() + 4 * getNPts()] = gFunc.green_integral_t_ND('c');
+        row[ptr->getIdx() + 4 * getNPts()] = gFunc.green_integral_t_ND('r');
+    } else if (string == "DN") {
+        row[ptl->getIdx()] = UNITVALUE;
+        row[ptc->getIdx()] = -UNITVALUE;
+        row[ptr->getIdx()] = mp * tp * gFunc.green_function_DN(tp);
+
+        row[ptl->getIdx() + getNPts()] = gFunc.green_integral_DN('l');
+        row[ptc->getIdx() + getNPts()] = gFunc.green_integral_DN('c');
+        row[ptr->getIdx() + getNPts()] = gFunc.green_integral_DN('r');
+
+        row[ptl->getIdx() + 2 * getNPts()] = gFunc.green_integral_DN('l');
+        row[ptc->getIdx() + 2 * getNPts()] = gFunc.green_integral_DN('c');
+        row[ptr->getIdx() + 2 * getNPts()] = gFunc.green_integral_DN('r');
+
+        row[ptl->getIdx() + 4 * getNPts()] = gFunc.green_integral_t_DN('l');
+        row[ptc->getIdx() + 4 * getNPts()] = gFunc.green_integral_t_DN('c');
+        row[ptr->getIdx() + 4 * getNPts()] = gFunc.green_integral_t_DN('r') - gFunc.green_function_DN(tp);
+    }
+    auto c = -row[getIdx()];
+    for (auto &item: row) {
+        item.value /= c;
+    }
+    row.remove(getIdx());
+    return row;
+}
+
+AGM::matrixRow
+AGM::pointAxisymmetric::calculateRepresentationFormulaNeumannOnAxialNonSymmetric() {
+    auto Error = []() -> double {
+        printError("AGM::pointAxisymmetric::calculateRepresentationFormulaNeumannOnAxialNonSymmetric", "nullptr");
+        return ZEROVALUE;
+    };
+    point *ptc = getAxialLine('y')->front()->getIdx() == getIdx() ? getAxialLine('y')->at(1) :
+                 getAxialLine('y')->back()->getIdx() == getIdx() ? *std::prev(getAxialLine('y')->end() - 1) : nullptr;
+    point *ptl =
+            getAxialLine('y')->front()->getIdx() == getIdx() ? this : getAxialLine('y')->back()->getIdx() == getIdx()
+                                                                      ? *std::prev(getAxialLine('y')->end() - 2)
+                                                                      : nullptr;
+    point *ptr = getAxialLine('y')->front()->getIdx() == getIdx() ? getAxialLine('y')->at(2) :
+                 getAxialLine('y')->back()->getIdx() == getIdx() ? this : nullptr;
+    std::string string =
+            getAxialLine('y')->front()->getIdx() == getIdx() ? "ND" : getAxialLine('y')->back()->getIdx() == getIdx()
+                                                                      ? "DN" : "";
+    double tm = ptl ? ptl->getXy()[1] : Error();
+    double tb = ptc ? ptc->getXy()[1] : Error();
+    double tp = ptr ? ptr->getXy()[1] : Error();
+    auto gFunc{Greenfunction(tm, tb, tp, mp * getXy()[0], mp * getXy()[0])};
+
+    matrixRow row{};
+    if (string == "ND") {
+        row[ptl->getIdx()] = -mp * tb * gFunc.green_function_ND(tm);
+        row[ptc->getIdx()] = -UNITVALUE;
+        row[ptr->getIdx()] = UNITVALUE;
+
+        row[ptl->getIdx() + getNPts()] = -gFunc.green_integral_ND('l');
+        row[ptc->getIdx() + getNPts()] = -gFunc.green_integral_ND('c');
+        row[ptr->getIdx() + getNPts()] = -gFunc.green_integral_ND('r');
+
+        row[ptl->getIdx() + 3 * getNPts()] = gFunc.green_integral_ND('l');
+        row[ptc->getIdx() + 3 * getNPts()] = gFunc.green_integral_ND('c');
+        row[ptr->getIdx() + 3 * getNPts()] = gFunc.green_integral_ND('r');
+
+        row[ptl->getIdx() + 5 * getNPts()] = gFunc.green_integral_t_ND('l') + gFunc.green_function_ND(tm);
+        row[ptc->getIdx() + 5 * getNPts()] = gFunc.green_integral_t_ND('c');
+        row[ptr->getIdx() + 5 * getNPts()] = gFunc.green_integral_t_ND('r');
+    } else if (string == "DN") {
+        row[ptl->getIdx()] = UNITVALUE;
+        row[ptc->getIdx()] = -UNITVALUE;
+        row[ptr->getIdx()] = mp * tb * gFunc.green_function_DN(tp);
+
+        row[ptl->getIdx() + getNPts()] = -gFunc.green_integral_DN('l');
+        row[ptc->getIdx() + getNPts()] = -gFunc.green_integral_DN('c');
+        row[ptr->getIdx() + getNPts()] = -gFunc.green_integral_DN('r');
+
+        row[ptl->getIdx() + 3 * getNPts()] = gFunc.green_integral_DN('l');
+        row[ptc->getIdx() + 3 * getNPts()] = gFunc.green_integral_DN('c');
+        row[ptr->getIdx() + 3 * getNPts()] = gFunc.green_integral_DN('r');
+
+        row[ptl->getIdx() + 5 * getNPts()] = gFunc.green_integral_t_DN('l');
+        row[ptc->getIdx() + 5 * getNPts()] = gFunc.green_integral_t_DN('c');
+        row[ptr->getIdx() + 5 * getNPts()] = gFunc.green_integral_t_DN('r') - gFunc.green_function_DN(tp);
+    }
+    auto c = -row[getIdx()];
+    for (auto &item: row) {
+        item.value /= c;
+    }
+    row.remove(getIdx());
+    return row;
+}
+
+AGM::matrixRow AGM::pointAxisymmetric::calculateRepresentationFormulaNeumannOffAxial(char axis, int axisInt) {
+    if (axis == 'x') return calculateRepresentationFormulaNeumannOffAxialSymmetric();
+    else if (axis == 'y') return calculateRepresentationFormulaNeumannOffAxialNonSymmetric();
+    else
+        printError("AGM::pointAxisymmetric::calculateRepresentationFormulaNeumannOffAxial", "axis (which is %c) error",
+                   axis);
+    return {};
+}
+
+AGM::matrixRow AGM::pointAxisymmetric::calculateRepresentationFormulaNeumannOffAxialSymmetric() {
+    double tm{}, tb{}, tp{};
+    tm = element[W] ? element[W]->getXy()[0] : element[WN]->getXy()[0];
+    tb = getXy()[0];
+    tp = element[E] ? element[E]->getXy()[0] : element[EN]->getXy()[0];
+    char realAxis = getAxialLine('y') ? 'y' : '\0';
+    auto gFunc{GreenfunctionAxisymmetric(tm, tb, tp, mp, mp)};
+    auto approximateSol = [this](point *ptr, point *ptl, double coefficient, double d) -> matrixRow {
+        double m{ptl->getXy()[1]}, b{getXy()[1]}, p{ptr->getXy()[1]};
+        auto func{Greenfunction(m, b, p, d, d)};
+        auto mRow{matrixRow()};
+
+        mRow[ptl->getIdx()] = d * func.green_function_t(m);
+        mRow[ptr->getIdx()] = -d * func.green_function_t(p);
+
+        mRow[ptl->getIdx() + getNPts()] = -func.green_integral('L');
+        mRow[ptr->getIdx() + getNPts()] = -func.green_integral('R');
+
+        mRow[ptl->getIdx() + 3 * getNPts()] = func.green_integral('L');
+        mRow[ptr->getIdx() + 3 * getNPts()] = func.green_integral('R');
+
+        mRow[ptl->getIdx() + 5 * getNPts()] = func.green_integral_t('L');
+        mRow[ptr->getIdx() + 5 * getNPts()] = func.green_integral_t('R');
+
+        return mRow * coefficient;
+    };
+    auto linearApproximation = [this](point *ptr, point *ptl, double coefficient, int plus) -> matrixRow {
+        double m{ptl->getXy()[1]}, b{getXy()[1]}, p{ptr->getXy()[1]};
+        auto mRow = matrixRow();
+        mRow[ptl->getIdx() + plus * getNPts()] = (p - b) / (p - m);
+        mRow[ptr->getIdx() + plus * getNPts()] = (b - m) / (p - m);
+
+        return mRow * coefficient;
+    };
+    matrixRow row{};
+    auto assignMatrix = [&row, &approximateSol, &linearApproximation](point *pt, point *ptr, point *ptl, double mp0,
+                                                                      GreenfunctionAxisymmetric *func, double d,
+                                                                      char c) -> void {
+        if (pt) {
+            row[pt->getIdx()] += mp0 * func->green_function_ttau(d);
+            row[pt->getIdx() + getNPts()] += func->green_integral_tau(c);
+            row[pt->getIdx() + 2 * getNPts()] += func->green_integral_tau(c);
+            row[pt->getIdx() + 4 * getNPts()] += func->green_integral_ttau(c);
+        } else {
+            row += approximateSol(ptr, ptl, mp0 * func->green_function_ttau(d), std::abs(mp0));
+            row += linearApproximation(ptr, ptl, func->green_integral_tau(c), 1);
+            row += linearApproximation(ptr, ptl, func->green_integral_tau(c), 2);
+            row += linearApproximation(ptr, ptl, func->green_integral_ttau(c), 4);
+        }
+    };
+    row[getIdx() + getNPts()] += gFunc.green_integral_tau('c');
+    row[getIdx() + 2 * getNPts()] += gFunc.green_integral_tau('c');
+    row[getIdx() + 4 * getNPts()] += gFunc.green_integral_ttau('c') + UNITVALUE / mp / getXy()[0];
+
+    assignMatrix(element[E], element[EN], element[ES], -mp * tp, &gFunc, tp, 'r');
+    assignMatrix(element[W], element[WN], element[WS], mp * tm, &gFunc, tm, 'l');
+    return row;
+}
+
+AGM::matrixRow
+AGM::pointAxisymmetric::calculateRepresentationFormulaNeumannOffAxialNonSymmetric() {
+    double tm{}, tb{}, tp{};
+    tm = element[S] ? element[S]->getXy()[1] : element[SE]->getXy()[1];
+    tb = getXy()[1];
+    tp = element[N] ? element[N]->getXy()[1] : element[NE]->getXy()[1];
+    char realAxis = getAxialLine('x') ? 'x' : '\0';
+    auto gFunc{Greenfunction(tm, tb, tp, mp * getXy()[0], mp * getXy()[0])};
+    auto approximateSol = [this](point *ptr, point *ptl, double coefficient, double d) -> matrixRow {
+        double m{ptl->getXy()[0]}, b{getXy()[0]}, p{ptr->getXy()[0]};
+        auto func{GreenfunctionAxisymmetric(m, b, p, d * b, d * b)};
+        auto mRow{matrixRow()};
+
+        mRow[ptl->getIdx()] = d * m * func.green_function_t(m);
+        mRow[ptr->getIdx()] = -d * p * func.green_function_t(p);
+
+        mRow[ptl->getIdx() + getNPts()] = func.green_integral('L');
+        mRow[ptr->getIdx() + getNPts()] = func.green_integral('R');
+
+        mRow[ptl->getIdx() + 2 * getNPts()] = func.green_integral('L');
+        mRow[ptr->getIdx() + 2 * getNPts()] = func.green_integral('R');
+
+        mRow[ptl->getIdx() + 4 * getNPts()] = func.green_integral_t('L');
+        mRow[ptr->getIdx() + 4 * getNPts()] = func.green_integral_t('R');
+
+        return mRow * coefficient;
+    };
+    auto linearApproximation = [this](point *ptr, point *ptl, double coefficient, int plus) -> matrixRow {
+        double m{ptl->getXy()[0]}, b{getXy()[0]}, p{ptr->getXy()[0]};
+        auto mRow = matrixRow();
+        mRow[ptl->getIdx() + plus * getNPts()] = (p - b) / (p - m);
+        mRow[ptr->getIdx() + plus * getNPts()] = (b - m) / (p - m);
+
+        return mRow * coefficient;
+    };
+    matrixRow row{};
+    auto assignMatrix = [this, &row, &approximateSol, &linearApproximation](point *pt, point *ptr, point *ptl,
+                                                                            double mp0, Greenfunction *func,
+                                                                            double d,
+                                                                            char c) -> void {
+        if (pt) {
+            row[pt->getIdx()] += mp0 * getXy()[0] * func->green_function_ttau(d);
+            row[pt->getIdx() + getNPts()] += -func->green_integral_tau(c);
+            row[pt->getIdx() + 3 * getNPts()] += func->green_integral_tau(c);
+            row[pt->getIdx() + 5 * getNPts()] += func->green_integral_ttau(c);
+        } else {
+            row += approximateSol(ptr, ptl, mp0 * getXy()[0] * func->green_function_ttau(d), std::abs(mp0));
+            row += linearApproximation(ptr, ptl, -func->green_integral_tau(c), 1);
+            row += linearApproximation(ptr, ptl, func->green_integral_tau(c), 3);
+            row += linearApproximation(ptr, ptl, func->green_integral_ttau(c), 5);
+        }
+    };
+    row[getIdx() + getNPts()] += -gFunc.green_integral_tau('c');
+    row[getIdx() + 3 * getNPts()] += gFunc.green_integral_tau('c');
+    row[getIdx() + 5 * getNPts()] += gFunc.green_integral_ttau('c') + UNITVALUE / mp / getXy()[0];
+
+    assignMatrix(element[N], element[NE], element[NW], -mp, &gFunc, tp, 'r');
+    assignMatrix(element[S], element[SE], element[SW], mp, &gFunc, tm, 'l');
+    return row;
+}
+
+void AGM::pointAxisymmetric::calculateRepresentationFormulaInterface() {
+    auto getEachMp = [](point *pt, point *ptr, point *ptl) -> double {
+        auto Error = []() -> double {
+            printError("AGM::point::calculateRepresentationFormulaInterface", "getEachMp");
+            return ZEROVALUE;
+        };
+        double rtv = pt ? pt->getMp() : ptr->getCondition() == 'C' ?
+                                        ptr->getMp() : ptl->getCondition() == 'C' ?
+                                                       ptl->getMp() : Error();
+        return rtv;
+    };
+    auto checkInterface = [&getEachMp](point *pt) -> bool {
+        double mpe{getEachMp(pt->getElement()[E], pt->getElement()[EN], pt->getElement()[ES])};
+        double mpw{getEachMp(pt->getElement()[W], pt->getElement()[WN], pt->getElement()[WS])};
+        double mpn{getEachMp(pt->getElement()[N], pt->getElement()[NE], pt->getElement()[NW])};
+        double mps{getEachMp(pt->getElement()[S], pt->getElement()[SE], pt->getElement()[SW])};
+        return !(isclose(mpe, mpw) && isclose(mpn, mps) && isclose(mpe, mps));
+    };
+    bool isInterface = checkInterface(this);
+
+    std::array<matrixRow, 2> row{};
+    row[0] = calculateRepresentationFormulaInterfaceSymmetric();
+    row[1] = calculateRepresentationFormulaInterfaceNonSymmetric();
+
+    solMatrixRow[0] = row[0] + row[1];
+    if (isInterface) {
+        solMatrixRow[1][getIdx() + getNPts()] = UNITVALUE;
+    } else {
+        solMatrixRow[1] = row[0] - row[1];
+    }
+}
+
+AGM::matrixRow AGM::pointAxisymmetric::calculateRepresentationFormulaInterfaceSymmetric() {
+    double xm = getElement()[W] ? getElement()[W]->getXy()[0] : getElement()[WN]->getXy()[0];
+    double xb = getXy()[0];
+    double xp = getElement()[E] ? getElement()[E]->getXy()[0] : getElement()[EN]->getXy()[0];
+    auto getEachMp = [](point *pt, point *ptr, point *ptl) -> double {
+        auto Error = []() -> double {
+            printError("AGM::point::calculateRepresentationFormulaInterface", "getEachMp");
+            return ZEROVALUE;
+        };
+        double rtv = pt ? pt->getMp() : ptr->getCondition() == 'C' ?
+                                        ptr->getMp() : ptl->getCondition() == 'C' ?
+                                                       ptl->getMp() : Error();
+        return rtv;
+    };
+    double mpe{getEachMp(getElement()[E], getElement()[EN], getElement()[ES])};
+    double mpw{getEachMp(getElement()[W], getElement()[WN], getElement()[WS])};
+    auto gFunc{GreenfunctionAxisymmetric(xm, xb, xp, mpw, mpe)};
+    auto checkInterface = [&getEachMp](point *pt) -> bool {
+        double mpe{getEachMp(pt->getElement()[E], pt->getElement()[EN], pt->getElement()[ES])};
+        double mpw{getEachMp(pt->getElement()[W], pt->getElement()[WN], pt->getElement()[WS])};
+        double mpn{getEachMp(pt->getElement()[N], pt->getElement()[NE], pt->getElement()[NW])};
+        double mps{getEachMp(pt->getElement()[S], pt->getElement()[SE], pt->getElement()[SW])};
+        return !(isclose(mpe, mpw) && isclose(mpn, mps) && isclose(mpe, mps));
+    };
+    bool isInterface = checkInterface(this);
+    auto checkMatrixRow = [&checkInterface](matrixRow *row, point *ptr, point *ptl) -> void {
+        if (checkInterface(ptr)) {
+            (*row)[ptl->getIdx() + getNPts()] += (*row)[ptr->getIdx() + getNPts()];
+            row->remove(ptr->getIdx() + getNPts());
+        } else if (checkInterface(ptl)) {
+            (*row)[ptr->getIdx() + getNPts()] += (*row)[ptl->getIdx() + getNPts()];
+            row->remove(ptl->getIdx() + getNPts());
+        }
+    };
+    auto approximateSol = [this, &checkMatrixRow](point *ptr, point *ptl, double coefficient,
+                                                  double d) -> matrixRow {
+        double m{ptl->getXy()[1]}, b{getXy()[1]}, p{ptr->getXy()[1]};
+        auto func{Greenfunction(m, b, p, d, d)};
+        auto mRow{matrixRow()};
+        mRow[ptl->getIdx()] = d * func.green_function_t(m);
+        mRow[ptr->getIdx()] = -d * func.green_function_t(p);
+
+        mRow[ptl->getIdx() + getNPts()] = -func.green_integral('L');
+        mRow[ptr->getIdx() + getNPts()] = -func.green_integral('R');
+
+        checkMatrixRow(&mRow, ptr, ptl);
+
+        mRow[ptl->getIdx() + 3 * getNPts()] = func.green_integral('L');
+        mRow[ptr->getIdx() + 3 * getNPts()] = func.green_integral('R');
+
+        mRow[ptl->getIdx() + 5 * getNPts()] = func.green_integral_t('L');
+        mRow[ptr->getIdx() + 5 * getNPts()] = func.green_integral_t('R');
+
+        return mRow * coefficient;
+    };
+    auto linearApproximation = [this](point *ptr, point *ptl, double coefficient, int plus) -> matrixRow {
+        double m{ptl->getXy()[1]}, b{getXy()[1]}, p{ptr->getXy()[1]};
+        auto mRow = matrixRow();
+        mRow[ptl->getIdx() + plus * getNPts()] = (p - b) / (p - m);
+        mRow[ptr->getIdx() + plus * getNPts()] = (b - m) / (p - m);
+
+        return mRow * coefficient;
+    };
+    matrixRow row{};
+    auto assignMatrix = [&row, &approximateSol, &linearApproximation, &isInterface](point *pt, point *ptr, point *ptl,
+                                                                                    double mp0,
+                                                                                    GreenfunctionAxisymmetric *func,
+                                                                                    double d, char c, char C) -> void {
+        if (pt) {
+            row[pt->getIdx()] += mp0 * func->green_function_t(d);
+            row[pt->getIdx() + getNPts()] += isInterface ? func->green_integral(C)
+                                                         : func->green_integral(c);
+            row[pt->getIdx() + 2 * getNPts()] += func->green_integral(c);
+            row[pt->getIdx() + 4 * getNPts()] += func->green_integral_t(c);
+        } else {
+            row += approximateSol(ptr, ptl, mp0 * func->green_function_t(d), std::abs(mp0));
+            row += isInterface ? linearApproximation(ptr, ptl, func->green_integral(C), 1)
+                               : linearApproximation(ptr, ptl, func->green_integral(c), 1);
+            row += linearApproximation(ptr, ptl, func->green_integral(c), 2);
+            row += linearApproximation(ptr, ptl, func->green_integral_t(c), 4);
+        }
+    };
+    row[getIdx()] = -UNITVALUE;
+    if (!isInterface) row[getIdx() + getNPts()] = gFunc.green_integral('c');
+    row[getIdx() + 2 * getNPts()] = gFunc.green_integral('c');
+    row[getIdx() + 4 * getNPts()] = gFunc.green_integral_t('c');
+    assignMatrix(getElement()[E], getElement()[EN], getElement()[ES], -mpe * xp, &gFunc, xp, 'r', 'R');
+    assignMatrix(getElement()[W], getElement()[WN], getElement()[WS], mpw * xm, &gFunc, xm, 'l', 'L');
+
+    if (!row.empty()) {
+        while (row.back().idx >= 4 * getNPts()) {
+            partMatrixRow[0][row.back().idx - 4 * getNPts()] = row.back().value;
+            row.pop_back();
+        }
+        while (row.back().idx >= 2 * getNPts()) {
+            rhsMatrixRow[0][row.back().idx - 2 * getNPts()] = row.back().value;
+            row.pop_back();
+        }
+    }
+    return row;
+}
+
+AGM::matrixRow AGM::pointAxisymmetric::calculateRepresentationFormulaInterfaceNonSymmetric() {
+    double ym = getElement()[S] ? getElement()[S]->getXy()[1] : getElement()[SE]->getXy()[1];
+    double yb = getXy()[1];
+    double yp = getElement()[N] ? getElement()[N]->getXy()[1] : getElement()[NE]->getXy()[1];
+    auto getEachMp = [](point *pt, point *ptr, point *ptl) -> double {
+        auto Error = []() -> double {
+            printError("AGM::point::calculateRepresentationFormulaInterface", "getEachMp");
+            return ZEROVALUE;
+        };
+        double rtv = pt ? pt->getMp() : ptr->getCondition() == 'C' ?
+                                        ptr->getMp() : ptl->getCondition() == 'C' ?
+                                                       ptl->getMp() : Error();
+        return rtv;
+    };
+    double mpn{getEachMp(getElement()[N], getElement()[NE], getElement()[NW])};
+    double mps{getEachMp(getElement()[S], getElement()[SE], getElement()[SW])};
+    auto gFunc{Greenfunction(ym, yb, yp, mps * getXy()[0], mpn * getXy()[0])};
+    auto checkInterface = [&getEachMp](point *pt) -> bool {
+        double mpe{getEachMp(pt->getElement()[E], pt->getElement()[EN], pt->getElement()[ES])};
+        double mpw{getEachMp(pt->getElement()[W], pt->getElement()[WN], pt->getElement()[WS])};
+        double mpn{getEachMp(pt->getElement()[N], pt->getElement()[NE], pt->getElement()[NW])};
+        double mps{getEachMp(pt->getElement()[S], pt->getElement()[SE], pt->getElement()[SW])};
+        return !(isclose(mpe, mpw) && isclose(mpn, mps) && isclose(mpe, mps));
+    };
+    bool isInterface = checkInterface(this);
+    auto checkMatrixRow = [&checkInterface](matrixRow *row, point *ptr, point *ptl) -> void {
+        if (checkInterface(ptr)) {
+            (*row)[ptl->getIdx() + getNPts()] += (*row)[ptr->getIdx() + getNPts()];
+            row->remove(ptr->getIdx() + getNPts());
+        } else if (checkInterface(ptl)) {
+            (*row)[ptr->getIdx() + getNPts()] += (*row)[ptl->getIdx() + getNPts()];
+            row->remove(ptl->getIdx() + getNPts());
+        }
+    };
+    auto approximateSol = [this, &checkMatrixRow](point *ptr, point *ptl, double coefficient, double d) -> matrixRow {
+        double m{ptl->getXy()[0]}, b{getXy()[0]}, p{ptr->getXy()[0]};
+        auto func{GreenfunctionAxisymmetric(m, b, p, d, d)};
+        auto mRow{matrixRow()};
+        mRow[ptl->getIdx()] = d * m * func.green_function_t(m);
+        mRow[ptr->getIdx()] = -d * p * func.green_function_t(p);
+
+        mRow[ptl->getIdx() + getNPts()] = func.green_integral('L');
+        mRow[ptr->getIdx() + getNPts()] = func.green_integral('R');
+
+        checkMatrixRow(&mRow, ptr, ptl);
+
+        mRow[ptl->getIdx() + 2 * getNPts()] = func.green_integral('L');
+        mRow[ptr->getIdx() + 2 * getNPts()] = func.green_integral('R');
+
+        mRow[ptl->getIdx() + 4 * getNPts()] = func.green_integral_t('L');
+        mRow[ptr->getIdx() + 4 * getNPts()] = func.green_integral_t('R');
+
+        return mRow * coefficient;
+    };
+    auto linearApproximation = [this](point *ptr, point *ptl, double coefficient, int plus) -> matrixRow {
+        double m{ptl->getXy()[0]}, b{getXy()[0]}, p{ptr->getXy()[0]};
+        auto mRow = matrixRow();
+        mRow[ptl->getIdx() + plus * getNPts()] = (p - b) / (p - m);
+        mRow[ptr->getIdx() + plus * getNPts()] = (b - m) / (p - m);
+
+        return mRow * coefficient;
+    };
+    matrixRow row{};
+    auto assignMatrix = [this, &row, &approximateSol, &linearApproximation, &isInterface](point *pt, point *ptr,
+                                                                                          point *ptl,
+                                                                                          double mp0,
+                                                                                          Greenfunction *func,
+                                                                                          double d, char c,
+                                                                                          char C) -> void {
+        if (pt) {
+            row[pt->getIdx()] += mp0 * getXy()[0] * func->green_function_t(d);
+            row[pt->getIdx() + getNPts()] += isInterface ? -func->green_integral(C)
+                                                         : -func->green_integral(c);
+            row[pt->getIdx() + 3 * getNPts()] += func->green_integral(c);
+            row[pt->getIdx() + 5 * getNPts()] += func->green_integral_t(c);
+        } else {
+            row += approximateSol(ptr, ptl, mp0 * getXy()[0] * func->green_function_t(d), std::abs(mp0));
+            row += isInterface ? linearApproximation(ptr, ptl, -func->green_integral(C), 1)
+                               : linearApproximation(ptr, ptl, -func->green_integral(c), 1);
+            row += linearApproximation(ptr, ptl, func->green_integral(c), 3);
+            row += linearApproximation(ptr, ptl, func->green_integral_t(c), 5);
+        }
+    };
+    row[getIdx()] = -UNITVALUE;
+    if (!isInterface) row[getIdx() + getNPts()] = -gFunc.green_integral('c');
+    row[getIdx() + 3 * getNPts()] = gFunc.green_integral('c');
+    row[getIdx() + 5 * getNPts()] = gFunc.green_integral_t('c');
+    assignMatrix(getElement()[N], getElement()[NE], getElement()[NW], -mpn, &gFunc, yp, 'r', 'R');
+    assignMatrix(getElement()[S], getElement()[SE], getElement()[SW], mps, &gFunc, ym, 'l', 'L');
+
+    if (!row.empty()) {
+        while (row.back().idx >= 4 * getNPts()) {
+            partMatrixRow[1][row.back().idx - 4 * getNPts()] = row.back().value;
+            row.pop_back();
+        }
+        while (row.back().idx >= 2 * getNPts()) {
+            rhsMatrixRow[1][row.back().idx - 2 * getNPts()] = row.back().value;
+            row.pop_back();
+        }
+    }
+    return row;
+}
+
+void AGM::pointAxisymmetric::makeDerivativesCross() {
+    makeDerivativesCrossSymmetric();
+    makeDerivativesCrossNonSymmetric();
+}
+
+void AGM::pointAxisymmetric::makeDerivativesCrossSymmetric() {
+    double xm = element[W]->getXy()[0];
+    double xb = getXy()[0];
+    double xp = element[E]->getXy()[0];
+    auto gfunc{GreenfunctionAxisymmetric(xm, xb, xp, mp, mp)};
+    deriMatrixRow[0][element[W]->getIdx()] = mp * xm * gfunc.green_function_ttau(xm);
+    deriMatrixRow[0][element[E]->getIdx()] = -mp * xp * gfunc.green_function_ttau(xp);
+
+    deriMatrixRow[0][element[W]->getIdx() + getNPts()] = gfunc.green_integral_tau('l');
+    deriMatrixRow[0][getIdx() + getNPts()] = gfunc.green_integral_tau('c');
+    deriMatrixRow[0][element[E]->getIdx() + getNPts()] = gfunc.green_integral_tau('r');
+
+    deriMatrixRow[0][element[W]->getIdx() + 2 * getNPts()] = gfunc.green_integral_tau('l');
+    deriMatrixRow[0][getIdx() + 2 * getNPts()] = gfunc.green_integral_tau('c');
+    deriMatrixRow[0][element[E]->getIdx() + 2 * getNPts()] = gfunc.green_integral_tau('r');
+
+    deriMatrixRow[0][element[W]->getIdx() + 4 * getNPts()] = gfunc.green_integral_ttau('l');
+    deriMatrixRow[0][getIdx() + 4 * getNPts()] = gfunc.green_integral_ttau('c') + UNITVALUE / mp / getXy()[0];
+    deriMatrixRow[0][element[E]->getIdx() + 4 * getNPts()] = gfunc.green_integral_ttau('r');
+}
+
+void AGM::pointAxisymmetric::makeDerivativesCrossNonSymmetric() {
+    double ym = element[S]->getXy()[1];
+    double yb = getXy()[1];
+    double yp = element[N]->getXy()[1];
+    auto gfunc{Greenfunction(ym, yb, yp, mp * getXy()[0], mp * getXy()[0])};
+
+    deriMatrixRow[1][element[S]->getIdx()] = mp * getXy()[0] * gfunc.green_function_ttau(ym);
+    deriMatrixRow[1][element[N]->getIdx()] = -mp * getXy()[0] * gfunc.green_function_ttau(yp);
+
+    deriMatrixRow[1][element[S]->getIdx() + getNPts()] = -gfunc.green_integral_tau('l');
+    deriMatrixRow[1][getIdx() + getNPts()] = -gfunc.green_integral_tau('c');
+    deriMatrixRow[1][element[N]->getIdx() + getNPts()] = -gfunc.green_integral_tau('r');
+
+    deriMatrixRow[1][element[S]->getIdx() + 3 * getNPts()] = gfunc.green_integral_tau('l');
+    deriMatrixRow[1][getIdx() + 3 * getNPts()] = gfunc.green_integral_tau('c');
+    deriMatrixRow[1][element[N]->getIdx() + 3 * getNPts()] = gfunc.green_integral_tau('r');
+
+    deriMatrixRow[1][element[S]->getIdx() + 5 * getNPts()] = gfunc.green_integral_ttau('l');
+    deriMatrixRow[1][getIdx() + 5 * getNPts()] = gfunc.green_integral_ttau('c') + UNITVALUE / mp / getXy()[0];
+    deriMatrixRow[1][element[N]->getIdx() + 5 * getNPts()] = gfunc.green_integral_ttau('r');
+}
+
+void AGM::pointAxisymmetric::calculateDerivatives(const std::vector<pointAxisymmetric> *points,
+                                                  const std::function<double(int)> &f,
+                                                  const std::function<double(int)> &g,
+                                                  const std::function<double(int)> &fp,
+                                                  const std::function<double(int)> &gp) {
+    auto assignDerivatives = [&](int i) -> double {
+        double d{};
+        for (const auto &item: deriMatrixRow[i]) {
+            if (item.idx < getNPts()) {
+                d += item.value * points->at(item.idx)["sol"];
+            } else if (item.idx < 2 * getNPts()) {
+                d += item.value * points->at(item.idx - getNPts())["phi"];
+            } else if (item.idx < 3 * getNPts()) {
+                d += item.value * f(item.idx - 2 * getNPts());
+            } else if (item.idx < 4 * getNPts()) {
+                d += item.value * g(item.idx - 3 * getNPts());
+            } else if (item.idx < 5 * getNPts()) {
+                d += item.value * fp(item.idx - 4 * getNPts());
+            } else if (item.idx < 6 * getNPts()) {
+                d += item.value * gp(item.idx - 5 * getNPts());
+            } else {
+                printError("AGM::pointAxisymmetric::calculateDerivatives", "item.idx (which is %d) is too large",
+                           item.idx);
+            }
+        }
+        return d;
+    };
+    values["dx"] = assignDerivatives(0);
+    values["dy"] = assignDerivatives(1);
+}
+
+void AGM::pointAxisymmetric::approximateNaNDerivatives(std::vector<pointAxisymmetric> *points) {
+    auto findInnerPointOfBoundary = [this]() -> point * {
+        if (getCondition() == 'd' || getCondition() == 'n') {
+            for (const auto &item: {E, W, N, S}) {
+                if (getElement()[item] && getIdx() != getElement()[item]->getIdx()) {
+                    return getElement()[item];
+                }
+            }
+        }
+
+        for (const auto &item: {'x', 'y'}) {
+            if (getAxialLine(item) && getAxialLine(item)->front()->getIdx() == getIdx()) {
+                return getAxialLine(item)->at(1);
+            }
+            if (getAxialLine(item) && getAxialLine(item)->back()->getIdx() == getIdx()) {
+                return *std::prev(getAxialLine(item)->end() - 1);
+            }
+        }
+        printf("condition = %c\n", getCondition());
+        printError("AGM::pointAxisymmetric::approximateNaNDerivatives", "findInnerPointOfBoundary");
+        return nullptr;
+    };
+    if (std::isnan(values["dx"])) values["dx"] = points->at(findInnerPointOfBoundary()->getIdx()).getValue()["dx"];
+    if (std::isnan(values["dy"])) values["dy"] = points->at(findInnerPointOfBoundary()->getIdx()).getValue()["dy"];
+}
+
+void AGM::pointAxisymmetric::makeDerivativesInterface() {
+    makeDerivativesInterfaceSymmetric();
+    makeDerivativesInterfaceNonSymmetric();
+}
+
+void AGM::pointAxisymmetric::makeDerivativesInterfaceSymmetric() {
+    double xm = getElement()[W] ? getElement()[W]->getXy()[0] : getElement()[WN]->getXy()[0];
+    double xb = getXy()[0];
+    double xp = getElement()[E] ? getElement()[E]->getXy()[0] : getElement()[EN]->getXy()[0];
+    auto getEachMp = [](point *pt, point *ptr, point *ptl) -> double {
+        auto Error = []() -> double {
+            printError("AGM::point::calculateRepresentationFormulaInterface", "getEachMp");
+            return ZEROVALUE;
+        };
+        double rtv = pt ? pt->getMp() : ptr->getCondition() == 'C' ?
+                                        ptr->getMp() : ptl->getCondition() == 'C' ?
+                                                       ptl->getMp() : Error();
+        return rtv;
+    };
+    double mpe{getEachMp(getElement()[E], getElement()[EN], getElement()[ES])};
+    double mpw{getEachMp(getElement()[W], getElement()[WN], getElement()[WS])};
+    auto gFunc{GreenfunctionAxisymmetric(xm, xb, xp, mpw, mpe)};
+    auto checkInterface = [&getEachMp](point *pt) -> bool {
+        double mpe{getEachMp(pt->getElement()[E], pt->getElement()[EN], pt->getElement()[ES])};
+        double mpw{getEachMp(pt->getElement()[W], pt->getElement()[WN], pt->getElement()[WS])};
+        double mpn{getEachMp(pt->getElement()[N], pt->getElement()[NE], pt->getElement()[NW])};
+        double mps{getEachMp(pt->getElement()[S], pt->getElement()[SE], pt->getElement()[SW])};
+        return !(isclose(mpe, mpw) && isclose(mpn, mps) && isclose(mpe, mps));
+    };
+    bool isInterface = checkInterface(this);
+    auto checkMatrixRow = [&checkInterface](matrixRow *row, point *ptr, point *ptl) -> void {
+        if (checkInterface(ptr)) {
+            (*row)[ptl->getIdx() + getNPts()] += (*row)[ptr->getIdx() + getNPts()];
+            row->remove(ptr->getIdx() + getNPts());
+        } else if (checkInterface(ptl)) {
+            (*row)[ptr->getIdx() + getNPts()] += (*row)[ptl->getIdx() + getNPts()];
+            row->remove(ptl->getIdx() + getNPts());
+        }
+    };
+    auto approximateSol = [this, &checkMatrixRow](point *ptr, point *ptl, double coefficient, double d) -> matrixRow {
+        double m{ptl->getXy()[1]}, b{getXy()[1]}, p{ptr->getXy()[1]};
+        auto func{Greenfunction(m, b, p, d, d)};
+        auto mRow{matrixRow()};
+        mRow[ptl->getIdx()] = d * func.green_function_t(m);
+        mRow[ptr->getIdx()] = -d * func.green_function_t(p);
+
+        mRow[ptl->getIdx() + getNPts()] = -func.green_integral('L');
+        mRow[ptr->getIdx() + getNPts()] = -func.green_integral('R');
+
+        checkMatrixRow(&mRow, ptr, ptl);
+
+        mRow[ptl->getIdx() + 3 * getNPts()] = func.green_integral('L');
+        mRow[ptr->getIdx() + 3 * getNPts()] = func.green_integral('R');
+
+        mRow[ptl->getIdx() + 5 * getNPts()] = func.green_integral_t('L');
+        mRow[ptr->getIdx() + 5 * getNPts()] = func.green_integral_t('R');
+
+        return mRow * coefficient;
+    };
+    auto linearApproximation = [this](point *ptr, point *ptl, double coefficient, int plus) -> matrixRow {
+        double m{ptl->getXy()[1]}, b{getXy()[1]}, p{ptr->getXy()[1]};
+        auto mRow = matrixRow();
+        mRow[ptl->getIdx() + plus * getNPts()] = (p - b) / (p - m);
+        mRow[ptr->getIdx() + plus * getNPts()] = (b - m) / (p - m);
+
+        return mRow * coefficient;
+    };
+    auto assignMatrix = [this, &approximateSol, &linearApproximation, &isInterface](point *pt, point *ptr, point *ptl,
+                                                                                    double mp0,
+                                                                                    GreenfunctionAxisymmetric *func,
+                                                                                    double d, char c,
+                                                                                    char C) -> void {
+        if (pt) {
+            deriMatrixRow[0][pt->getIdx()] += mp0 * func->green_function_ttau(d);
+            deriMatrixRow[0][pt->getIdx() + getNPts()] += isInterface ? func->green_integral_tau(C)
+                                                                      : func->green_integral_tau(c);
+            deriMatrixRow[0][pt->getIdx() + 2 * getNPts()] += func->green_integral_tau(c);
+            deriMatrixRow[0][pt->getIdx() + 4 * getNPts()] += func->green_integral_ttau(c);
+        } else {
+            deriMatrixRow[0] += approximateSol(ptr, ptl, mp0 * func->green_function_ttau(d), std::abs(mp0));
+            deriMatrixRow[0] += isInterface ? linearApproximation(ptr, ptl, func->green_integral_tau(C), 1)
+                                            : linearApproximation(ptr, ptl, func->green_integral_tau(c), 1);
+            deriMatrixRow[0] += linearApproximation(ptr, ptl, func->green_integral_tau(c), 2);
+            deriMatrixRow[0] += linearApproximation(ptr, ptl, func->green_integral_ttau(c), 4);
+        }
+    };
+    if (!isInterface) deriMatrixRow[0][getIdx() + getNPts()] = gFunc.green_integral_tau('c');
+    deriMatrixRow[0][getIdx() + 2 * getNPts()] = gFunc.green_integral_tau('c');
+    deriMatrixRow[0][getIdx() + 4 * getNPts()] = gFunc.green_integral_ttau('c') + UNITVALUE / mp / getXy()[0];
+    assignMatrix(getElement()[E], getElement()[EN], getElement()[ES], -mpe * xp, &gFunc, xp, 'r', 'R');
+    assignMatrix(getElement()[W], getElement()[WN], getElement()[WS], mpw * xm, &gFunc, xm, 'l', 'L');
+}
+
+void AGM::pointAxisymmetric::makeDerivativesInterfaceNonSymmetric() {
+    double ym = getElement()[S] ? getElement()[S]->getXy()[1] : getElement()[SE]->getXy()[1];
+    double yb = getXy()[1];
+    double yp = getElement()[N] ? getElement()[N]->getXy()[1] : getElement()[NE]->getXy()[1];
+    auto getEachMp = [](point *pt, point *ptr, point *ptl) -> double {
+        auto Error = []() -> double {
+            printError("AGM::point::calculateRepresentationFormulaInterface", "getEachMp");
+            return ZEROVALUE;
+        };
+        double rtv = pt ? pt->getMp() : ptr->getCondition() == 'C' ?
+                                        ptr->getMp() : ptl->getCondition() == 'C' ?
+                                                       ptl->getMp() : Error();
+        return rtv;
+    };
+    double mpn{getEachMp(getElement()[N], getElement()[NE], getElement()[NW])};
+    double mps{getEachMp(getElement()[S], getElement()[SE], getElement()[SW])};
+    auto gFunc{Greenfunction(ym, yb, yp, mps * getXy()[0], mpn * getXy()[0])};
+    auto checkInterface = [&getEachMp](point *pt) -> bool {
+        double mpe{getEachMp(pt->getElement()[E], pt->getElement()[EN], pt->getElement()[ES])};
+        double mpw{getEachMp(pt->getElement()[W], pt->getElement()[WN], pt->getElement()[WS])};
+        double mpn{getEachMp(pt->getElement()[N], pt->getElement()[NE], pt->getElement()[NW])};
+        double mps{getEachMp(pt->getElement()[S], pt->getElement()[SE], pt->getElement()[SW])};
+        return !(isclose(mpe, mpw) && isclose(mpn, mps) && isclose(mpe, mps));
+    };
+    bool isInterface = checkInterface(this);
+    auto checkMatrixRow = [&checkInterface](matrixRow *row, point *ptr, point *ptl) -> void {
+        if (checkInterface(ptr)) {
+            (*row)[ptl->getIdx() + getNPts()] += (*row)[ptr->getIdx() + getNPts()];
+            row->remove(ptr->getIdx() + getNPts());
+        } else if (checkInterface(ptl)) {
+            (*row)[ptr->getIdx() + getNPts()] += (*row)[ptl->getIdx() + getNPts()];
+            row->remove(ptl->getIdx() + getNPts());
+        }
+    };
+    auto approximateSol = [this, &checkMatrixRow](point *ptr, point *ptl, double coefficient, double d) -> matrixRow {
+        double m{ptl->getXy()[0]}, b{getXy()[0]}, p{ptr->getXy()[0]};
+        auto func{GreenfunctionAxisymmetric(m, b, p, d, d)};
+        auto mRow{matrixRow()};
+        mRow[ptl->getIdx()] = d * m * func.green_function_t(m);
+        mRow[ptr->getIdx()] = -d * p * func.green_function_t(p);
+
+        mRow[ptl->getIdx() + getNPts()] = func.green_integral('L');
+        mRow[ptr->getIdx() + getNPts()] = func.green_integral('R');
+
+        checkMatrixRow(&mRow, ptr, ptl);
+
+        mRow[ptl->getIdx() + 2 * getNPts()] = func.green_integral('L');
+        mRow[ptr->getIdx() + 2 * getNPts()] = func.green_integral('R');
+
+        mRow[ptl->getIdx() + 4 * getNPts()] = func.green_integral_t('L');
+        mRow[ptr->getIdx() + 4 * getNPts()] = func.green_integral_t('R');
+
+        return mRow * coefficient;
+    };
+    auto linearApproximation = [this](point *ptr, point *ptl, double coefficient, int plus) -> matrixRow {
+        double m{ptl->getXy()[0]}, b{getXy()[0]}, p{ptr->getXy()[0]};
+        auto mRow = matrixRow();
+        mRow[ptl->getIdx() + plus * getNPts()] = (p - b) / (p - m);
+        mRow[ptr->getIdx() + plus * getNPts()] = (b - m) / (p - m);
+
+        return mRow * coefficient;
+    };
+    auto assignMatrix = [this, &approximateSol, &linearApproximation, &isInterface](point *pt, point *ptr, point *ptl,
+                                                                                    double mp0, Greenfunction *func,
+                                                                                    double d, char c, char C) -> void {
+        if (pt) {
+            deriMatrixRow[1][pt->getIdx()] += mp0 * getXy()[0] * func->green_function_ttau(d);
+            deriMatrixRow[1][pt->getIdx() + getNPts()] += isInterface ? -func->green_integral_tau(C)
+                                                                      : -func->green_integral_tau(c);
+            deriMatrixRow[1][pt->getIdx() + 3 * getNPts()] += func->green_integral_tau(c);
+            deriMatrixRow[1][pt->getIdx() + 5 * getNPts()] += func->green_integral_ttau(c);
+        } else {
+            deriMatrixRow[1] += approximateSol(ptr, ptl, mp0 * getXy()[0] * func->green_function_ttau(d),
+                                               std::abs(mp0));
+            deriMatrixRow[1] += isInterface ? linearApproximation(ptr, ptl, -func->green_integral_tau(C), 1)
+                                            : linearApproximation(ptr, ptl, -func->green_integral_tau(c), 1);
+            deriMatrixRow[1] += linearApproximation(ptr, ptl, func->green_integral_tau(c), 3);
+            deriMatrixRow[1] += linearApproximation(ptr, ptl, func->green_integral_ttau(c), 5);
+        }
+    };
+    if (!isInterface) deriMatrixRow[1][getIdx() + getNPts()] = -gFunc.green_integral_tau('c');
+    deriMatrixRow[1][getIdx() + 3 * getNPts()] = gFunc.green_integral_tau('c');
+    deriMatrixRow[1][getIdx() + 5 * getNPts()] = gFunc.green_integral_ttau('c') + UNITVALUE / mp;
+    assignMatrix(getElement()[N], getElement()[NE], getElement()[NW], -mpn, &gFunc, yp, 'r', 'R');
+    assignMatrix(getElement()[S], getElement()[SE], getElement()[SW], mps, &gFunc, ym, 'l', 'L');
+}

@@ -25,6 +25,7 @@
 #include <ctime>
 #include <omp.h>
 #include <cctype>
+#include <type_traits>
 
 #ifndef UNITVALUE
 #define UNITVALUE 1.0000000000000000E0

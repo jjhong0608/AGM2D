@@ -420,8 +420,8 @@ void AGM::point::findStencilInterface() {
         double vv{};
         for (const auto &item: {E, W, N, S}) {
             if (getElement()[item]) {
-                if (2e0 * (*getElement()[item] - *this) > vv) {
-                    vv = 2e0 * (*getElement()[item] - *this);
+                if (3e0 * (*getElement()[item] - *this) > vv) {
+                    vv = 3e0 * (*getElement()[item] - *this);
                 }
             }
         }
@@ -517,10 +517,10 @@ void AGM::point::findStencilInterface() {
     auto assignStencil = [&](EWNS ewns, EWNS ewns0, EWNS ewns1, auto func, char lineChar, int lineIdx,
                              double pt) -> void {
         auto alin = func(lineChar, lineIdx, pt);
-        if (getCondition() == 'd') {
-            printError("this");
-        }
-        if (alin && std::fabs((*this) - *alin) > dist) alin = nullptr;
+//        if (alin && std::fabs((*this) - *alin) > dist) {
+//            std::cout << "(xx, yy) = " << xy[0] << ", " << xy[1] << "\n";
+//            alin = nullptr;
+//        }
         if (alin) {
             auto leftPt = findLeftPt(alin, lineIdx);
             auto rightPt = findRightPt(alin, lineIdx);
@@ -561,6 +561,9 @@ void AGM::point::findStencilInterface() {
                 }
             }
             if (crossLine.size() > 1) {
+                for (const auto &item: crossLine) {
+                    std::cout << "(x, y) = " << item[0] << ", " << item[1] << "\n";
+                }
                 printError("AGM::point::findStencilInterface",
                            "The size of crossLine (which is %d) more than 1, should be corrected later. (using sort algorithm)",
                            crossLine.size());
@@ -750,6 +753,17 @@ AGM::matrixRow AGM::point::calculateRepresentationFormulaNeumannOnAxial(char axi
     double tp = ptr ? ptr->getXy()[axisInt] : Error();
     double signPhi0 = axis == 'x' ? UNITVALUE : -UNITVALUE;
     auto gFunc{Greenfunction(tm, tb, tp, mp, mp)};
+
+    if (string == "ND") {
+        if (iszero(gFunc.green_function_ND(tm))) {
+            return calculateRepresentationFormulaNeumannOffAxial(axis, axisInt);
+        }
+    } else if (string == "DN") {
+        if (iszero(gFunc.green_function_DN(tp))) {
+            return calculateRepresentationFormulaNeumannOffAxial(axis, axisInt);
+        }
+    }
+
     matrixRow row{};
     if (string == "ND") {
         row[ptl->getIdx()] = -mp * gFunc.green_function_ND(tm);
@@ -1001,6 +1015,8 @@ void AGM::point::approximatePhiAtBoundary(int order) {
                 return *std::prev(getAxialLine(item)->end() - 2);
             }
         }
+        std::cout << "(x, y) = (" << xy[0] << ", " << xy[1] << ")\n";
+        std::cout << "boundary condition = " << getCondition() << "\n";
         printError("AGM::point::approximatePhiAtBoundary", "findInnerPointOfBoundary");
         return nullptr;
     };

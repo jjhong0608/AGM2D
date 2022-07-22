@@ -123,6 +123,7 @@ void AGM::matrix<pt>::factorizeMatrix() {
         exit(3);
     }
     pPram.msglvl = 0;
+//    pPram.iparm[12] = 2;
 }
 
 template<typename pt>
@@ -149,7 +150,52 @@ void AGM::matrix<pt>::calculateMatrix() {
         pts->at(i)["sol"] = x[i];
         pts->at(i)["phi"] = x[i + size];
     }
+//    std::cout << "pressure\n";
+//    calculateResidual(x, rb);
     delete[] rb;
+}
+
+template<typename pt>
+void AGM::matrix<pt>::calculateResidual(const double *x, const double *rb) {
+    auto res = new double[2 * pts->size()];
+    double maxRes{};
+    int maxIdx{};
+    #pragma omp parallel for
+    for (int i = 0; i < 2 * pts->size(); ++i) {
+        res[i] = ZEROVALUE;
+        for (int j = ia[i]; j < ia[i + 1]; ++j) {
+            res[i] += ent[j - 1] * x[ja[j - 1] - 1];
+        }
+        res[i] = std::fabs(res[i] - rb[i]);
+    }
+    for (int i = 0; i < 2 * pts->size(); ++i) {
+//        std::cout << "res[" << i << "] = " << res[i] << "\n";
+        if (maxRes < res[i]) {
+            maxRes = res[i];
+            maxIdx = i;
+        }
+    }
+
+    std::ofstream f("/home/jjhong0608/docker/AGM2D/Matrix/Residual.dat");
+    if (!f.is_open()) {
+        std::cout << "Residual file is not opened\n";
+    }
+    for (int i = 0; i < 2 * pts->size(); ++i) {
+        f << i << "\t" << pts->at(i % pts->size())[0] << "\t" << pts->at(i % pts->size())[1] << "\t" << res[i]
+          << "\n";
+    }
+    f.close();
+
+    std::cout << "------ Residual of the matrix |Ax - b| -----\n";
+    std::cout << "Maximum Residual = " << maxRes << "\n";
+    std::cout << maxIdx << "-th point\n";
+    std::cout << "(x, y) = (" << pts->at(maxIdx % pts->size())[0] << ", " << pts->at(maxIdx % pts->size())[1] << ")\n";
+    std::cout << "boundary condition = " << pts->at(maxIdx % pts->size()).getCondition() << "\n";
+    std::cout << "--------------------------------------------\n";
+
+    if (maxRes > 1e2) {
+        exit(1);
+    }
 }
 
 template<typename pt>
@@ -171,3 +217,6 @@ class AGM::matrix<AGM::point>;
 
 template
 class AGM::matrix<AGM::pointHeat>;
+
+template
+class AGM::matrix<AGM::pointAxisymmetric>;

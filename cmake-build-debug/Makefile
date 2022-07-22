@@ -169,6 +169,33 @@ Header/Greenfunction.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/Greenfunction.cpp.s
 .PHONY : Header/Greenfunction.cpp.s
 
+Header/GreenfunctionAxisymmetric.o: Header/GreenfunctionAxisymmetric.cpp.o
+
+.PHONY : Header/GreenfunctionAxisymmetric.o
+
+# target to build an object file
+Header/GreenfunctionAxisymmetric.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/GreenfunctionAxisymmetric.cpp.o
+.PHONY : Header/GreenfunctionAxisymmetric.cpp.o
+
+Header/GreenfunctionAxisymmetric.i: Header/GreenfunctionAxisymmetric.cpp.i
+
+.PHONY : Header/GreenfunctionAxisymmetric.i
+
+# target to preprocess a source file
+Header/GreenfunctionAxisymmetric.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/GreenfunctionAxisymmetric.cpp.i
+.PHONY : Header/GreenfunctionAxisymmetric.cpp.i
+
+Header/GreenfunctionAxisymmetric.s: Header/GreenfunctionAxisymmetric.cpp.s
+
+.PHONY : Header/GreenfunctionAxisymmetric.s
+
+# target to generate assembly for a file
+Header/GreenfunctionAxisymmetric.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/GreenfunctionAxisymmetric.cpp.s
+.PHONY : Header/GreenfunctionAxisymmetric.cpp.s
+
 Header/GreenfunctionReactionDiffusion.o: Header/GreenfunctionReactionDiffusion.cpp.o
 
 .PHONY : Header/GreenfunctionReactionDiffusion.o
@@ -439,6 +466,33 @@ Header/point.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/point.cpp.s
 .PHONY : Header/point.cpp.s
 
+Header/pointAxisymmetric.o: Header/pointAxisymmetric.cpp.o
+
+.PHONY : Header/pointAxisymmetric.o
+
+# target to build an object file
+Header/pointAxisymmetric.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/pointAxisymmetric.cpp.o
+.PHONY : Header/pointAxisymmetric.cpp.o
+
+Header/pointAxisymmetric.i: Header/pointAxisymmetric.cpp.i
+
+.PHONY : Header/pointAxisymmetric.i
+
+# target to preprocess a source file
+Header/pointAxisymmetric.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/pointAxisymmetric.cpp.i
+.PHONY : Header/pointAxisymmetric.cpp.i
+
+Header/pointAxisymmetric.s: Header/pointAxisymmetric.cpp.s
+
+.PHONY : Header/pointAxisymmetric.s
+
+# target to generate assembly for a file
+Header/pointAxisymmetric.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/pointAxisymmetric.cpp.s
+.PHONY : Header/pointAxisymmetric.cpp.s
+
 Header/pointHeat.o: Header/pointHeat.cpp.o
 
 .PHONY : Header/pointHeat.o
@@ -694,6 +748,9 @@ help:
 	@echo "... Header/Greenfunction.o"
 	@echo "... Header/Greenfunction.i"
 	@echo "... Header/Greenfunction.s"
+	@echo "... Header/GreenfunctionAxisymmetric.o"
+	@echo "... Header/GreenfunctionAxisymmetric.i"
+	@echo "... Header/GreenfunctionAxisymmetric.s"
 	@echo "... Header/GreenfunctionReactionDiffusion.o"
 	@echo "... Header/GreenfunctionReactionDiffusion.i"
 	@echo "... Header/GreenfunctionReactionDiffusion.s"
@@ -724,6 +781,9 @@ help:
 	@echo "... Header/point.o"
 	@echo "... Header/point.i"
 	@echo "... Header/point.s"
+	@echo "... Header/pointAxisymmetric.o"
+	@echo "... Header/pointAxisymmetric.i"
+	@echo "... Header/pointAxisymmetric.s"
 	@echo "... Header/pointHeat.o"
 	@echo "... Header/pointHeat.i"
 	@echo "... Header/pointHeat.s"

@@ -66,6 +66,8 @@ namespace AGM {
 
         static double deltaTime();
 
+        static double writeTime();
+
         double u(double t, const point &pt);
 
         double v(double t, const point &pt);

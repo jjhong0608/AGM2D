@@ -54,6 +54,7 @@ void AGM::matrixMulti<pt>::factorizeMatrix() {
         exit(3);
     }
     matrix<pt>::pPram.msglvl = 0;
+//    matrix<pt>::pPram.iparm[12] = 2;
 }
 
 template<typename pt>
@@ -69,6 +70,7 @@ void AGM::matrixMulti<pt>::calculateMatrix() {
     }
     double x[2 * matrix<pt>::pPram.n];
     for (auto &i: x) i = ZEROVALUE;
+    matrix<pt>::pPram.iparm[12] = 2;
     matrix<pt>::pPram.phase = 33;
     pardiso(matrix<pt>::pPram.ppt, &matrix<pt>::pPram.maxfct, &matrix<pt>::pPram.mnum, &matrix<pt>::pPram.mtype,
             &matrix<pt>::pPram.phase, &matrix<pt>::pPram.n, matrix<pt>::ent, matrix<pt>::ia, matrix<pt>::ja,
@@ -85,6 +87,10 @@ void AGM::matrixMulti<pt>::calculateMatrix() {
         pts0->at(i)["sol"] = x[i + 2 * size];
         pts0->at(i)["phi"] = x[i + 3 * size];
     }
+
+//    std::cout << "Velocity\n";
+//    this->calculateResidual(x, rb);
+
     delete[] rb;
 }
 

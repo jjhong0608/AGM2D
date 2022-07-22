@@ -129,6 +129,17 @@ AGM::matrixRow AGM::pointHeat::calculateRepresentationFormulaNeumannOnAxial(char
     double tp = ptr ? ptr->getXy()[axisInt] : Error();
     double signPhi0 = axis == 'x' ? UNITVALUE : -UNITVALUE;
     auto gFunc{GreenfunctionReactionDiffusion(tm, tb, tp, mp, mp, UNITVALUE / delta)};
+
+    if (string == "ND") {
+        if (iszero(gFunc.green_function_ND(tm))) {
+            return calculateRepresentationFormulaNeumannOffAxial(axis, axisInt);
+        }
+    } else if (string == "DN") {
+        if (iszero(gFunc.green_function_DN(tp))) {
+            return calculateRepresentationFormulaNeumannOffAxial(axis, axisInt);
+        }
+    }
+
     matrixRow row{};
     if (string == "ND") {
         row[ptl->getIdx()] = -mp * gFunc.green_function_ND(tm);

@@ -6,7 +6,7 @@
 #define AGM_POINTHEAT_H
 
 
-#include "point.h"
+#include "pointAxisymmetric.h"
 
 namespace AGM {
     class pointHeat : public point {
