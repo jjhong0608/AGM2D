@@ -6,37 +6,52 @@
 
 AGM::ellipticFunction::ellipticFunction() = default;
 
-double AGM::ellipticFunction::u(const AGM::point &pt) {
+auto AGM::ellipticFunction::u(const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
-    return UNITVALUE / std::sqrt(x * x + y * y);
+    return ZEROVALUE;
+//    return UNITVALUE / std::sqrt(x * x + y * y);
 }
 
-double AGM::ellipticFunction::phi(const AGM::point &pt) {
+auto AGM::ellipticFunction::phi(const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
     return ZEROVALUE;
 }
 
-double AGM::ellipticFunction::f(const AGM::point &pt) {
+auto AGM::ellipticFunction::f(const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
     return ZEROVALUE;
 }
 
-double AGM::ellipticFunction::ux(const AGM::point &pt) {
+auto AGM::ellipticFunction::ux(const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
     return ZEROVALUE;
 }
 
-double AGM::ellipticFunction::uy(const AGM::point &pt) {
+auto AGM::ellipticFunction::uy(const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
     return ZEROVALUE;
 }
 
 void AGM::ellipticFunction::assignBoundaryValue(AGM::point &pt) {
 //    return;
-//    double x{pt[0]}, y{pt[1]};
+    double x{pt[0]}, y{pt[1]};
+    if (iszero(x)) {
+        pt.setCondition('N');
+    } else if (isclose(y, 130.0)) {
+        pt.setCondition('N');
+        if (isclose(x, 31.5)) {
+            pt.setCondition('n');
+        } else if (isclose(x, 42.0)) {
+            pt.setCondition('n');
+        }
+    } else if (isclose(y, -194.738)) {
+        pt.setCondition('N');
+    } else if (x < 1e1 && y < 1e-6) {
+        pt["bdv"] = 1e2;
+    }
 
     if (pt.getCondition() == 'D') {
-        pt["bdv"] = u(pt);
+//        pt["bdv"] = u(pt);
     } else if (pt.getCondition() == 'N') {
         pt["bdv"] = ux(pt) * pt.getNormal()[0] + uy(pt) * pt.getNormal()[1];
     }
@@ -47,40 +62,40 @@ AGM::ellipticFunction::~ellipticFunction() = default;
 
 AGM::heatFunction::heatFunction() = default;
 
-double AGM::heatFunction::initialTime() {
+auto AGM::heatFunction::initialTime() -> double {
     return UNITVALUE;
 }
 
-double AGM::heatFunction::terminalTime() {
+auto AGM::heatFunction::terminalTime() -> double {
     return 1.25;
 }
 
-double AGM::heatFunction::deltaTime() {
+auto AGM::heatFunction::deltaTime() -> double {
     return 0.01;
 }
 
-double AGM::heatFunction::u(double t, const AGM::point &pt) {
+auto AGM::heatFunction::u(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
     double r{std::sqrt(std::pow(x, 2) + std::pow(y, 2))};
     return std::exp(-std::pow(r, 2) / (4 * t)) / (4 * M_PI * t);
 }
 
-double AGM::heatFunction::phi(double t, const AGM::point &pt) {
+auto AGM::heatFunction::phi(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
     return (1.0 / 32.0) * (-pow(x, 2) + pow(y, 2)) * exp(-1.0 / 4.0 * (pow(x, 2) + pow(y, 2)) / t) / (M_PI * pow(t, 3));
 }
 
-double AGM::heatFunction::f(double t, const AGM::point &pt) {
+auto AGM::heatFunction::f(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
     return ZEROVALUE;
 }
 
-double AGM::heatFunction::ux(double t, const AGM::point &pt) {
+auto AGM::heatFunction::ux(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
     return -1.0 / 8.0 * x * exp(-1.0 / 4.0 * (pow(x, 2) + pow(y, 2)) / t) / (M_PI * pow(t, 2));
 }
 
-double AGM::heatFunction::uy(double t, const AGM::point &pt) {
+auto AGM::heatFunction::uy(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
     return -1.0 / 8.0 * y * exp(-1.0 / 4.0 * (pow(x, 2) + pow(y, 2)) / t) / (M_PI * pow(t, 2));
 }
@@ -107,30 +122,30 @@ AGM::heatFunction::~heatFunction() = default;
 
 AGM::NavierStokesFunction::NavierStokesFunction() = default;
 
-double AGM::NavierStokesFunction::initialTime() {
+auto AGM::NavierStokesFunction::initialTime() -> double {
     return ZEROVALUE;
 }
 
-double AGM::NavierStokesFunction::terminalTime() {
+auto AGM::NavierStokesFunction::terminalTime() -> double {
     return 1.5e2;
 }
 
-double AGM::NavierStokesFunction::deltaTime() {
-    return 1e-3;
+auto AGM::NavierStokesFunction::deltaTime() -> double {
+    return 1e-4;
 }
 
-double AGM::NavierStokesFunction::writeTime() {
+auto AGM::NavierStokesFunction::writeTime() -> double {
     return 1e-1;
 }
 
-double AGM::NavierStokesFunction::u(double t, const AGM::point &pt) {
+auto AGM::NavierStokesFunction::u(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
     // Air Foil
-    if (isclose(x, -5)) {
+    if (isclose(x, -7)) {
         return UNITVALUE;
     } else if (isclose(y, -7)) {
         return UNITVALUE;
-    } else if (isclose(y, 7)) {
+    } else if (isclose(y, 6.5)) {
         return UNITVALUE;
     }
     return ZEROVALUE;
@@ -149,7 +164,7 @@ double AGM::NavierStokesFunction::u(double t, const AGM::point &pt) {
     return UNITVALUE - pow(a, 2) / (pow(x, 2) + pow(y, 2)) + 2 * pow(a * y, 2) / pow(pow(x, 2) + pow(y, 2), 2);
 }
 
-double AGM::NavierStokesFunction::v(double t, const AGM::point &pt) {
+auto AGM::NavierStokesFunction::v(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
     return ZEROVALUE;
     // Kalman vortex
@@ -160,57 +175,57 @@ double AGM::NavierStokesFunction::v(double t, const AGM::point &pt) {
     return -2 * pow(a, 2) * x * y / pow(pow(x, 2) + pow(y, 2), 2);
 }
 
-double AGM::NavierStokesFunction::p(double t, const AGM::point &pt) {
+auto AGM::NavierStokesFunction::p(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
     return 0;
 }
 
-double AGM::NavierStokesFunction::phi(double t, const AGM::point &pt) {
+auto AGM::NavierStokesFunction::phi(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
     return 0;
 }
 
-double AGM::NavierStokesFunction::psi(double t, const AGM::point &pt) {
+auto AGM::NavierStokesFunction::psi(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
     return 0;
 }
 
-double AGM::NavierStokesFunction::ux(double t, const AGM::point &pt) {
+auto AGM::NavierStokesFunction::ux(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
     return 0;
 }
 
-double AGM::NavierStokesFunction::uy(double t, const AGM::point &pt) {
+auto AGM::NavierStokesFunction::uy(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
     return 0;
 }
 
-double AGM::NavierStokesFunction::vx(double t, const AGM::point &pt) {
+auto AGM::NavierStokesFunction::vx(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
     return 0;
 }
 
-double AGM::NavierStokesFunction::vy(double t, const AGM::point &pt) {
+auto AGM::NavierStokesFunction::vy(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
     return 0;
 }
 
-double AGM::NavierStokesFunction::px(double t, const AGM::point &pt) {
+auto AGM::NavierStokesFunction::px(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
     return 0;
 }
 
-double AGM::NavierStokesFunction::py(double t, const AGM::point &pt) {
+auto AGM::NavierStokesFunction::py(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
     return 0;
 }
 
-double AGM::NavierStokesFunction::f1(double t, const AGM::point &pt) {
+auto AGM::NavierStokesFunction::f1(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
     return 0;
 }
 
-double AGM::NavierStokesFunction::f2(double t, const AGM::point &pt) {
+auto AGM::NavierStokesFunction::f2(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
     return 0;
 }

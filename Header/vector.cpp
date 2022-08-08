@@ -14,7 +14,7 @@ AGM::vector::vector(const std::vector<double> &x) : std::vector<double>(x) {
 
 AGM::vector::~vector() = default;
 
-double AGM::vector::norm() {
+auto AGM::vector::norm() -> double {
     double sum{};
     for (const auto &i: *this) {
         sum += i * i;
@@ -22,7 +22,7 @@ double AGM::vector::norm() {
     return sqrt(sum);
 }
 
-double AGM::vector::dot(const AGM::vector &src) {
+auto AGM::vector::dot(const AGM::vector &src) -> double {
     if (size() != src.size()) printError("AGM::vector::dot", "The sizes of the two vectors do not match.");
     double sum{};
     for (int i = 0; i < size(); ++i) {
@@ -31,12 +31,12 @@ double AGM::vector::dot(const AGM::vector &src) {
     return sum;
 }
 
-AGM::vector AGM::vector::cross(const AGM::vector &src) {
+auto AGM::vector::cross(const AGM::vector &src) -> AGM::vector {
     return AGM::vector(std::vector<double>{at(1) * src.at(2) - at(2) * src.at(1), at(2) * src.at(0) - at(0) * src.at(2),
                                            at(0) * src.at(1) - at(1) * src.at(0)});
 }
 
-AGM::vector AGM::vector::unitVector() {
+auto AGM::vector::unitVector() -> AGM::vector {
     AGM::vector vec = vector{};
     double n = norm();
     for (const auto &i: *this) {
@@ -45,7 +45,7 @@ AGM::vector AGM::vector::unitVector() {
     return vec;
 }
 
-AGM::vector AGM::vector::operator+(const vector &src) {
+auto AGM::vector::operator+(const vector &src) -> AGM::vector {
     if (size() != src.size())
         printError("AGM::src::operator+",
                    "size of this vector (which is %d) is not equal to vector src (which is %d)", size(),
@@ -57,7 +57,7 @@ AGM::vector AGM::vector::operator+(const vector &src) {
     return vec;
 }
 
-AGM::vector AGM::vector::operator-(const vector &src) {
+auto AGM::vector::operator-(const vector &src) -> AGM::vector {
     if (size() != src.size())
         printError("AGM::src::operator-",
                    "size of this vector (which is %d) is not equal to vector src (which is %d)", size(),
@@ -69,7 +69,7 @@ AGM::vector AGM::vector::operator-(const vector &src) {
     return vec;
 }
 
-AGM::vector AGM::vector::operator*(double d) {
+auto AGM::vector::operator*(double d) -> AGM::vector {
     AGM::vector vec = vector{};
     for (const auto &i: *this) {
         vec.emplace_back(i * d);
@@ -77,7 +77,7 @@ AGM::vector AGM::vector::operator*(double d) {
     return vec;
 }
 
-AGM::vector AGM::vector::operator/(double d) {
+auto AGM::vector::operator/(double d) -> AGM::vector {
     AGM::vector vec = vector{};
     for (const auto &i: *this) {
         vec.emplace_back(i / d);
@@ -85,7 +85,7 @@ AGM::vector AGM::vector::operator/(double d) {
     return vec;
 }
 
-AGM::vector AGM::vector::operator+(const vector &src) const {
+auto AGM::vector::operator+(const vector &src) const -> AGM::vector {
     if (size() != src.size())
         printError("AGM::src::operator+",
                    "size of this vector (which is %d) is not equal to vector src (which is %d)", size(),
@@ -97,7 +97,7 @@ AGM::vector AGM::vector::operator+(const vector &src) const {
     return vec;
 }
 
-AGM::vector AGM::vector::operator-(const vector &src) const {
+auto AGM::vector::operator-(const vector &src) const -> AGM::vector {
     if (size() != src.size())
         printError("AGM::src::operator+",
                    "size of this vector (which is %d) is not equal to vector src (which is %d)", size(),
@@ -109,7 +109,7 @@ AGM::vector AGM::vector::operator-(const vector &src) const {
     return vec;
 }
 
-AGM::vector AGM::vector::operator*(double d) const {
+auto AGM::vector::operator*(double d) const -> AGM::vector {
     AGM::vector vec = vector{};
     for (const auto &i: *this) {
         vec.emplace_back(i * d);
@@ -117,7 +117,7 @@ AGM::vector AGM::vector::operator*(double d) const {
     return vec;
 }
 
-AGM::vector AGM::vector::operator/(double d) const {
+auto AGM::vector::operator/(double d) const -> AGM::vector {
     AGM::vector vec = vector{};
     for (const auto &i: *this) {
         vec.emplace_back(i / d);
@@ -125,7 +125,7 @@ AGM::vector AGM::vector::operator/(double d) const {
     return vec;
 }
 
-double AGM::vector::operator*(const vector &src) {
+auto AGM::vector::operator*(const vector &src) -> double {
     if (size() != src.size())
         printError("AGM::src::operator*",
                    "size of this vector (which is %d) is not equal to vector src (which is %d)", size(),
@@ -137,7 +137,7 @@ double AGM::vector::operator*(const vector &src) {
     return sum;
 }
 
-AGM::vector &AGM::vector::operator+=(const vector &src) {
+auto AGM::vector::operator+=(const vector &src) -> AGM::vector & {
     if (size() != src.size())
         printError("AGM::src::operator+=",
                    "size of this vector (which is %d) is not equal to vector src (which is %d)", size(),
@@ -148,7 +148,7 @@ AGM::vector &AGM::vector::operator+=(const vector &src) {
     return *this;
 }
 
-AGM::vector &AGM::vector::operator-=(const vector &src) {
+auto AGM::vector::operator-=(const vector &src) -> AGM::vector & {
     if (size() != src.size())
         printError("AGM::src::operator-=",
                    "size of this vector (which is %d) is not equal to vector src (which is %d)", size(),
@@ -159,14 +159,14 @@ AGM::vector &AGM::vector::operator-=(const vector &src) {
     return *this;
 }
 
-AGM::vector &AGM::vector::operator*=(double d) {
+auto AGM::vector::operator*=(double d) -> AGM::vector & {
     for (auto &i: *this) {
         i *= d;
     }
     return *this;
 }
 
-bool AGM::vector::operator<(const AGM::vector &src) {
+auto AGM::vector::operator<(const AGM::vector &src) -> bool {
     if (size() != src.size())
         printError("AGM::src::operator<",
                    "size of this vector (which is %d) is not equal to vector src (which is %d)", size(),
@@ -179,7 +179,7 @@ bool AGM::vector::operator<(const AGM::vector &src) {
     return false;
 }
 
-bool AGM::vector::operator>(const AGM::vector &src) {
+auto AGM::vector::operator>(const AGM::vector &src) -> bool {
     if (size() != src.size())
         printError("AGM::src::operator>",
                    "size of this vector (which is %d) is not equal to vector src (which is %d)", size(),

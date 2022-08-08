@@ -7,7 +7,7 @@
 double AGM::pointHeat::time;
 double AGM::pointHeat::delta;
 
-double AGM::pointHeat::getTime() {
+auto AGM::pointHeat::getTime() -> double {
     return time;
 }
 
@@ -15,7 +15,7 @@ void AGM::pointHeat::setTime(double d) {
     pointHeat::time = d;
 }
 
-double AGM::pointHeat::getDelta() {
+auto AGM::pointHeat::getDelta() -> double {
     return delta;
 }
 
@@ -106,7 +106,7 @@ void AGM::pointHeat::calculateRepresentationFormulaCross() {
     solMatrixRow[1] = row[0] - row[1];
 }
 
-AGM::matrixRow AGM::pointHeat::calculateRepresentationFormulaNeumannOnAxial(char axis, int axisInt) {
+auto AGM::pointHeat::calculateRepresentationFormulaNeumannOnAxial(char axis, int axisInt) -> AGM::matrixRow {
     auto Error = []() -> double {
         printError("AGM::pointHeat::calculateRepresentationFormulaNeumannOnAxial", "nullptr");
         return ZEROVALUE;
@@ -182,7 +182,7 @@ AGM::matrixRow AGM::pointHeat::calculateRepresentationFormulaNeumannOnAxial(char
     return row;
 }
 
-AGM::matrixRow AGM::pointHeat::calculateRepresentationFormulaNeumannOffAxial(char axis, int axisInt) {
+auto AGM::pointHeat::calculateRepresentationFormulaNeumannOffAxial(char axis, int axisInt) -> AGM::matrixRow {
     double tm{}, tb{}, tp{};
     if (axis == 'x') {
         tm = element[W] ? element[W]->getXy()[0] : element[WN]->getXy()[0];

@@ -13,7 +13,7 @@ namespace AGM {
         bool is_on_axis{false};
 
     public:
-        bool isOnAxis() const;
+        auto isOnAxis() const -> bool;
 
         void setIsOnAxis(bool isOnAxis);
 
@@ -25,33 +25,37 @@ namespace AGM {
 
         void calculateRepresentationFormulaCross() override;
 
-        matrixRow calculateRepresentationFormulaCrossSymmetric();
+        auto calculateRepresentationFormulaCrossSymmetric() -> matrixRow;
 
-        matrixRow calculateRepresentationFormulaCrossSymmetricNearAxis();
+        auto calculateRepresentationFormulaCrossSymmetricNearAxis() -> matrixRow;
 
-        matrixRow calculateRepresentationFormulaCrossNonSymmetric();
+        auto calculateRepresentationFormulaCrossNonSymmetric() -> matrixRow;
 
-        matrixRow calculateRepresentationFormulaNeumannOnAxial(char axis, int axisInt) override;
+        auto calculateRepresentationFormulaNeumannOnAxial(char axis, int axisInt) -> matrixRow override;
 
-        matrixRow calculateRepresentationFormulaNeumannOnAxialSymmetric();
+        auto calculateRepresentationFormulaNeumannOnAxialSymmetric() -> matrixRow;
 
-        matrixRow calculateRepresentationFormulaNeumannOnAxialNonSymmetric();
+        auto calculateRepresentationFormulaNeumannOnAxialNonSymmetric() -> matrixRow;
 
-        matrixRow calculateRepresentationFormulaNeumannOffAxial(char axis, int axisInt) override;
+        auto calculateRepresentationFormulaNeumannOffAxial(char axis, int axisInt) -> matrixRow override;
 
-        matrixRow calculateRepresentationFormulaNeumannOffAxialSymmetric();
+        auto calculateRepresentationFormulaNeumannOffAxialSymmetric() -> matrixRow;
 
-        matrixRow calculateRepresentationFormulaNeumannOffAxialNonSymmetric();
+        auto calculateRepresentationFormulaNeumannOffAxialNonSymmetric() -> matrixRow;
 
         void calculateRepresentationFormulaInterface() override;
 
-        matrixRow calculateRepresentationFormulaInterfaceSymmetric();
+        auto calculateRepresentationFormulaInterfaceSymmetric() -> matrixRow;
 
-        matrixRow calculateRepresentationFormulaInterfaceNonSymmetric();
+        auto calculateRepresentationFormulaInterfaceSymmetricNearAxis() -> matrixRow;
+
+        auto calculateRepresentationFormulaInterfaceNonSymmetric() -> matrixRow;
 
         void makeDerivativesCross() override;
 
         void makeDerivativesCrossSymmetric();
+
+        void makeDerivativesCrossSymmetricNearAxis();
 
         void makeDerivativesCrossNonSymmetric();
 
@@ -64,6 +68,8 @@ namespace AGM {
         void makeDerivativesInterface() override;
 
         void makeDerivativesInterfaceSymmetric();
+
+        void makeDerivativesInterfaceSymmetricNearAxis();
 
         void makeDerivativesInterfaceNonSymmetric();
     };

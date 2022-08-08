@@ -6,13 +6,21 @@ CMakeFiles/AGM2D.dir/Header/Greenfunction.cpp.o: ../Header/Greenfunction.h
 CMakeFiles/AGM2D.dir/Header/Greenfunction.cpp.o: ../Header/util.h
 CMakeFiles/AGM2D.dir/Header/Greenfunction.cpp.o: ../Header/vector.h
 
+CMakeFiles/AGM2D.dir/Header/GreenfunctionAxisymmetric.cpp.o: ../Header/Greenfunction.h
+CMakeFiles/AGM2D.dir/Header/GreenfunctionAxisymmetric.cpp.o: ../Header/GreenfunctionAxisymmetric.cpp
+CMakeFiles/AGM2D.dir/Header/GreenfunctionAxisymmetric.cpp.o: ../Header/GreenfunctionAxisymmetric.h
+CMakeFiles/AGM2D.dir/Header/GreenfunctionAxisymmetric.cpp.o: ../Header/util.h
+CMakeFiles/AGM2D.dir/Header/GreenfunctionAxisymmetric.cpp.o: ../Header/vector.h
+
 CMakeFiles/AGM2D.dir/Header/GreenfunctionReactionDiffusion.cpp.o: ../Header/Greenfunction.h
+CMakeFiles/AGM2D.dir/Header/GreenfunctionReactionDiffusion.cpp.o: ../Header/GreenfunctionAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/GreenfunctionReactionDiffusion.cpp.o: ../Header/GreenfunctionReactionDiffusion.cpp
 CMakeFiles/AGM2D.dir/Header/GreenfunctionReactionDiffusion.cpp.o: ../Header/GreenfunctionReactionDiffusion.h
 CMakeFiles/AGM2D.dir/Header/GreenfunctionReactionDiffusion.cpp.o: ../Header/util.h
 CMakeFiles/AGM2D.dir/Header/GreenfunctionReactionDiffusion.cpp.o: ../Header/vector.h
 
 CMakeFiles/AGM2D.dir/Header/axialLine.cpp.o: ../Header/Greenfunction.h
+CMakeFiles/AGM2D.dir/Header/axialLine.cpp.o: ../Header/GreenfunctionAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/axialLine.cpp.o: ../Header/GreenfunctionReactionDiffusion.h
 CMakeFiles/AGM2D.dir/Header/axialLine.cpp.o: ../Header/axialLine.cpp
 CMakeFiles/AGM2D.dir/Header/axialLine.cpp.o: ../Header/axialLine.h
@@ -20,6 +28,7 @@ CMakeFiles/AGM2D.dir/Header/axialLine.cpp.o: ../Header/util.h
 CMakeFiles/AGM2D.dir/Header/axialLine.cpp.o: ../Header/vector.h
 
 CMakeFiles/AGM2D.dir/Header/boundaryLine.cpp.o: ../Header/Greenfunction.h
+CMakeFiles/AGM2D.dir/Header/boundaryLine.cpp.o: ../Header/GreenfunctionAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/boundaryLine.cpp.o: ../Header/GreenfunctionReactionDiffusion.h
 CMakeFiles/AGM2D.dir/Header/boundaryLine.cpp.o: ../Header/axialLine.h
 CMakeFiles/AGM2D.dir/Header/boundaryLine.cpp.o: ../Header/boundaryLine.cpp
@@ -28,6 +37,7 @@ CMakeFiles/AGM2D.dir/Header/boundaryLine.cpp.o: ../Header/util.h
 CMakeFiles/AGM2D.dir/Header/boundaryLine.cpp.o: ../Header/vector.h
 
 CMakeFiles/AGM2D.dir/Header/coordinate.cpp.o: ../Header/Greenfunction.h
+CMakeFiles/AGM2D.dir/Header/coordinate.cpp.o: ../Header/GreenfunctionAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/coordinate.cpp.o: ../Header/GreenfunctionReactionDiffusion.h
 CMakeFiles/AGM2D.dir/Header/coordinate.cpp.o: ../Header/axialLine.h
 CMakeFiles/AGM2D.dir/Header/coordinate.cpp.o: ../Header/boundaryLine.h
@@ -38,6 +48,7 @@ CMakeFiles/AGM2D.dir/Header/coordinate.cpp.o: ../Header/util.h
 CMakeFiles/AGM2D.dir/Header/coordinate.cpp.o: ../Header/vector.h
 
 CMakeFiles/AGM2D.dir/Header/function.cpp.o: ../Header/Greenfunction.h
+CMakeFiles/AGM2D.dir/Header/function.cpp.o: ../Header/GreenfunctionAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/function.cpp.o: ../Header/GreenfunctionReactionDiffusion.h
 CMakeFiles/AGM2D.dir/Header/function.cpp.o: ../Header/axialLine.h
 CMakeFiles/AGM2D.dir/Header/function.cpp.o: ../Header/boundaryLine.h
@@ -46,12 +57,14 @@ CMakeFiles/AGM2D.dir/Header/function.cpp.o: ../Header/function.cpp
 CMakeFiles/AGM2D.dir/Header/function.cpp.o: ../Header/function.h
 CMakeFiles/AGM2D.dir/Header/function.cpp.o: ../Header/matrixRow.h
 CMakeFiles/AGM2D.dir/Header/function.cpp.o: ../Header/point.h
+CMakeFiles/AGM2D.dir/Header/function.cpp.o: ../Header/pointAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/function.cpp.o: ../Header/pointHeat.h
 CMakeFiles/AGM2D.dir/Header/function.cpp.o: ../Header/util.h
 CMakeFiles/AGM2D.dir/Header/function.cpp.o: ../Header/value.h
 CMakeFiles/AGM2D.dir/Header/function.cpp.o: ../Header/vector.h
 
 CMakeFiles/AGM2D.dir/Header/matrix.cpp.o: ../Header/Greenfunction.h
+CMakeFiles/AGM2D.dir/Header/matrix.cpp.o: ../Header/GreenfunctionAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/matrix.cpp.o: ../Header/GreenfunctionReactionDiffusion.h
 CMakeFiles/AGM2D.dir/Header/matrix.cpp.o: ../Header/axialLine.h
 CMakeFiles/AGM2D.dir/Header/matrix.cpp.o: ../Header/boundaryLine.h
@@ -61,6 +74,7 @@ CMakeFiles/AGM2D.dir/Header/matrix.cpp.o: ../Header/matrix.cpp
 CMakeFiles/AGM2D.dir/Header/matrix.cpp.o: ../Header/matrix.h
 CMakeFiles/AGM2D.dir/Header/matrix.cpp.o: ../Header/matrixRow.h
 CMakeFiles/AGM2D.dir/Header/matrix.cpp.o: ../Header/point.h
+CMakeFiles/AGM2D.dir/Header/matrix.cpp.o: ../Header/pointAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/matrix.cpp.o: ../Header/pointHeat.h
 CMakeFiles/AGM2D.dir/Header/matrix.cpp.o: ../Header/util.h
 CMakeFiles/AGM2D.dir/Header/matrix.cpp.o: ../Header/value.h
@@ -70,6 +84,7 @@ CMakeFiles/AGM2D.dir/Header/matrix.cpp.o: /usr/local/intel/compilers_and_librari
 CMakeFiles/AGM2D.dir/Header/matrix.cpp.o: /usr/local/intel/compilers_and_libraries_2018.5.274/linux/mkl/include/mkl_types.h
 
 CMakeFiles/AGM2D.dir/Header/matrixMulti.cpp.o: ../Header/Greenfunction.h
+CMakeFiles/AGM2D.dir/Header/matrixMulti.cpp.o: ../Header/GreenfunctionAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/matrixMulti.cpp.o: ../Header/GreenfunctionReactionDiffusion.h
 CMakeFiles/AGM2D.dir/Header/matrixMulti.cpp.o: ../Header/axialLine.h
 CMakeFiles/AGM2D.dir/Header/matrixMulti.cpp.o: ../Header/boundaryLine.h
@@ -80,6 +95,7 @@ CMakeFiles/AGM2D.dir/Header/matrixMulti.cpp.o: ../Header/matrixMulti.cpp
 CMakeFiles/AGM2D.dir/Header/matrixMulti.cpp.o: ../Header/matrixMulti.h
 CMakeFiles/AGM2D.dir/Header/matrixMulti.cpp.o: ../Header/matrixRow.h
 CMakeFiles/AGM2D.dir/Header/matrixMulti.cpp.o: ../Header/point.h
+CMakeFiles/AGM2D.dir/Header/matrixMulti.cpp.o: ../Header/pointAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/matrixMulti.cpp.o: ../Header/pointHeat.h
 CMakeFiles/AGM2D.dir/Header/matrixMulti.cpp.o: ../Header/util.h
 CMakeFiles/AGM2D.dir/Header/matrixMulti.cpp.o: ../Header/value.h
@@ -335,6 +351,7 @@ CMakeFiles/AGM2D.dir/Header/matrixNormal.cpp.o: ../Header/Eigen/src/SparseLU/Spa
 CMakeFiles/AGM2D.dir/Header/matrixNormal.cpp.o: ../Header/Eigen/src/SparseLU/SparseLU_relax_snode.h
 CMakeFiles/AGM2D.dir/Header/matrixNormal.cpp.o: ../Header/Eigen/src/SparseQR/SparseQR.h
 CMakeFiles/AGM2D.dir/Header/matrixNormal.cpp.o: ../Header/Greenfunction.h
+CMakeFiles/AGM2D.dir/Header/matrixNormal.cpp.o: ../Header/GreenfunctionAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/matrixNormal.cpp.o: ../Header/GreenfunctionReactionDiffusion.h
 CMakeFiles/AGM2D.dir/Header/matrixNormal.cpp.o: ../Header/axialLine.h
 CMakeFiles/AGM2D.dir/Header/matrixNormal.cpp.o: ../Header/boundaryLine.h
@@ -346,6 +363,7 @@ CMakeFiles/AGM2D.dir/Header/matrixNormal.cpp.o: ../Header/matrixNormal.cpp
 CMakeFiles/AGM2D.dir/Header/matrixNormal.cpp.o: ../Header/matrixNormal.h
 CMakeFiles/AGM2D.dir/Header/matrixNormal.cpp.o: ../Header/matrixRow.h
 CMakeFiles/AGM2D.dir/Header/matrixNormal.cpp.o: ../Header/point.h
+CMakeFiles/AGM2D.dir/Header/matrixNormal.cpp.o: ../Header/pointAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/matrixNormal.cpp.o: ../Header/pointHeat.h
 CMakeFiles/AGM2D.dir/Header/matrixNormal.cpp.o: ../Header/util.h
 CMakeFiles/AGM2D.dir/Header/matrixNormal.cpp.o: ../Header/value.h
@@ -390,6 +408,7 @@ CMakeFiles/AGM2D.dir/Header/matrixNormal.cpp.o: /usr/local/intel/compilers_and_l
 CMakeFiles/AGM2D.dir/Header/matrixNormal.cpp.o: /usr/local/intel/compilers_and_libraries_2018.5.274/linux/mkl/include/mkl_vsl_types.h
 
 CMakeFiles/AGM2D.dir/Header/matrixRow.cpp.o: ../Header/Greenfunction.h
+CMakeFiles/AGM2D.dir/Header/matrixRow.cpp.o: ../Header/GreenfunctionAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/matrixRow.cpp.o: ../Header/GreenfunctionReactionDiffusion.h
 CMakeFiles/AGM2D.dir/Header/matrixRow.cpp.o: ../Header/axialLine.h
 CMakeFiles/AGM2D.dir/Header/matrixRow.cpp.o: ../Header/boundaryLine.h
@@ -399,6 +418,7 @@ CMakeFiles/AGM2D.dir/Header/matrixRow.cpp.o: ../Header/util.h
 CMakeFiles/AGM2D.dir/Header/matrixRow.cpp.o: ../Header/vector.h
 
 CMakeFiles/AGM2D.dir/Header/point.cpp.o: ../Header/Greenfunction.h
+CMakeFiles/AGM2D.dir/Header/point.cpp.o: ../Header/GreenfunctionAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/point.cpp.o: ../Header/GreenfunctionReactionDiffusion.h
 CMakeFiles/AGM2D.dir/Header/point.cpp.o: ../Header/axialLine.h
 CMakeFiles/AGM2D.dir/Header/point.cpp.o: ../Header/boundaryLine.h
@@ -410,13 +430,29 @@ CMakeFiles/AGM2D.dir/Header/point.cpp.o: ../Header/util.h
 CMakeFiles/AGM2D.dir/Header/point.cpp.o: ../Header/value.h
 CMakeFiles/AGM2D.dir/Header/point.cpp.o: ../Header/vector.h
 
+CMakeFiles/AGM2D.dir/Header/pointAxisymmetric.cpp.o: ../Header/Greenfunction.h
+CMakeFiles/AGM2D.dir/Header/pointAxisymmetric.cpp.o: ../Header/GreenfunctionAxisymmetric.h
+CMakeFiles/AGM2D.dir/Header/pointAxisymmetric.cpp.o: ../Header/GreenfunctionReactionDiffusion.h
+CMakeFiles/AGM2D.dir/Header/pointAxisymmetric.cpp.o: ../Header/axialLine.h
+CMakeFiles/AGM2D.dir/Header/pointAxisymmetric.cpp.o: ../Header/boundaryLine.h
+CMakeFiles/AGM2D.dir/Header/pointAxisymmetric.cpp.o: ../Header/coordinate.h
+CMakeFiles/AGM2D.dir/Header/pointAxisymmetric.cpp.o: ../Header/matrixRow.h
+CMakeFiles/AGM2D.dir/Header/pointAxisymmetric.cpp.o: ../Header/point.h
+CMakeFiles/AGM2D.dir/Header/pointAxisymmetric.cpp.o: ../Header/pointAxisymmetric.cpp
+CMakeFiles/AGM2D.dir/Header/pointAxisymmetric.cpp.o: ../Header/pointAxisymmetric.h
+CMakeFiles/AGM2D.dir/Header/pointAxisymmetric.cpp.o: ../Header/util.h
+CMakeFiles/AGM2D.dir/Header/pointAxisymmetric.cpp.o: ../Header/value.h
+CMakeFiles/AGM2D.dir/Header/pointAxisymmetric.cpp.o: ../Header/vector.h
+
 CMakeFiles/AGM2D.dir/Header/pointHeat.cpp.o: ../Header/Greenfunction.h
+CMakeFiles/AGM2D.dir/Header/pointHeat.cpp.o: ../Header/GreenfunctionAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/pointHeat.cpp.o: ../Header/GreenfunctionReactionDiffusion.h
 CMakeFiles/AGM2D.dir/Header/pointHeat.cpp.o: ../Header/axialLine.h
 CMakeFiles/AGM2D.dir/Header/pointHeat.cpp.o: ../Header/boundaryLine.h
 CMakeFiles/AGM2D.dir/Header/pointHeat.cpp.o: ../Header/coordinate.h
 CMakeFiles/AGM2D.dir/Header/pointHeat.cpp.o: ../Header/matrixRow.h
 CMakeFiles/AGM2D.dir/Header/pointHeat.cpp.o: ../Header/point.h
+CMakeFiles/AGM2D.dir/Header/pointHeat.cpp.o: ../Header/pointAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/pointHeat.cpp.o: ../Header/pointHeat.cpp
 CMakeFiles/AGM2D.dir/Header/pointHeat.cpp.o: ../Header/pointHeat.h
 CMakeFiles/AGM2D.dir/Header/pointHeat.cpp.o: ../Header/util.h
@@ -670,6 +706,7 @@ CMakeFiles/AGM2D.dir/Header/readFile.cpp.o: ../Header/Eigen/src/SparseLU/SparseL
 CMakeFiles/AGM2D.dir/Header/readFile.cpp.o: ../Header/Eigen/src/SparseLU/SparseLU_relax_snode.h
 CMakeFiles/AGM2D.dir/Header/readFile.cpp.o: ../Header/Eigen/src/SparseQR/SparseQR.h
 CMakeFiles/AGM2D.dir/Header/readFile.cpp.o: ../Header/Greenfunction.h
+CMakeFiles/AGM2D.dir/Header/readFile.cpp.o: ../Header/GreenfunctionAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/readFile.cpp.o: ../Header/GreenfunctionReactionDiffusion.h
 CMakeFiles/AGM2D.dir/Header/readFile.cpp.o: ../Header/axialLine.h
 CMakeFiles/AGM2D.dir/Header/readFile.cpp.o: ../Header/boundaryLine.h
@@ -680,6 +717,7 @@ CMakeFiles/AGM2D.dir/Header/readFile.cpp.o: ../Header/matrixMulti.h
 CMakeFiles/AGM2D.dir/Header/readFile.cpp.o: ../Header/matrixNormal.h
 CMakeFiles/AGM2D.dir/Header/readFile.cpp.o: ../Header/matrixRow.h
 CMakeFiles/AGM2D.dir/Header/readFile.cpp.o: ../Header/point.h
+CMakeFiles/AGM2D.dir/Header/readFile.cpp.o: ../Header/pointAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/readFile.cpp.o: ../Header/pointHeat.h
 CMakeFiles/AGM2D.dir/Header/readFile.cpp.o: ../Header/readFile.cpp
 CMakeFiles/AGM2D.dir/Header/readFile.cpp.o: ../Header/readFile.h
@@ -972,6 +1010,7 @@ CMakeFiles/AGM2D.dir/Header/solver.cpp.o: ../Header/Eigen/src/SparseLU/SparseLU_
 CMakeFiles/AGM2D.dir/Header/solver.cpp.o: ../Header/Eigen/src/SparseLU/SparseLU_relax_snode.h
 CMakeFiles/AGM2D.dir/Header/solver.cpp.o: ../Header/Eigen/src/SparseQR/SparseQR.h
 CMakeFiles/AGM2D.dir/Header/solver.cpp.o: ../Header/Greenfunction.h
+CMakeFiles/AGM2D.dir/Header/solver.cpp.o: ../Header/GreenfunctionAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/solver.cpp.o: ../Header/GreenfunctionReactionDiffusion.h
 CMakeFiles/AGM2D.dir/Header/solver.cpp.o: ../Header/axialLine.h
 CMakeFiles/AGM2D.dir/Header/solver.cpp.o: ../Header/boundaryLine.h
@@ -982,6 +1021,7 @@ CMakeFiles/AGM2D.dir/Header/solver.cpp.o: ../Header/matrixMulti.h
 CMakeFiles/AGM2D.dir/Header/solver.cpp.o: ../Header/matrixNormal.h
 CMakeFiles/AGM2D.dir/Header/solver.cpp.o: ../Header/matrixRow.h
 CMakeFiles/AGM2D.dir/Header/solver.cpp.o: ../Header/point.h
+CMakeFiles/AGM2D.dir/Header/solver.cpp.o: ../Header/pointAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/solver.cpp.o: ../Header/pointHeat.h
 CMakeFiles/AGM2D.dir/Header/solver.cpp.o: ../Header/readFile.h
 CMakeFiles/AGM2D.dir/Header/solver.cpp.o: ../Header/solver.cpp
@@ -1034,6 +1074,7 @@ CMakeFiles/AGM2D.dir/Header/util.cpp.o: ../Header/util.cpp
 CMakeFiles/AGM2D.dir/Header/util.cpp.o: ../Header/util.h
 
 CMakeFiles/AGM2D.dir/Header/value.cpp.o: ../Header/Greenfunction.h
+CMakeFiles/AGM2D.dir/Header/value.cpp.o: ../Header/GreenfunctionAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/value.cpp.o: ../Header/GreenfunctionReactionDiffusion.h
 CMakeFiles/AGM2D.dir/Header/value.cpp.o: ../Header/axialLine.h
 CMakeFiles/AGM2D.dir/Header/value.cpp.o: ../Header/boundaryLine.h
@@ -1295,6 +1336,7 @@ CMakeFiles/AGM2D.dir/Header/writeFile.cpp.o: ../Header/Eigen/src/SparseLU/Sparse
 CMakeFiles/AGM2D.dir/Header/writeFile.cpp.o: ../Header/Eigen/src/SparseLU/SparseLU_relax_snode.h
 CMakeFiles/AGM2D.dir/Header/writeFile.cpp.o: ../Header/Eigen/src/SparseQR/SparseQR.h
 CMakeFiles/AGM2D.dir/Header/writeFile.cpp.o: ../Header/Greenfunction.h
+CMakeFiles/AGM2D.dir/Header/writeFile.cpp.o: ../Header/GreenfunctionAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/writeFile.cpp.o: ../Header/GreenfunctionReactionDiffusion.h
 CMakeFiles/AGM2D.dir/Header/writeFile.cpp.o: ../Header/axialLine.h
 CMakeFiles/AGM2D.dir/Header/writeFile.cpp.o: ../Header/boundaryLine.h
@@ -1305,6 +1347,7 @@ CMakeFiles/AGM2D.dir/Header/writeFile.cpp.o: ../Header/matrixMulti.h
 CMakeFiles/AGM2D.dir/Header/writeFile.cpp.o: ../Header/matrixNormal.h
 CMakeFiles/AGM2D.dir/Header/writeFile.cpp.o: ../Header/matrixRow.h
 CMakeFiles/AGM2D.dir/Header/writeFile.cpp.o: ../Header/point.h
+CMakeFiles/AGM2D.dir/Header/writeFile.cpp.o: ../Header/pointAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/writeFile.cpp.o: ../Header/pointHeat.h
 CMakeFiles/AGM2D.dir/Header/writeFile.cpp.o: ../Header/readFile.h
 CMakeFiles/AGM2D.dir/Header/writeFile.cpp.o: ../Header/util.h
@@ -1598,6 +1641,7 @@ CMakeFiles/AGM2D.dir/Header/writeFileMultiple.cpp.o: ../Header/Eigen/src/SparseL
 CMakeFiles/AGM2D.dir/Header/writeFileMultiple.cpp.o: ../Header/Eigen/src/SparseLU/SparseLU_relax_snode.h
 CMakeFiles/AGM2D.dir/Header/writeFileMultiple.cpp.o: ../Header/Eigen/src/SparseQR/SparseQR.h
 CMakeFiles/AGM2D.dir/Header/writeFileMultiple.cpp.o: ../Header/Greenfunction.h
+CMakeFiles/AGM2D.dir/Header/writeFileMultiple.cpp.o: ../Header/GreenfunctionAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/writeFileMultiple.cpp.o: ../Header/GreenfunctionReactionDiffusion.h
 CMakeFiles/AGM2D.dir/Header/writeFileMultiple.cpp.o: ../Header/axialLine.h
 CMakeFiles/AGM2D.dir/Header/writeFileMultiple.cpp.o: ../Header/boundaryLine.h
@@ -1608,6 +1652,7 @@ CMakeFiles/AGM2D.dir/Header/writeFileMultiple.cpp.o: ../Header/matrixMulti.h
 CMakeFiles/AGM2D.dir/Header/writeFileMultiple.cpp.o: ../Header/matrixNormal.h
 CMakeFiles/AGM2D.dir/Header/writeFileMultiple.cpp.o: ../Header/matrixRow.h
 CMakeFiles/AGM2D.dir/Header/writeFileMultiple.cpp.o: ../Header/point.h
+CMakeFiles/AGM2D.dir/Header/writeFileMultiple.cpp.o: ../Header/pointAxisymmetric.h
 CMakeFiles/AGM2D.dir/Header/writeFileMultiple.cpp.o: ../Header/pointHeat.h
 CMakeFiles/AGM2D.dir/Header/writeFileMultiple.cpp.o: ../Header/readFile.h
 CMakeFiles/AGM2D.dir/Header/writeFileMultiple.cpp.o: ../Header/util.h
@@ -1901,6 +1946,7 @@ CMakeFiles/AGM2D.dir/main.cpp.o: ../Header/Eigen/src/plugins/MatrixCwiseBinaryOp
 CMakeFiles/AGM2D.dir/main.cpp.o: ../Header/Eigen/src/plugins/MatrixCwiseUnaryOps.h
 CMakeFiles/AGM2D.dir/main.cpp.o: ../Header/Eigen/src/plugins/ReshapedMethods.h
 CMakeFiles/AGM2D.dir/main.cpp.o: ../Header/Greenfunction.h
+CMakeFiles/AGM2D.dir/main.cpp.o: ../Header/GreenfunctionAxisymmetric.h
 CMakeFiles/AGM2D.dir/main.cpp.o: ../Header/GreenfunctionReactionDiffusion.h
 CMakeFiles/AGM2D.dir/main.cpp.o: ../Header/axialLine.h
 CMakeFiles/AGM2D.dir/main.cpp.o: ../Header/boundaryLine.h
@@ -1911,6 +1957,7 @@ CMakeFiles/AGM2D.dir/main.cpp.o: ../Header/matrixMulti.h
 CMakeFiles/AGM2D.dir/main.cpp.o: ../Header/matrixNormal.h
 CMakeFiles/AGM2D.dir/main.cpp.o: ../Header/matrixRow.h
 CMakeFiles/AGM2D.dir/main.cpp.o: ../Header/point.h
+CMakeFiles/AGM2D.dir/main.cpp.o: ../Header/pointAxisymmetric.h
 CMakeFiles/AGM2D.dir/main.cpp.o: ../Header/pointHeat.h
 CMakeFiles/AGM2D.dir/main.cpp.o: ../Header/readFile.h
 CMakeFiles/AGM2D.dir/main.cpp.o: ../Header/solver.h

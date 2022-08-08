@@ -22,13 +22,13 @@ namespace AGM {
 
         virtual ~axialLine();
 
-        [[nodiscard]] char getMark() const;
+        [[nodiscard]] auto getMark() const -> char;
 
         void setMark(char i);
 
-        double &operator[](int i);
+        auto operator[](int i) -> double &;
 
-        double operator-(axialLine &line);
+        auto operator-(axialLine &line) -> double;
     };
 }
 

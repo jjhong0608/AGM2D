@@ -12,7 +12,7 @@ void AGM::matrixRow::remove(int i) {
     }
 }
 
-double &AGM::matrixRow::operator[](int i) {
+auto AGM::matrixRow::operator[](int i) -> double & {
     if (empty()) {
         matrixElement args;
         args.idx = i;
@@ -39,7 +39,7 @@ double &AGM::matrixRow::operator[](int i) {
     return back().value;
 }
 
-AGM::matrixRow AGM::matrixRow::operator+(const AGM::matrixRow &src) const {
+auto AGM::matrixRow::operator+(const AGM::matrixRow &src) const -> AGM::matrixRow {
     auto row = matrixRow();
     row = *this;
     for (const auto &i: src) {
@@ -48,7 +48,7 @@ AGM::matrixRow AGM::matrixRow::operator+(const AGM::matrixRow &src) const {
     return row;
 }
 
-AGM::matrixRow AGM::matrixRow::operator-(const AGM::matrixRow &src) const {
+auto AGM::matrixRow::operator-(const AGM::matrixRow &src) const -> AGM::matrixRow {
     auto row = matrixRow();
     row = *this;
     for (const auto &i: src) {
@@ -57,7 +57,7 @@ AGM::matrixRow AGM::matrixRow::operator-(const AGM::matrixRow &src) const {
     return row;
 }
 
-AGM::matrixRow AGM::matrixRow::operator*(double d) const {
+auto AGM::matrixRow::operator*(double d) const -> AGM::matrixRow {
     auto row = matrixRow();
     row = *this;
     for (auto &i: row) {
@@ -66,14 +66,14 @@ AGM::matrixRow AGM::matrixRow::operator*(double d) const {
     return row;
 }
 
-AGM::matrixRow AGM::matrixRow::operator+=(const AGM::matrixRow &src) {
+auto AGM::matrixRow::operator+=(const AGM::matrixRow &src) -> AGM::matrixRow {
     for (const auto &i: src) {
         (*this)[i.idx] += i.value;
     }
     return *this;
 }
 
-AGM::matrixRow AGM::matrixRow::operator-=(const AGM::matrixRow &src) {
+auto AGM::matrixRow::operator-=(const AGM::matrixRow &src) -> AGM::matrixRow {
     for (const auto &i: src) {
         (*this)[i.idx] -= i.value;
     }

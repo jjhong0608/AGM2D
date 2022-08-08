@@ -44,85 +44,85 @@ namespace AGM {
 
         virtual ~point();
 
-        int getIdx() const;
+        auto getIdx() const -> int;
 
         void setIdx(int i);
 
-        const coordinate &getXy() const;
+        auto getXy() const -> const coordinate &;
 
         void setXy(const coordinate &coordinate);
 
-        const coordinate &getNormal() const;
+        auto getNormal() const -> const coordinate &;
 
         void setNormal(const coordinate &coordinate);
 
-        double getMp() const;
+        auto getMp() const -> double;
 
         void setMp(double d);
 
-        char getCondition() const;
+        auto getCondition() const -> char;
 
         void setCondition(char i);
 
-        const std::array<point *, 12> &getElement() const;
+        auto getElement() const -> const std::array<point *, 12> &;
 
         void setElement(const std::array<point *, 12> &array);
 
-        const value &getValue() const;
+        auto getValue() const -> const value &;
 
         void setValue(const value &value);
 
-        const std::array<matrixRow, 2> &getSolMatrixRow() const;
+        auto getSolMatrixRow() const -> const std::array<matrixRow, 2> &;
 
         void setSolMatrixRow(const std::array<matrixRow, 2> &row);
 
-        const std::array<matrixRow, 2> &getDeriMatrixRow() const;
+        auto getDeriMatrixRow() const -> const std::array<matrixRow, 2> &;
 
         void setDeriMatrixRow(const std::array<matrixRow, 2> &row);
 
-        const std::array<double, 2> &getRb() const;
+        auto getRb() const -> const std::array<double, 2> &;
 
         void setRb(const std::array<double, 2> &array);
 
-        const std::array<AGM::axialLine *, 2> &getAxialLine() const;
+        auto getAxialLine() const -> const std::array<AGM::axialLine *, 2> &;
 
-        axialLine *&getAxialLine(char i);
+        auto getAxialLine(char i) -> axialLine *&;
 
         void setAxialLine(const std::array<AGM::axialLine *, 2> &array);
 
         void setAxialLine(AGM::axialLine *line, char i);
 
-        static int getNPts();
+        static auto getNPts() -> int;
 
         static void setNPts(int i);
 
-        static std::vector<axialLine> *&getAxialLines(char i);
+        static auto getAxialLines(char i) -> std::vector<axialLine> *&;
 
         static void setAxialLines(std::vector<axialLine> *line, char i);
 
-        static std::vector<boundaryLine2D> *getBdLine();
+        static auto getBdLine() -> std::vector<boundaryLine2D> *;
 
         static void setBdLine(std::vector<boundaryLine2D> *line);
 
-        static std::vector<point> *getPts();
+        static auto getPts() -> std::vector<point> *;
 
         static void setPts(std::vector<point> *vector);
 
-        double &operator[](int i);
+        auto operator[](int i) -> double &;
 
-        const double &operator[](int i) const;
+        auto operator[](int i) const -> const double &;
 
-        point *&operator[](EWNS ewns);
+        auto operator[](EWNS ewns) -> point *&;
 
-        double &operator[](const std::string &string);
+        auto operator[](const std::string &string) -> double &;
 
-        const double &operator[](const std::string &string) const;
+        auto operator[](const std::string &string) const -> const double &;
 
-        double operator-(const point &src);
+        auto operator-(const point &src) -> double;
 
-        double operator-(axialLine &src);
+        auto operator-(axialLine &src) -> double;
 
-        point &operator=(const point &src);
+        auto operator=(const point &src) -> point &;
 
         void findStencil();
 
@@ -142,9 +142,9 @@ namespace AGM {
 
         void calculateRepresentationFormulaNeumann();
 
-        virtual matrixRow calculateRepresentationFormulaNeumannOnAxial(char axis, int axisInt);
+        virtual auto calculateRepresentationFormulaNeumannOnAxial(char axis, int axisInt) -> matrixRow;
 
-        virtual matrixRow calculateRepresentationFormulaNeumannOffAxial(char axis, int axisInt);
+        virtual auto calculateRepresentationFormulaNeumannOffAxial(char axis, int axisInt) -> matrixRow;
 
         virtual void calculateRepresentationFormulaInterface();
 

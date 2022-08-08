@@ -17,17 +17,17 @@ namespace AGM {
     public:
         void remove(int i);
 
-        double &operator[](int i);
+        auto operator[](int i) -> double &;
 
-        matrixRow operator+(const matrixRow &src) const;
+        auto operator+(const matrixRow &src) const -> matrixRow;
 
-        matrixRow operator-(const matrixRow &src) const;
+        auto operator-(const matrixRow &src) const -> matrixRow;
 
-        matrixRow operator*(double d) const;
+        auto operator*(double d) const -> matrixRow;
 
-        matrixRow operator+=(const matrixRow &src);
+        auto operator+=(const matrixRow &src) -> matrixRow;
 
-        matrixRow operator-=(const matrixRow &src);
+        auto operator-=(const matrixRow &src) -> matrixRow;
     };
 }
 

@@ -12,27 +12,27 @@ AGM::coordinate::coordinate(double x, double y) : std::array<double, 2>{x, y} {
 
 }
 
-double AGM::coordinate::norm() const {
+auto AGM::coordinate::norm() const -> double {
     return std::sqrt(at(0) * at(0) + at(1) * at(1));
 }
 
-AGM::coordinate AGM::coordinate::operator+(const AGM::coordinate &src) const {
+auto AGM::coordinate::operator+(const AGM::coordinate &src) const -> AGM::coordinate {
     return {at(0) + src.at(0), at(1) + src.at(1)};
 }
 
-AGM::coordinate AGM::coordinate::operator-(const AGM::coordinate &src) const {
+auto AGM::coordinate::operator-(const AGM::coordinate &src) const -> AGM::coordinate {
     return {at(0) - src.at(0), at(1) - src.at(1)};
 }
 
-AGM::coordinate AGM::coordinate::operator*(double d) const {
+auto AGM::coordinate::operator*(double d) const -> AGM::coordinate {
     return {at(0) * d, at(1) * d};
 }
 
-bool AGM::coordinate::operator==(const AGM::coordinate &src) const {
+auto AGM::coordinate::operator==(const AGM::coordinate &src) const -> bool {
     return isclose(at(0), src.at(0)) && isclose(at(1), src.at(1));
 }
 
-bool AGM::coordinate::operator!=(const AGM::coordinate &src) const {
+auto AGM::coordinate::operator!=(const AGM::coordinate &src) const -> bool {
     return !(*this == src);
 }
 

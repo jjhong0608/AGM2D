@@ -14,35 +14,35 @@ AGM::GreenfunctionReactionDiffusion::GreenfunctionReactionDiffusion(double tm, d
     GreenfunctionReactionDiffusion::alpha = std::sqrt(c / mpl);
 }
 
-double AGM::GreenfunctionReactionDiffusion::E(double a, double b) const {
+auto AGM::GreenfunctionReactionDiffusion::E(double a, double b) const -> double {
     return UNITVALUE - std::exp(-2.0E0 * alpha * (a - b));
 }
 
-double AGM::GreenfunctionReactionDiffusion::F(double a, double b) const {
+auto AGM::GreenfunctionReactionDiffusion::F(double a, double b) const -> double {
     return UNITVALUE + std::exp(-2.0E0 * alpha * (a - b));
 }
 
-double AGM::GreenfunctionReactionDiffusion::l2p(double s) const {
+auto AGM::GreenfunctionReactionDiffusion::l2p(double s) const -> double {
     return std::pow(s, 2) / alpha + 2.0E0 * s / std::pow(alpha, 2) + 2.0E0 / std::pow(alpha, 3);
 }
 
-double AGM::GreenfunctionReactionDiffusion::l2m(double s) const {
+auto AGM::GreenfunctionReactionDiffusion::l2m(double s) const -> double {
     return std::pow(s, 2) / alpha - 2.0E0 * s / std::pow(alpha, 2) + 2.0E0 / std::pow(alpha, 3);
 }
 
-double AGM::GreenfunctionReactionDiffusion::l1p(double s) const {
+auto AGM::GreenfunctionReactionDiffusion::l1p(double s) const -> double {
     return s / alpha + 1 / std::pow(alpha, 2);
 }
 
-double AGM::GreenfunctionReactionDiffusion::l1m(double s) const {
+auto AGM::GreenfunctionReactionDiffusion::l1m(double s) const -> double {
     return s / alpha - 1 / std::pow(alpha, 2);
 }
 
-double AGM::GreenfunctionReactionDiffusion::l0(double a, double b) const {
+auto AGM::GreenfunctionReactionDiffusion::l0(double a, double b) const -> double {
     return (UNITVALUE - std::exp(-alpha * (a - b))) / alpha;
 }
 
-double AGM::GreenfunctionReactionDiffusion::green_function(double t) const {
+auto AGM::GreenfunctionReactionDiffusion::green_function(double t) const -> double {
     if (t < tau || isclose(tm, t)) {
         return alpha / 2.0E0 / c * E(tp, tau) * E(t, tm) / E(tp, tm) * std::exp(-alpha * (tau - t));
     } else {
@@ -50,7 +50,7 @@ double AGM::GreenfunctionReactionDiffusion::green_function(double t) const {
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::green_function_t(double t) const {
+auto AGM::GreenfunctionReactionDiffusion::green_function_t(double t) const -> double {
     if (t < tau || isclose(tm, t)) {
         return std::pow(alpha, 2) / 2.0E0 / c * E(tp, tau) / E(tp, tm) *
                (std::exp(-alpha * (tau - t)) + std::exp(-alpha * (t + tau - 2.0E0 * tm)));
@@ -60,7 +60,7 @@ double AGM::GreenfunctionReactionDiffusion::green_function_t(double t) const {
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::green_function_tau(double t) const {
+auto AGM::GreenfunctionReactionDiffusion::green_function_tau(double t) const -> double {
     if (t < tau || isclose(tm, t)) {
         return -std::pow(alpha, 2) / 2.0E0 / c * E(t, tm) / E(tp, tm) *
                (std::exp(-alpha * (tau - t)) + std::exp(-alpha * (2.0E0 * tp - t - tau)));
@@ -70,7 +70,7 @@ double AGM::GreenfunctionReactionDiffusion::green_function_tau(double t) const {
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::green_function_ttau(double t) const {
+auto AGM::GreenfunctionReactionDiffusion::green_function_ttau(double t) const -> double {
     if (t < tau || isclose(tm, t)) {
         return -std::pow(alpha, 3) / 2.0E0 / c / E(tp, tm) * (E(t, tm) * E(tp, tau) * std::exp(-alpha * (tau - t)) +
                                                               2.0E0 * std::exp(-alpha * (2.0E0 * tp - t - tau)) +
@@ -82,7 +82,7 @@ double AGM::GreenfunctionReactionDiffusion::green_function_ttau(double t) const 
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::green_function_ND(double t) const {
+auto AGM::GreenfunctionReactionDiffusion::green_function_ND(double t) const -> double {
     if (t < tau || isclose(tm, t)) {
         return alpha / 2.0E0 / c * E(tp, tau) * F(t, tm) / F(tp, tm) * std::exp(-alpha * (tau - t));
     } else {
@@ -90,7 +90,7 @@ double AGM::GreenfunctionReactionDiffusion::green_function_ND(double t) const {
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::green_function_t_ND(double t) const {
+auto AGM::GreenfunctionReactionDiffusion::green_function_t_ND(double t) const -> double {
     if (t < tau || isclose(tm, t)) {
         return std::pow(alpha, 2) / 2.0E0 / c * E(tp, tau) / F(tp, tm) *
                (std::exp(-alpha * (tau - t)) - std::exp(-alpha * (t + tau - 2.0E0 * tm)));
@@ -100,7 +100,7 @@ double AGM::GreenfunctionReactionDiffusion::green_function_t_ND(double t) const 
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::green_function_tau_ND(double t) const {
+auto AGM::GreenfunctionReactionDiffusion::green_function_tau_ND(double t) const -> double {
     if (t < tau || isclose(tm, t)) {
         return -std::pow(alpha, 2) / 2.0E0 / c * F(t, tm) / F(tp, tm) *
                (std::exp(-alpha * (tau - t)) + std::exp(-alpha * (2.0E0 * tp - t - tau)));
@@ -111,7 +111,7 @@ double AGM::GreenfunctionReactionDiffusion::green_function_tau_ND(double t) cons
 
 }
 
-double AGM::GreenfunctionReactionDiffusion::green_function_ttau_ND(double t) const {
+auto AGM::GreenfunctionReactionDiffusion::green_function_ttau_ND(double t) const -> double {
     if (t < tau || isclose(tm, t)) {
         return -std::pow(alpha, 3) / 2.0E0 / c / F(tp, tm) * (F(t, tm) * E(tp, tau) * std::exp(-alpha * (tau - t)) +
                                                               2.0E0 * std::exp(-alpha * (2.0E0 * tp - t - tau)) -
@@ -123,7 +123,7 @@ double AGM::GreenfunctionReactionDiffusion::green_function_ttau_ND(double t) con
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::green_function_DN(double t) const {
+auto AGM::GreenfunctionReactionDiffusion::green_function_DN(double t) const -> double {
     if (t < tau || isclose(tm, t)) {
         return alpha / 2.0E0 / c * F(tp, tau) * E(t, tm) / F(tp, tm) * std::exp(-alpha * (tau - t));
     } else {
@@ -131,7 +131,7 @@ double AGM::GreenfunctionReactionDiffusion::green_function_DN(double t) const {
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::green_function_t_DN(double t) const {
+auto AGM::GreenfunctionReactionDiffusion::green_function_t_DN(double t) const -> double {
     if (t < tau || isclose(tm, t)) {
         return std::pow(alpha, 2) / 2.0E0 / c * F(tp, tau) / F(tp, tm) *
                (std::exp(-alpha * (tau - t)) + std::exp(-alpha * (t + tau - 2.0E0 * tm)));
@@ -141,7 +141,7 @@ double AGM::GreenfunctionReactionDiffusion::green_function_t_DN(double t) const 
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::green_function_tau_DN(double t) const {
+auto AGM::GreenfunctionReactionDiffusion::green_function_tau_DN(double t) const -> double {
     if (t < tau || isclose(tm, t)) {
         return -std::pow(alpha, 2) / 2.0E0 / c * E(t, tm) / F(tp, tm) *
                (std::exp(-alpha * (tau - t)) - std::exp(-alpha * (2.0E0 * tp - t - tau)));
@@ -152,7 +152,7 @@ double AGM::GreenfunctionReactionDiffusion::green_function_tau_DN(double t) cons
 
 }
 
-double AGM::GreenfunctionReactionDiffusion::green_function_ttau_DN(double t) const {
+auto AGM::GreenfunctionReactionDiffusion::green_function_ttau_DN(double t) const -> double {
     if (t < tau || isclose(tm, t)) {
         return -std::pow(alpha, 3) / 2.0E0 / c / F(tp, tm) * (E(t, tm) * F(tp, tau) * std::exp(-alpha * (tau - t)) -
                                                               2.0E0 * std::exp(-alpha * (2.0E0 * tp - t - tau)) +
@@ -164,7 +164,7 @@ double AGM::GreenfunctionReactionDiffusion::green_function_ttau_DN(double t) con
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_square(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_square(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -181,7 +181,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_square(char i) const {
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_linear(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_linear(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -198,7 +198,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_linear(char i) const {
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_const(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_const(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -213,7 +213,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_const(char i) const {
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_square_t(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_square_t(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -232,7 +232,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_square_t(char i) const {
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_linear_t(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_linear_t(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -252,7 +252,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_linear_t(char i) const {
 
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_const_t(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_const_t(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -269,7 +269,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_const_t(char i) const {
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_square_tau(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_square_tau(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -288,7 +288,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_square_tau(char i) const {
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_linear_tau(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_linear_tau(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -307,7 +307,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_linear_tau(char i) const {
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_const_tau(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_const_tau(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -324,7 +324,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_const_tau(char i) const {
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_square_ttau(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_square_ttau(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -345,7 +345,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_square_ttau(char i) const 
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_linear_ttau(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_linear_ttau(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -362,7 +362,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_linear_ttau(char i) const 
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_const_ttau(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_const_ttau(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -377,7 +377,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_const_ttau(char i) const {
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_square_ND(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_square_ND(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -394,7 +394,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_square_ND(char i) const {
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_linear_ND(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_linear_ND(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -411,7 +411,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_linear_ND(char i) const {
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_const_ND(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_const_ND(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -426,7 +426,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_const_ND(char i) const {
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_square_t_ND(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_square_t_ND(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -445,7 +445,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_square_t_ND(char i) const 
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_linear_t_ND(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_linear_t_ND(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -464,7 +464,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_linear_t_ND(char i) const 
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_const_t_ND(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_const_t_ND(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -481,7 +481,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_const_t_ND(char i) const {
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_square_tau_ND(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_square_tau_ND(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -500,7 +500,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_square_tau_ND(char i) cons
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_linear_tau_ND(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_linear_tau_ND(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -519,7 +519,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_linear_tau_ND(char i) cons
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_const_tau_ND(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_const_tau_ND(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -536,7 +536,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_const_tau_ND(char i) const
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_square_DN(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_square_DN(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -553,7 +553,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_square_DN(char i) const {
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_linear_DN(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_linear_DN(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -570,7 +570,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_linear_DN(char i) const {
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_const_DN(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_const_DN(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -585,7 +585,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_const_DN(char i) const {
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_square_t_DN(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_square_t_DN(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -604,7 +604,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_square_t_DN(char i) const 
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_linear_t_DN(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_linear_t_DN(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -623,7 +623,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_linear_t_DN(char i) const 
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_const_t_DN(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_const_t_DN(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -640,7 +640,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_const_t_DN(char i) const {
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_square_tau_DN(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_square_tau_DN(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -659,7 +659,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_square_tau_DN(char i) cons
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_linear_tau_DN(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_linear_tau_DN(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':
@@ -678,7 +678,7 @@ double AGM::GreenfunctionReactionDiffusion::integrate_linear_tau_DN(char i) cons
     }
 }
 
-double AGM::GreenfunctionReactionDiffusion::integrate_const_tau_DN(char i) const {
+auto AGM::GreenfunctionReactionDiffusion::integrate_const_tau_DN(char i) const -> double {
     double value{};
     switch (i) {
         case 'l':

@@ -9,7 +9,7 @@ AGM::Greenfunction::Greenfunction(double tm, double tau, double tp, double mpl, 
 
 AGM::Greenfunction::~Greenfunction() = default;
 
-double AGM::Greenfunction::green_function(double t) const {
+auto AGM::Greenfunction::green_function(double t) const -> double {
     if (t < tau || isclose(tm, t)) {
         return (t - tm) * (tau - tp) / (mpl * (tau - tp) + mpr * (-tau + tm));
     } else {
@@ -17,7 +17,7 @@ double AGM::Greenfunction::green_function(double t) const {
     }
 }
 
-double AGM::Greenfunction::green_function_t(double t) const {
+auto AGM::Greenfunction::green_function_t(double t) const -> double {
     if (t < tau || isclose(tm, t)) {
         return (tau - tp) / (mpl * (tau - tp) + mpr * (-tau + tm));
     } else {
@@ -25,7 +25,7 @@ double AGM::Greenfunction::green_function_t(double t) const {
     }
 }
 
-double AGM::Greenfunction::green_function_tau(double t) const {
+auto AGM::Greenfunction::green_function_tau(double t) const -> double {
     if (t < tau || isclose(tm, t)) {
         return (t - tm) * (mpl * (tau - tp) + mpr * (-tau + tm) - (mpl - mpr) * (tau - tp)) /
                pow(mpl * (tau - tp) + mpr * (-tau + tm), 2);
@@ -35,7 +35,7 @@ double AGM::Greenfunction::green_function_tau(double t) const {
     }
 }
 
-double AGM::Greenfunction::green_function_ttau(double t) const {
+auto AGM::Greenfunction::green_function_ttau(double t) const -> double {
     if (t < tau || isclose(tm, t)) {
         return (mpl * (tau - tp) + mpr * (-tau + tm) - (mpl - mpr) * (tau - tp)) /
                pow(mpl * (tau - tp) + mpr * (-tau + tm), 2);
@@ -45,7 +45,7 @@ double AGM::Greenfunction::green_function_ttau(double t) const {
     }
 }
 
-double AGM::Greenfunction::integrate_square(char i) const {
+auto AGM::Greenfunction::integrate_square(char i) const -> double {
     switch (i) {
         case 'l':
             return 1.0 / 12.0 * pow(tau - tm, 2) * (tau - tp) * (3 * pow(tau, 2) + 2 * tau * tm + pow(tm, 2)) /
@@ -59,7 +59,7 @@ double AGM::Greenfunction::integrate_square(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_linear(char i) const {
+auto AGM::Greenfunction::integrate_linear(char i) const -> double {
     switch (i) {
         case 'l':
             return 1.0 / 6.0 * pow(tau - tm, 2) * (tau - tp) * (2 * tau + tm) / (mpl * (tau - tp) - mpr * (tau - tm));
@@ -71,7 +71,7 @@ double AGM::Greenfunction::integrate_linear(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_const(char i) const {
+auto AGM::Greenfunction::integrate_const(char i) const -> double {
     switch (i) {
         case 'l':
             return 1.0 / 2.0 * pow(tau - tm, 2) * (tau - tp) / (mpl * (tau - tp) - mpr * (tau - tm));
@@ -83,7 +83,7 @@ double AGM::Greenfunction::integrate_const(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_square_t(char i) const {
+auto AGM::Greenfunction::integrate_square_t(char i) const -> double {
     switch (i) {
         case 'l':
             return 1.0 / 3.0 * (tau - tm) * (tau - tp) * (pow(tau, 2) + tau * tm + pow(tm, 2)) /
@@ -97,7 +97,7 @@ double AGM::Greenfunction::integrate_square_t(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_linear_t(char i) const {
+auto AGM::Greenfunction::integrate_linear_t(char i) const -> double {
     switch (i) {
         case 'l':
             return 1.0 / 2.0 * (tau - tm) * (tau + tm) * (tau - tp) / (mpl * (tau - tp) - mpr * (tau - tm));
@@ -109,7 +109,7 @@ double AGM::Greenfunction::integrate_linear_t(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_const_t(char i) const {
+auto AGM::Greenfunction::integrate_const_t(char i) const -> double {
     switch (i) {
         case 'l':
             return (tau - tm) * (tau - tp) / (mpl * (tau - tp) - mpr * (tau - tm));
@@ -121,7 +121,7 @@ double AGM::Greenfunction::integrate_const_t(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_square_tau(char i) const {
+auto AGM::Greenfunction::integrate_square_tau(char i) const -> double {
     switch (i) {
         case 'l':
             return 1.0 / 12.0 * mpr * pow(tau - tm, 2) * (tm - tp) * (3 * pow(tau, 2) + 2 * tau * tm + pow(tm, 2)) /
@@ -135,7 +135,7 @@ double AGM::Greenfunction::integrate_square_tau(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_linear_tau(char i) const {
+auto AGM::Greenfunction::integrate_linear_tau(char i) const -> double {
     switch (i) {
         case 'l':
             return 1.0 / 6.0 * mpr * pow(tau - tm, 2) * (2 * tau + tm) * (tm - tp) /
@@ -149,7 +149,7 @@ double AGM::Greenfunction::integrate_linear_tau(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_const_tau(char i) const {
+auto AGM::Greenfunction::integrate_const_tau(char i) const -> double {
     switch (i) {
         case 'l':
             return 1.0 / 2.0 * mpr * pow(tau - tm, 2) * (tm - tp) / pow(mpl * (tau - tp) - mpr * (tau - tm), 2);
@@ -161,7 +161,7 @@ double AGM::Greenfunction::integrate_const_tau(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_square_ttau(char i) const {
+auto AGM::Greenfunction::integrate_square_ttau(char i) const -> double {
     switch (i) {
         case 'l':
             return 1.0 / 3.0 * mpr * (tau - tm) * (tm - tp) * (pow(tau, 2) + tau * tm + pow(tm, 2)) /
@@ -175,7 +175,7 @@ double AGM::Greenfunction::integrate_square_ttau(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_linear_ttau(char i) const {
+auto AGM::Greenfunction::integrate_linear_ttau(char i) const -> double {
     switch (i) {
         case 'l':
             return 1.0 / 2.0 * mpr * (tau - tm) * (tau + tm) * (tm - tp) / pow(mpl * (tau - tp) - mpr * (tau - tm), 2);
@@ -187,7 +187,7 @@ double AGM::Greenfunction::integrate_linear_ttau(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_const_ttau(char i) const {
+auto AGM::Greenfunction::integrate_const_ttau(char i) const -> double {
     switch (i) {
         case 'l':
             return mpr * (tau - tm) * (tm - tp) / pow(mpl * (tau - tp) - mpr * (tau - tm), 2);
@@ -199,7 +199,7 @@ double AGM::Greenfunction::integrate_const_ttau(char i) const {
     }
 }
 
-double AGM::Greenfunction::green_integral(char pos) const {
+auto AGM::Greenfunction::green_integral(char pos) const -> double {
     if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
         return green_integral_linear(pos);
     } else {
@@ -207,7 +207,7 @@ double AGM::Greenfunction::green_integral(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_t(char pos) const {
+auto AGM::Greenfunction::green_integral_t(char pos) const -> double {
     if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
         return green_integral_t_linear(pos);
     } else {
@@ -215,7 +215,7 @@ double AGM::Greenfunction::green_integral_t(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_tau(char pos) const {
+auto AGM::Greenfunction::green_integral_tau(char pos) const -> double {
     if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
         return green_integral_tau_linear(pos);
     } else {
@@ -223,7 +223,7 @@ double AGM::Greenfunction::green_integral_tau(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_ttau(char pos) const {
+auto AGM::Greenfunction::green_integral_ttau(char pos) const -> double {
     if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
         return green_integral_ttau_linear(pos);
     } else {
@@ -231,8 +231,8 @@ double AGM::Greenfunction::green_integral_ttau(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_square(char pos) const {
-    double cc{}, cl{}, cr{};
+auto AGM::Greenfunction::green_integral_square(char pos) const -> double {
+    double cc{};
     switch (pos) {
         case 'l':
             cc = -UNITVALUE / (tau * tm - tau * tp - tm * tm + tm * tp);
@@ -255,8 +255,8 @@ double AGM::Greenfunction::green_integral_square(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_t_square(char pos) const {
-    double cc{}, cl{}, cr{};
+auto AGM::Greenfunction::green_integral_t_square(char pos) const -> double {
+    double cc{};
     switch (pos) {
         case 'l':
             cc = -UNITVALUE / (tau * tm - tau * tp - tm * tm + tm * tp);
@@ -282,8 +282,8 @@ double AGM::Greenfunction::green_integral_t_square(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_tau_square(char pos) const {
-    double cc{}, cl{}, cr{};
+auto AGM::Greenfunction::green_integral_tau_square(char pos) const -> double {
+    double cc{};
     switch (pos) {
         case 'l':
             cc = -UNITVALUE / (tau * tm - tau * tp - tm * tm + tm * tp);
@@ -309,8 +309,8 @@ double AGM::Greenfunction::green_integral_tau_square(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_ttau_square(char pos) const {
-    double cc{}, cl{}, cr{};
+auto AGM::Greenfunction::green_integral_ttau_square(char pos) const -> double {
+    double cc{};
     switch (pos) {
         case 'l':
             cc = -UNITVALUE / (tau * tm - tau * tp - tm * tm + tm * tp);
@@ -336,7 +336,7 @@ double AGM::Greenfunction::green_integral_ttau_square(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_linear(char pos) const {
+auto AGM::Greenfunction::green_integral_linear(char pos) const -> double {
     double cl = isclose(tau, tm) ? ZEROVALUE : UNITVALUE / (tau - tm);
     double cr = isclose(tau, tp) ? ZEROVALUE : UNITVALUE / (tau - tp);
 
@@ -360,7 +360,7 @@ double AGM::Greenfunction::green_integral_linear(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_t_linear(char pos) const {
+auto AGM::Greenfunction::green_integral_t_linear(char pos) const -> double {
     double cl = isclose(tau, tm) ? ZEROVALUE : UNITVALUE / (tau - tm);
     double cr = isclose(tau, tp) ? ZEROVALUE : UNITVALUE / (tau - tp);
 
@@ -384,7 +384,7 @@ double AGM::Greenfunction::green_integral_t_linear(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_tau_linear(char pos) const {
+auto AGM::Greenfunction::green_integral_tau_linear(char pos) const -> double {
     double cl = isclose(tau, tm) ? ZEROVALUE : UNITVALUE / (tau - tm);
     double cr = isclose(tau, tp) ? ZEROVALUE : UNITVALUE / (tau - tp);
 
@@ -408,7 +408,7 @@ double AGM::Greenfunction::green_integral_tau_linear(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_ttau_linear(char pos) const {
+auto AGM::Greenfunction::green_integral_ttau_linear(char pos) const -> double {
     double cl = isclose(tau, tm) ? ZEROVALUE : UNITVALUE / (tau - tm);
     double cr = isclose(tau, tp) ? ZEROVALUE : UNITVALUE / (tau - tp);
 
@@ -432,7 +432,7 @@ double AGM::Greenfunction::green_integral_ttau_linear(char pos) const {
     }
 }
 
-double AGM::Greenfunction::integrate_square_ND(char i) const {
+auto AGM::Greenfunction::integrate_square_ND(char i) const -> double {
     switch (i) {
         case 'l':
             return (1.0 / 3.0) * (pow(tau, 3) * (-tau + tp) + pow(tm, 3) * (tau - tp)) / mpr;
@@ -444,7 +444,7 @@ double AGM::Greenfunction::integrate_square_ND(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_linear_ND(char i) const {
+auto AGM::Greenfunction::integrate_linear_ND(char i) const -> double {
     switch (i) {
         case 'l':
             return (1.0 / 2.0) * (pow(tau, 2) * (-tau + tp) + pow(tm, 2) * (tau - tp)) / mpr;
@@ -456,7 +456,7 @@ double AGM::Greenfunction::integrate_linear_ND(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_const_ND(char i) const {
+auto AGM::Greenfunction::integrate_const_ND(char i) const -> double {
     switch (i) {
         case 'l':
             return (-tau + tm) * (tau - tp) / mpr;
@@ -468,7 +468,7 @@ double AGM::Greenfunction::integrate_const_ND(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_square_t_ND(char i) const {
+auto AGM::Greenfunction::integrate_square_t_ND(char i) const -> double {
     switch (i) {
         case 'l':
             return ZEROVALUE;
@@ -480,7 +480,7 @@ double AGM::Greenfunction::integrate_square_t_ND(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_linear_t_ND(char i) const {
+auto AGM::Greenfunction::integrate_linear_t_ND(char i) const -> double {
     switch (i) {
         case 'l':
             return ZEROVALUE;
@@ -492,7 +492,7 @@ double AGM::Greenfunction::integrate_linear_t_ND(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_const_t_ND(char i) const {
+auto AGM::Greenfunction::integrate_const_t_ND(char i) const -> double {
     switch (i) {
         case 'l':
             return ZEROVALUE;
@@ -504,7 +504,7 @@ double AGM::Greenfunction::integrate_const_t_ND(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_square_tau_ND(char i) const {
+auto AGM::Greenfunction::integrate_square_tau_ND(char i) const -> double {
     switch (i) {
         case 'r':
             return ZEROVALUE;
@@ -516,7 +516,7 @@ double AGM::Greenfunction::integrate_square_tau_ND(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_linear_tau_ND(char i) const {
+auto AGM::Greenfunction::integrate_linear_tau_ND(char i) const -> double {
     switch (i) {
         case 'r':
             return ZEROVALUE;
@@ -528,7 +528,7 @@ double AGM::Greenfunction::integrate_linear_tau_ND(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_const_tau_ND(char i) const {
+auto AGM::Greenfunction::integrate_const_tau_ND(char i) const -> double {
     switch (i) {
         case 'r':
             return ZEROVALUE;
@@ -540,19 +540,19 @@ double AGM::Greenfunction::integrate_const_tau_ND(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_square_ttau_ND(char i) const {
+auto AGM::Greenfunction::integrate_square_ttau_ND(char i) const -> double {
     return ZEROVALUE;
 }
 
-double AGM::Greenfunction::integrate_linear_ttau_ND(char i) const {
+auto AGM::Greenfunction::integrate_linear_ttau_ND(char i) const -> double {
     return ZEROVALUE;
 }
 
-double AGM::Greenfunction::integrate_const_ttau_ND(char i) const {
+auto AGM::Greenfunction::integrate_const_ttau_ND(char i) const -> double {
     return ZEROVALUE;
 }
 
-double AGM::Greenfunction::green_function_ND(double t) const {
+auto AGM::Greenfunction::green_function_ND(double t) const -> double {
     if (t < tau || isclose(tm, t)) {
         return (-tau + tp) / mpr;
     } else {
@@ -560,7 +560,7 @@ double AGM::Greenfunction::green_function_ND(double t) const {
     }
 }
 
-double AGM::Greenfunction::green_function_t_ND(double t) const {
+auto AGM::Greenfunction::green_function_t_ND(double t) const -> double {
     if (t < tau || isclose(tm, t)) {
         return ZEROVALUE;
     } else {
@@ -568,7 +568,7 @@ double AGM::Greenfunction::green_function_t_ND(double t) const {
     }
 }
 
-double AGM::Greenfunction::green_function_tau_ND(double t) const {
+auto AGM::Greenfunction::green_function_tau_ND(double t) const -> double {
     if (t < tau || isclose(tm, t)) {
         return -UNITVALUE / mpr;
     } else {
@@ -576,11 +576,11 @@ double AGM::Greenfunction::green_function_tau_ND(double t) const {
     }
 }
 
-double AGM::Greenfunction::green_function_ttau_ND(double t) const {
+auto AGM::Greenfunction::green_function_ttau_ND(double t) const -> double {
     return ZEROVALUE;
 }
 
-double AGM::Greenfunction::green_integral_ND(char pos) const {
+auto AGM::Greenfunction::green_integral_ND(char pos) const -> double {
     if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
         return green_integral_linear_ND(pos);
     } else {
@@ -588,7 +588,7 @@ double AGM::Greenfunction::green_integral_ND(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_t_ND(char pos) const {
+auto AGM::Greenfunction::green_integral_t_ND(char pos) const -> double {
     if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
         return green_integral_t_linear_ND(pos);
     } else {
@@ -596,7 +596,7 @@ double AGM::Greenfunction::green_integral_t_ND(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_tau_ND(char pos) const {
+auto AGM::Greenfunction::green_integral_tau_ND(char pos) const -> double {
     if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
         return green_integral_tau_linear_ND(pos);
     } else {
@@ -604,7 +604,7 @@ double AGM::Greenfunction::green_integral_tau_ND(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_ttau_ND(char pos) const {
+auto AGM::Greenfunction::green_integral_ttau_ND(char pos) const -> double {
     if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
         return green_integral_ttau_linear_ND(pos);
     } else {
@@ -612,7 +612,7 @@ double AGM::Greenfunction::green_integral_ttau_ND(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_square_ND(char pos) const {
+auto AGM::Greenfunction::green_integral_square_ND(char pos) const -> double {
     double cc{}, cl{}, cr{};
     switch (pos) {
         case 'l':
@@ -664,7 +664,7 @@ double AGM::Greenfunction::green_integral_square_ND(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_t_square_ND(char pos) const {
+auto AGM::Greenfunction::green_integral_t_square_ND(char pos) const -> double {
     double cc{}, cl{}, cr{};
     switch (pos) {
         case 'l':
@@ -716,7 +716,7 @@ double AGM::Greenfunction::green_integral_t_square_ND(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_tau_square_ND(char pos) const {
+auto AGM::Greenfunction::green_integral_tau_square_ND(char pos) const -> double {
     double cc{}, cl{}, cr{};
     switch (pos) {
         case 'l':
@@ -773,7 +773,7 @@ double AGM::Greenfunction::green_integral_tau_square_ND(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_ttau_square_ND(char pos) const {
+auto AGM::Greenfunction::green_integral_ttau_square_ND(char pos) const -> double {
     double cc{}, cl{}, cr{};
     switch (pos) {
         case 'l':
@@ -830,7 +830,7 @@ double AGM::Greenfunction::green_integral_ttau_square_ND(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_linear_ND(char pos) const {
+auto AGM::Greenfunction::green_integral_linear_ND(char pos) const -> double {
     double cl = isclose(tau, tm) ? ZEROVALUE : UNITVALUE / (tau - tm);
     double cr = isclose(tau, tp) ? ZEROVALUE : UNITVALUE / (tau - tp);
 
@@ -854,7 +854,7 @@ double AGM::Greenfunction::green_integral_linear_ND(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_t_linear_ND(char pos) const {
+auto AGM::Greenfunction::green_integral_t_linear_ND(char pos) const -> double {
     double cl = isclose(tau, tm) ? ZEROVALUE : UNITVALUE / (tau - tm);
     double cr = isclose(tau, tp) ? ZEROVALUE : UNITVALUE / (tau - tp);
 
@@ -878,7 +878,7 @@ double AGM::Greenfunction::green_integral_t_linear_ND(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_tau_linear_ND(char pos) const {
+auto AGM::Greenfunction::green_integral_tau_linear_ND(char pos) const -> double {
     double cl = isclose(tau, tm) ? ZEROVALUE : UNITVALUE / (tau - tm);
     double cr = isclose(tau, tp) ? ZEROVALUE : UNITVALUE / (tau - tp);
 
@@ -905,7 +905,7 @@ double AGM::Greenfunction::green_integral_tau_linear_ND(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_ttau_linear_ND(char pos) const {
+auto AGM::Greenfunction::green_integral_ttau_linear_ND(char pos) const -> double {
     double cl = isclose(tau, tm) ? ZEROVALUE : UNITVALUE / (tau - tm);
     double cr = isclose(tau, tp) ? ZEROVALUE : UNITVALUE / (tau - tp);
 
@@ -930,7 +930,7 @@ double AGM::Greenfunction::green_integral_ttau_linear_ND(char pos) const {
     }
 }
 
-double AGM::Greenfunction::integrate_square_DN(char i) const {
+auto AGM::Greenfunction::integrate_square_DN(char i) const -> double {
     switch (i) {
         case 'l':
             return (1.0 / 12.0) * (3 * pow(tau, 4) - 4 * pow(tau, 3) * tm + pow(tm, 4)) / mpr;
@@ -942,7 +942,7 @@ double AGM::Greenfunction::integrate_square_DN(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_linear_DN(char i) const {
+auto AGM::Greenfunction::integrate_linear_DN(char i) const -> double {
     switch (i) {
         case 'l':
             return (1.0 / 6.0) * (2 * pow(tau, 3) - 3 * pow(tau, 2) * tm + pow(tm, 3)) / mpr;
@@ -954,7 +954,7 @@ double AGM::Greenfunction::integrate_linear_DN(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_const_DN(char i) const {
+auto AGM::Greenfunction::integrate_const_DN(char i) const -> double {
     switch (i) {
         case 'l':
             return (1.0 / 2.0) * (pow(tau, 2) - 2 * tau * tm + pow(tm, 2)) / mpr;
@@ -966,7 +966,7 @@ double AGM::Greenfunction::integrate_const_DN(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_square_t_DN(char i) const {
+auto AGM::Greenfunction::integrate_square_t_DN(char i) const -> double {
     switch (i) {
         case 'l':
             return (1.0 / 3.0) * (pow(tau, 3) - pow(tm, 3)) / mpl;
@@ -978,7 +978,7 @@ double AGM::Greenfunction::integrate_square_t_DN(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_linear_t_DN(char i) const {
+auto AGM::Greenfunction::integrate_linear_t_DN(char i) const -> double {
     switch (i) {
         case 'l':
             return (1.0 / 2.0) * (pow(tau, 2) - pow(tm, 2)) / mpl;
@@ -990,7 +990,7 @@ double AGM::Greenfunction::integrate_linear_t_DN(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_const_t_DN(char i) const {
+auto AGM::Greenfunction::integrate_const_t_DN(char i) const -> double {
     switch (i) {
         case 'l':
             return (tau - tm) / mpl;
@@ -1002,7 +1002,7 @@ double AGM::Greenfunction::integrate_const_t_DN(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_square_tau_DN(char i) const {
+auto AGM::Greenfunction::integrate_square_tau_DN(char i) const -> double {
     switch (i) {
         case 'l':
             return ZEROVALUE;
@@ -1014,7 +1014,7 @@ double AGM::Greenfunction::integrate_square_tau_DN(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_linear_tau_DN(char i) const {
+auto AGM::Greenfunction::integrate_linear_tau_DN(char i) const -> double {
     switch (i) {
         case 'l':
             return ZEROVALUE;
@@ -1026,7 +1026,7 @@ double AGM::Greenfunction::integrate_linear_tau_DN(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_const_tau_DN(char i) const {
+auto AGM::Greenfunction::integrate_const_tau_DN(char i) const -> double {
     switch (i) {
         case 'l':
             return ZEROVALUE;
@@ -1038,19 +1038,19 @@ double AGM::Greenfunction::integrate_const_tau_DN(char i) const {
     }
 }
 
-double AGM::Greenfunction::integrate_square_ttau_DN(char i) const {
+auto AGM::Greenfunction::integrate_square_ttau_DN(char i) const -> double {
     return ZEROVALUE;
 }
 
-double AGM::Greenfunction::integrate_linear_ttau_DN(char i) const {
+auto AGM::Greenfunction::integrate_linear_ttau_DN(char i) const -> double {
     return ZEROVALUE;
 }
 
-double AGM::Greenfunction::integrate_const_ttau_DN(char i) const {
+auto AGM::Greenfunction::integrate_const_ttau_DN(char i) const -> double {
     return ZEROVALUE;
 }
 
-double AGM::Greenfunction::green_function_DN(double t) const {
+auto AGM::Greenfunction::green_function_DN(double t) const -> double {
     if (t < tau || isclose(tm, t)) {
         return (t - tm) / mpr;
     } else {
@@ -1058,7 +1058,7 @@ double AGM::Greenfunction::green_function_DN(double t) const {
     }
 }
 
-double AGM::Greenfunction::green_function_t_DN(double t) const {
+auto AGM::Greenfunction::green_function_t_DN(double t) const -> double {
     if (t < tau || isclose(tm, t)) {
         return 1.0 / mpr;
     } else {
@@ -1066,7 +1066,7 @@ double AGM::Greenfunction::green_function_t_DN(double t) const {
     }
 }
 
-double AGM::Greenfunction::green_function_tau_DN(double t) const {
+auto AGM::Greenfunction::green_function_tau_DN(double t) const -> double {
     if (t < tau || isclose(tm, t)) {
         return ZEROVALUE;
     } else {
@@ -1074,11 +1074,11 @@ double AGM::Greenfunction::green_function_tau_DN(double t) const {
     }
 }
 
-double AGM::Greenfunction::green_function_ttau_DN(double t) const {
+auto AGM::Greenfunction::green_function_ttau_DN(double t) const -> double {
     return ZEROVALUE;
 }
 
-double AGM::Greenfunction::green_integral_DN(char pos) const {
+auto AGM::Greenfunction::green_integral_DN(char pos) const -> double {
     if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
         return green_integral_linear_DN(pos);
     } else {
@@ -1086,7 +1086,7 @@ double AGM::Greenfunction::green_integral_DN(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_t_DN(char pos) const {
+auto AGM::Greenfunction::green_integral_t_DN(char pos) const -> double {
     if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
         return green_integral_t_linear_DN(pos);
     } else {
@@ -1094,7 +1094,7 @@ double AGM::Greenfunction::green_integral_t_DN(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_tau_DN(char pos) const {
+auto AGM::Greenfunction::green_integral_tau_DN(char pos) const -> double {
     if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
         return green_integral_tau_linear_DN(pos);
     } else {
@@ -1102,7 +1102,7 @@ double AGM::Greenfunction::green_integral_tau_DN(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_ttau_DN(char pos) const {
+auto AGM::Greenfunction::green_integral_ttau_DN(char pos) const -> double {
     if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
         return green_integral_ttau_linear_DN(pos);
     } else {
@@ -1110,7 +1110,7 @@ double AGM::Greenfunction::green_integral_ttau_DN(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_square_DN(char pos) const {
+auto AGM::Greenfunction::green_integral_square_DN(char pos) const -> double {
     double cc{}, cl{}, cr{};
     switch (pos) {
         case 'l':
@@ -1162,7 +1162,7 @@ double AGM::Greenfunction::green_integral_square_DN(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_t_square_DN(char pos) const {
+auto AGM::Greenfunction::green_integral_t_square_DN(char pos) const -> double {
     double cc{}, cl{}, cr{};
     switch (pos) {
         case 'l':
@@ -1214,7 +1214,7 @@ double AGM::Greenfunction::green_integral_t_square_DN(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_tau_square_DN(char pos) const {
+auto AGM::Greenfunction::green_integral_tau_square_DN(char pos) const -> double {
     double cc{}, cl{}, cr{};
     switch (pos) {
         case 'l':
@@ -1271,7 +1271,7 @@ double AGM::Greenfunction::green_integral_tau_square_DN(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_ttau_square_DN(char pos) const {
+auto AGM::Greenfunction::green_integral_ttau_square_DN(char pos) const -> double {
     double cc{}, cl{}, cr{};
     switch (pos) {
         case 'l':
@@ -1328,7 +1328,7 @@ double AGM::Greenfunction::green_integral_ttau_square_DN(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_linear_DN(char pos) const {
+auto AGM::Greenfunction::green_integral_linear_DN(char pos) const -> double {
     double cl = isclose(tau, tm) ? ZEROVALUE : UNITVALUE / (tau - tm);
     double cr = isclose(tau, tp) ? ZEROVALUE : UNITVALUE / (tau - tp);
 
@@ -1352,7 +1352,7 @@ double AGM::Greenfunction::green_integral_linear_DN(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_t_linear_DN(char pos) const {
+auto AGM::Greenfunction::green_integral_t_linear_DN(char pos) const -> double {
     double cl = isclose(tau, tm) ? ZEROVALUE : UNITVALUE / (tau - tm);
     double cr = isclose(tau, tp) ? ZEROVALUE : UNITVALUE / (tau - tp);
 
@@ -1376,7 +1376,7 @@ double AGM::Greenfunction::green_integral_t_linear_DN(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_tau_linear_DN(char pos) const {
+auto AGM::Greenfunction::green_integral_tau_linear_DN(char pos) const -> double {
     double cl = isclose(tau, tm) ? ZEROVALUE : UNITVALUE / (tau - tm);
     double cr = isclose(tau, tp) ? ZEROVALUE : UNITVALUE / (tau - tp);
 
@@ -1403,7 +1403,7 @@ double AGM::Greenfunction::green_integral_tau_linear_DN(char pos) const {
     }
 }
 
-double AGM::Greenfunction::green_integral_ttau_linear_DN(char pos) const {
+auto AGM::Greenfunction::green_integral_ttau_linear_DN(char pos) const -> double {
     double cl = isclose(tau, tm) ? ZEROVALUE : UNITVALUE / (tau - tm);
     double cr = isclose(tau, tp) ? ZEROVALUE : UNITVALUE / (tau - tp);
 

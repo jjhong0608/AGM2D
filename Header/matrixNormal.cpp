@@ -17,7 +17,7 @@ AGM::matrixNormal<pt>::matrixNormal(std::vector<pt> *pts, int fixedPointIdx):mat
 
 
 template<typename pt>
-int AGM::matrixNormal<pt>::getFixedPointIdx() const {
+auto AGM::matrixNormal<pt>::getFixedPointIdx() const -> int {
     return fixedPointIdx;
 }
 
@@ -154,7 +154,9 @@ void AGM::matrixNormal<pt>::calculateMatrix() {
         }
     }
     double x[2 * matrix<pt>::pPram.n];
-    for (auto &i: x) i = ZEROVALUE;
+    for (int j = 0; j < 2 * matrix<pt>::pPram.n; ++j) {
+        x[j] = ZEROVALUE;
+    }
     matrix<pt>::pPram.phase = 33;
     pardiso(matrix<pt>::pPram.ppt, &matrix<pt>::pPram.maxfct, &matrix<pt>::pPram.mnum, &matrix<pt>::pPram.mtype,
             &matrix<pt>::pPram.phase, &matrix<pt>::pPram.n, matrix<pt>::ent, matrix<pt>::ia, matrix<pt>::ja,

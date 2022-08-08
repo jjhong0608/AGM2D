@@ -8,7 +8,7 @@ AGM::solver::solver(std::vector<point> *pts) : pts(pts) {}
 
 AGM::solver::~solver() = default;
 
-std::vector<AGM::point> *AGM::solver::getPts() const {
+auto AGM::solver::getPts() const -> std::vector<AGM::point> * {
     return pts;
 }
 
@@ -125,14 +125,14 @@ void AGM::solver::axisymmetricEllipticSolver() {
             if (std::isnan(row.value)) {
                 std::cout << "(x, y) = (" << item->getXy()[0] << ", " << item->getXy()[1] << ")\n";
                 std::cout << "condition = " << item->getCondition() << "\n";
-                printError("find NaN value");
+                printError("find NaN0 value");
             }
         }
         for (const auto &row: item->getSolMatrixRow()[1]) {
             if (std::isnan(row.value)) {
                 std::cout << "(x, y) = (" << item->getXy()[0] << ", " << item->getXy()[1] << ")\n";
                 std::cout << "condition = " << item->getCondition() << "\n";
-                printError("find NaN value1");
+                printError("find NaN1 value1");
             }
         }
         if (std::isnan(item->getRb()[0])) {
@@ -157,7 +157,7 @@ void AGM::solver::axisymmetricEllipticSolver() {
 //        std::cout << "condition = " << item.getCondition() << ", " << "value = " << item["sol"] << "\n";
 //    }
 
-//    calculateDifferentiation();
+    calculateDifferentiation();
     auto wf{AGM::writeFile<pointAxisymmetric>(&ptsAxis)};
     wf.writeResult("/home/jjhong0608/docker/AGM2D/Axisymmetric/AGM_Result");
     std::cout << "Relative L2-error = " << wf.calculateError("sol") << "\n";
@@ -269,7 +269,7 @@ void AGM::solver::heatSolver() {
 
 void AGM::solver::NavierStokesSolver() {
     auto f{AGM::NavierStokesFunction()};
-    int fixedPointIndex{};
+    int fixedPointIndex{}, presentIter{}, saveIter{};
     point::setNPts(int(pts->size()));
     auto uvel{std::vector<pointHeat>(point::getNPts())};
     auto vvel{std::vector<pointHeat>(point::getNPts())};
@@ -358,6 +358,13 @@ void AGM::solver::NavierStokesSolver() {
     auto pRhsY1 = [&](int i) -> double {
         return -vvel.at(i)["dy"] / pointHeat::getDelta();
     };
+    auto findSaveIter = [&presentIter, &saveIter]() -> void {
+        saveIter = int(std::floor(NavierStokesFunction::writeTime() / NavierStokesFunction::deltaTime() + 0.5));
+        presentIter = int(std::floor(
+                (std::fmod(NavierStokesFunction::initialTime(), NavierStokesFunction::writeTime())) /
+                 NavierStokesFunction::deltaTime() + 0.5));
+        std::cout << "Initial iteration number = " << presentIter << "\n";
+    };
     auto copyPointInformation = [this, &uvel, &vvel, &fixedPointIndex]() -> void {
         for (int i = 0; i < point::getNPts(); ++i) {
             uvel.at(i).point::operator=(pts->at(i));
@@ -390,6 +397,18 @@ void AGM::solver::NavierStokesSolver() {
             f.assignPreviousValue(puvel.at(i), pvvel.at(i), ppvel.at(i), uvel.at(i), vvel.at(i), pts->at(i));
             f.assignBoundaryValue(uvel.at(i), vvel.at(i));
         }
+
+//        int temp_idx{}, temp_bc{};
+//        double temp_x{}, temp_y{};
+//        std::ifstream file("AGM_Result_2.570000");
+//        if (!file.is_open()) {
+//            printError("assignInitial", "AGM_Result_2.570000 is not opened");
+//        }
+//        for (int i = 0; i < point::getNPts(); ++i) {
+//            file >> temp_idx >> temp_x >> temp_y >> puvel.at(i)["sol"] >> pvvel.at(i)["sol"] >> pts->at(i)["sol"]
+//                 >> puvel.at(i)["dx"] >> puvel.at(i)["dy"] >> pvvel.at(i)["dx"] >> pvvel.at(i)["dy"]
+//                 >> puvel.at(i)["phi"] >> pvvel.at(i)["phi"] >> temp_bc;
+//        }
     };
     auto assignBoundaryValue = [&f, &uvel, &vvel]() -> void {
         #pragma omp parallel for
@@ -510,15 +529,20 @@ void AGM::solver::NavierStokesSolver() {
         }
     };
     auto wf{writeFileMultiple<pointHeat, pointHeat, point>(&uvel, &vvel, pts)};
-    auto updateTime = [&wf]() -> void {
+    auto updateTime = [&presentIter, &saveIter, &wf]() -> void {
+        ++presentIter;
         pointHeat::setTime(pointHeat::getTime() + pointHeat::getDelta());
-        std::cout << "current time = [" << pointHeat::getTime() << " / " << AGM::NavierStokesFunction::terminalTime()
-                  << "]\n";
-        if (isclose(std::floor(pointHeat::getTime() + HALFVALUE * pointHeat::getDelta()), pointHeat::getTime())) {
-            wf.writeResult("/home/jjhong0608/docker/AGM2D/air_foil/test4/AGM_Result_" +
+        std::cout << presentIter << "-th iteration, " << "current time = [" << pointHeat::getTime() << " / "
+                  << AGM::NavierStokesFunction::terminalTime() << "]\n";
+        if (presentIter % saveIter == 0) {
+            wf.writeResult("/home/jjhong0608/docker/AGM2D/air_foil/test5/AGM_Result_" +
                            std::to_string(pointHeat::getTime()));
         }
+        wf.writeResult("/home/jjhong0608/docker/AGM2D/air_foil/test5/AGM_Result_" +
+                       std::to_string(pointHeat::getTime()));
+
     };
+    findSaveIter();
     copyPointInformation();
     assignInitial();
     makeMatrixVelocity();
@@ -559,5 +583,5 @@ void AGM::solver::NavierStokesSolver() {
     matrixVelocity.releaseMatrix();
     matrixPressure.releaseMatrix();
 
-    wf.writeResult("/home/jjhong0608/docker/AGM2D/air_foil/test4/AGM_Result");
+    wf.writeResult("/home/jjhong0608/docker/AGM2D/air_foil/test5/AGM_Result");
 }

@@ -16,6 +16,9 @@ template<typename T0, typename T1, typename T2>
 void AGM::writeFileMultiple<T0, T1, T2>::writeResult(const std::string &string) {
     int bc{};
     std::ofstream f(string);
+    if (!f.is_open()) {
+        printError("AGM::writeFileMultiple<T0, T1, T2>::writeResult", "file (%s) does not opened.", string.c_str());
+    }
     f.precision(16);
     for (int i = 0; i < point::getNPts(); ++i) {
         bc = pts0->at(i).getCondition() == 'C' ? 0 : pts0->at(i).getCondition() == 'D' ? 1 :

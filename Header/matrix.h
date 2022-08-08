@@ -31,19 +31,19 @@ namespace AGM {
 
         virtual ~matrix();
 
-        int *getIa() const;
+        auto getIa() const -> int *;
 
         void setIa(int *pInt);
 
-        int *getJa() const;
+        auto getJa() const -> int *;
 
         void setJa(int *pInt);
 
-        double *getEnt() const;
+        auto getEnt() const -> double *;
 
         void setEnt(double *pDouble);
 
-        std::vector<pt> *getPts() const;
+        auto getPts() const -> std::vector<pt> *;
 
         void setPts(std::vector<pt> *vector);
 

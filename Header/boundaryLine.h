@@ -16,17 +16,17 @@ namespace AGM {
 
         virtual ~denseMatrix();
 
-        denseMatrix operator+(const denseMatrix &src);
+        auto operator+(const denseMatrix &src) -> denseMatrix;
 
-        denseMatrix operator-(const denseMatrix &src);
+        auto operator-(const denseMatrix &src) -> denseMatrix;
 
-        denseMatrix operator*(double d);
+        auto operator*(double d) -> denseMatrix;
 
-        denseMatrix operator*(const denseMatrix &src);
+        auto operator*(const denseMatrix &src) -> denseMatrix;
 
-        AGM::vector operator*(const AGM::vector &src);
+        auto operator*(const AGM::vector &src) -> AGM::vector;
 
-        denseMatrix &operator=(const denseMatrix &src);
+        auto operator=(const denseMatrix &src) -> denseMatrix &;
     };
 
     class line2D {
@@ -43,29 +43,29 @@ namespace AGM {
 
         void calcProperties();
 
-        [[nodiscard]] vector &getStart();
+        [[nodiscard]] auto getStart() -> vector &;
 
-        [[nodiscard]] const vector &getStart() const;
+        [[nodiscard]] auto getStart() const -> const vector &;
 
         void setStart(const vector &vector);
 
-        [[nodiscard]] vector &getAnEnd();
+        [[nodiscard]] auto getAnEnd() -> vector &;
 
-        [[nodiscard]] const vector &getAnEnd() const;
+        [[nodiscard]] auto getAnEnd() const -> const vector &;
 
         void setAnEnd(const vector &vector);
 
-        [[nodiscard]] vector &getNormal();
+        [[nodiscard]] auto getNormal() -> vector &;
 
-        [[nodiscard]] const vector &getNormal() const;
+        [[nodiscard]] auto getNormal() const -> const vector &;
 
-        [[nodiscard]] vector &getTangent();
+        [[nodiscard]] auto getTangent() -> vector &;
 
-        [[nodiscard]] const vector &getTangent() const;
+        [[nodiscard]] auto getTangent() const -> const vector &;
 
-        [[nodiscard]] double getLength() const;
+        [[nodiscard]] auto getLength() const -> double;
 
-        bool iscross(const line2D &src, AGM::vector &vec);
+        auto iscross(const line2D &src, AGM::vector &vec) -> bool;
 
         virtual ~line2D();
     };
@@ -81,11 +81,11 @@ namespace AGM {
 
         boundaryLine2D(double s0, double s1, double e0, double e1, char condition, double boundaryValue);
 
-        [[nodiscard]] char getCondition() const;
+        [[nodiscard]] auto getCondition() const -> char;
 
         void setCondition(char i);
 
-        [[nodiscard]] double getBoundaryValue() const;
+        [[nodiscard]] auto getBoundaryValue() const -> double;
 
         void setBoundaryValue(double boundaryValue);
     };

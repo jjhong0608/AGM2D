@@ -16,41 +16,41 @@ namespace AGM {
 
         virtual ~vector();
 
-        double norm();
+        auto norm() -> double;
 
-        double dot(const vector &src);
+        auto dot(const vector &src) -> double;
 
-        vector cross(const vector &src);
+        auto cross(const vector &src) -> vector;
 
-        vector unitVector();
+        auto unitVector() -> vector;
 
-        vector operator+(const vector &src);
+        auto operator+(const vector &src) -> vector;
 
-        vector operator-(const vector &src);
+        auto operator-(const vector &src) -> vector;
 
-        vector operator*(double d);
+        auto operator*(double d) -> vector;
 
-        vector operator/(double d);
+        auto operator/(double d) -> vector;
 
-        vector operator+(const vector &src) const;
+        auto operator+(const vector &src) const -> vector;
 
-        vector operator-(const vector &src) const;
+        auto operator-(const vector &src) const -> vector;
 
-        vector operator*(double d) const;
+        auto operator*(double d) const -> vector;
 
-        vector operator/(double d) const;
+        auto operator/(double d) const -> vector;
 
-        double operator*(const vector &src);
+        auto operator*(const vector &src) -> double;
 
-        vector &operator+=(const vector &src);
+        auto operator+=(const vector &src) -> vector &;
 
-        vector &operator-=(const vector &src);
+        auto operator-=(const vector &src) -> vector &;
 
-        vector &operator*=(double d);
+        auto operator*=(double d) -> vector &;
 
-        bool operator<(const vector &src);
+        auto operator<(const vector &src) -> bool;
 
-        bool operator>(const vector &src);
+        auto operator>(const vector &src) -> bool;
     };
 
 }

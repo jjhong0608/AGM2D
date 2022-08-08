@@ -14,7 +14,7 @@ AGM::denseMatrix::denseMatrix(int row, int col) : vector(row),
 
 AGM::denseMatrix::~denseMatrix() = default;
 
-AGM::denseMatrix AGM::denseMatrix::operator+(const AGM::denseMatrix &src) {
+auto AGM::denseMatrix::operator+(const AGM::denseMatrix &src) -> AGM::denseMatrix {
     if (row != src.row || col != src.col)
         printError("AGM::denseMatrix::operator+",
                    "size of denseMatrix (which is (%d, %d)) is not equal size of source denseMatrix (which is (%d, %d))",
@@ -29,7 +29,7 @@ AGM::denseMatrix AGM::denseMatrix::operator+(const AGM::denseMatrix &src) {
     return denseMatrix;
 }
 
-AGM::denseMatrix AGM::denseMatrix::operator-(const AGM::denseMatrix &src) {
+auto AGM::denseMatrix::operator-(const AGM::denseMatrix &src) -> AGM::denseMatrix {
     if (row != src.row || col != src.col)
         printError("AGM::denseMatrix::operator-",
                    "the size of denseMatrix (which is (%d, %d)) is not equal to the size of source denseMatrix (which is (%d, %d))",
@@ -43,7 +43,7 @@ AGM::denseMatrix AGM::denseMatrix::operator-(const AGM::denseMatrix &src) {
     return mat;
 }
 
-AGM::denseMatrix AGM::denseMatrix::operator*(double d) {
+auto AGM::denseMatrix::operator*(double d) -> AGM::denseMatrix {
     denseMatrix mat = denseMatrix(row, col);
     for (int i = 0; i < row; ++i) {
         for (int j = 0; j < col; ++j) {
@@ -53,7 +53,7 @@ AGM::denseMatrix AGM::denseMatrix::operator*(double d) {
     return mat;
 }
 
-AGM::denseMatrix AGM::denseMatrix::operator*(const AGM::denseMatrix &src) {
+auto AGM::denseMatrix::operator*(const AGM::denseMatrix &src) -> AGM::denseMatrix {
     if (col != src.row)
         printError("AGM::denseMatrix::operator*",
                    "the column size of denseMatrix (which is %d) is not equal to the row size of source denseMatrix (which is %d)",
@@ -72,7 +72,7 @@ AGM::denseMatrix AGM::denseMatrix::operator*(const AGM::denseMatrix &src) {
     return mat;
 }
 
-AGM::vector AGM::denseMatrix::operator*(const AGM::vector &src) {
+auto AGM::denseMatrix::operator*(const AGM::vector &src) -> AGM::vector {
     if (col != src.size())
         printError("AGM::denseMatrix::operator*",
                    "the column size of denseMatrix (which is %d) is not equal to the size of source vector (which is %d)",
@@ -89,7 +89,7 @@ AGM::vector AGM::denseMatrix::operator*(const AGM::vector &src) {
     return vec;
 }
 
-AGM::denseMatrix &AGM::denseMatrix::operator=(const AGM::denseMatrix &src) {
+auto AGM::denseMatrix::operator=(const AGM::denseMatrix &src) -> AGM::denseMatrix & {
     row = src.row;
     col = src.col;
     resize(row);
@@ -123,11 +123,11 @@ void AGM::line2D::calcProperties() {
     tangent = line.unitVector();
 }
 
-AGM::vector &AGM::line2D::getStart() {
+auto AGM::line2D::getStart() -> AGM::vector & {
     return start;
 }
 
-const AGM::vector &AGM::line2D::getStart() const {
+auto AGM::line2D::getStart() const -> const AGM::vector & {
     return start;
 }
 
@@ -138,11 +138,11 @@ void AGM::line2D::setStart(const AGM::vector &vector) {
     start = vector;
 }
 
-AGM::vector &AGM::line2D::getAnEnd() {
+auto AGM::line2D::getAnEnd() -> AGM::vector & {
     return end;
 }
 
-const AGM::vector &AGM::line2D::getAnEnd() const {
+auto AGM::line2D::getAnEnd() const -> const AGM::vector & {
     return end;
 }
 
@@ -153,27 +153,27 @@ void AGM::line2D::setAnEnd(const AGM::vector &vector) {
     end = vector;
 }
 
-AGM::vector &AGM::line2D::getNormal() {
+auto AGM::line2D::getNormal() -> AGM::vector & {
     return normal;
 }
 
-const AGM::vector &AGM::line2D::getNormal() const {
+auto AGM::line2D::getNormal() const -> const AGM::vector & {
     return normal;
 }
 
-AGM::vector &AGM::line2D::getTangent() {
+auto AGM::line2D::getTangent() -> AGM::vector & {
     return tangent;
 }
 
-const AGM::vector &AGM::line2D::getTangent() const {
+auto AGM::line2D::getTangent() const -> const AGM::vector & {
     return tangent;
 }
 
-double AGM::line2D::getLength() const {
+auto AGM::line2D::getLength() const -> double {
     return length;
 }
 
-bool AGM::line2D::iscross(const AGM::line2D &src, AGM::vector &vec) {
+auto AGM::line2D::iscross(const AGM::line2D &src, AGM::vector &vec) -> bool {
     if (isclose(std::fabs((src.end - src.start).unitVector() * tangent), UNITVALUE)) {
         return false;
     }
@@ -219,7 +219,7 @@ AGM::boundaryLine2D::boundaryLine2D(const AGM::vector &start, const AGM::vector 
                                     double boundaryValue) : line2D(start, anEnd), condition(condition),
                                                             boundary_value(boundaryValue) {}
 
-char AGM::boundaryLine2D::getCondition() const {
+auto AGM::boundaryLine2D::getCondition() const -> char {
     return condition;
 }
 
@@ -227,7 +227,7 @@ void AGM::boundaryLine2D::setCondition(char i) {
     boundaryLine2D::condition = i;
 }
 
-double AGM::boundaryLine2D::getBoundaryValue() const {
+auto AGM::boundaryLine2D::getBoundaryValue() const -> double {
     return boundary_value;
 }
 

@@ -23,7 +23,7 @@ AGM::point::point(const AGM::coordinate &xy, double mp) : xy(xy), mp(mp) {}
 
 AGM::point::point(int idx, const AGM::coordinate &xy, double mp) : idx(idx), xy(xy), mp(mp) {}
 
-int AGM::point::getIdx() const {
+auto AGM::point::getIdx() const -> int {
     return idx;
 }
 
@@ -31,7 +31,7 @@ void AGM::point::setIdx(int i) {
     point::idx = i;
 }
 
-const AGM::coordinate &AGM::point::getXy() const {
+auto AGM::point::getXy() const -> const AGM::coordinate & {
     return xy;
 }
 
@@ -39,7 +39,7 @@ void AGM::point::setXy(const AGM::coordinate &coordinate) {
     point::xy = coordinate;
 }
 
-const AGM::coordinate &AGM::point::getNormal() const {
+auto AGM::point::getNormal() const -> const AGM::coordinate & {
     return normal;
 }
 
@@ -47,7 +47,7 @@ void AGM::point::setNormal(const AGM::coordinate &coordinate) {
     point::normal = coordinate;
 }
 
-double AGM::point::getMp() const {
+auto AGM::point::getMp() const -> double {
     return mp;
 }
 
@@ -55,7 +55,7 @@ void AGM::point::setMp(double d) {
     point::mp = d;
 }
 
-char AGM::point::getCondition() const {
+auto AGM::point::getCondition() const -> char {
     return condition;
 }
 
@@ -63,7 +63,7 @@ void AGM::point::setCondition(char i) {
     point::condition = i;
 }
 
-const std::array<AGM::point *, 12> &AGM::point::getElement() const {
+auto AGM::point::getElement() const -> const std::array<AGM::point *, 12> & {
     return element;
 }
 
@@ -71,7 +71,7 @@ void AGM::point::setElement(const std::array<AGM::point *, 12> &array) {
     point::element = array;
 }
 
-const AGM::value &AGM::point::getValue() const {
+auto AGM::point::getValue() const -> const AGM::value & {
     return values;
 }
 
@@ -79,7 +79,7 @@ void AGM::point::setValue(const AGM::value &value) {
     point::values = value;
 }
 
-const std::array<AGM::matrixRow, 2> &AGM::point::getSolMatrixRow() const {
+auto AGM::point::getSolMatrixRow() const -> const std::array<AGM::matrixRow, 2> & {
     return solMatrixRow;
 }
 
@@ -87,7 +87,7 @@ void AGM::point::setSolMatrixRow(const std::array<AGM::matrixRow, 2> &row) {
     point::solMatrixRow = row;
 }
 
-const std::array<AGM::matrixRow, 2> &AGM::point::getDeriMatrixRow() const {
+auto AGM::point::getDeriMatrixRow() const -> const std::array<AGM::matrixRow, 2> & {
     return deriMatrixRow;
 }
 
@@ -95,7 +95,7 @@ void AGM::point::setDeriMatrixRow(const std::array<AGM::matrixRow, 2> &row) {
     point::deriMatrixRow = row;
 }
 
-const std::array<double, 2> &AGM::point::getRb() const {
+auto AGM::point::getRb() const -> const std::array<double, 2> & {
     return rb;
 }
 
@@ -103,11 +103,11 @@ void AGM::point::setRb(const std::array<double, 2> &array) {
     point::rb = array;
 }
 
-const std::array<AGM::axialLine *, 2> &AGM::point::getAxialLine() const {
+auto AGM::point::getAxialLine() const -> const std::array<AGM::axialLine *, 2> & {
     return aline;
 }
 
-AGM::axialLine *&AGM::point::getAxialLine(char i) {
+auto AGM::point::getAxialLine(char i) -> AGM::axialLine *& {
     if (i == 'x') return aline[0];
     if (i == 'y') return aline[1];
     if (i == 'z') return aline[2];
@@ -125,7 +125,7 @@ void AGM::point::setAxialLine(AGM::axialLine *line, char i) {
     if (i == 'z') aline[2] = line;
 }
 
-int AGM::point::getNPts() {
+auto AGM::point::getNPts() -> int {
     return nPts;
 }
 
@@ -133,7 +133,7 @@ void AGM::point::setNPts(int i) {
     point::nPts = i;
 }
 
-std::vector<AGM::axialLine> *&AGM::point::getAxialLines(char i) {
+auto AGM::point::getAxialLines(char i) -> std::vector<AGM::axialLine> *& {
     if (i == 'x') return xline;
     if (i == 'y') return yline;
     printError("std::vector<AGM::axialLine> *&AGM::point::getAxialLines", "input character (which is %c) is wrong", i);
@@ -145,7 +145,7 @@ void AGM::point::setAxialLines(std::vector<AGM::axialLine> *line, char i) {
     if (i == 'y') yline = line;
 }
 
-std::vector<AGM::boundaryLine2D> *AGM::point::getBdLine() {
+auto AGM::point::getBdLine() -> std::vector<AGM::boundaryLine2D> * {
     return bdLine;
 }
 
@@ -153,7 +153,7 @@ void AGM::point::setBdLine(std::vector<AGM::boundaryLine2D> *line) {
     point::bdLine = line;
 }
 
-std::vector<AGM::point> *AGM::point::getPts() {
+auto AGM::point::getPts() -> std::vector<AGM::point> * {
     return pts;
 }
 
@@ -161,31 +161,31 @@ void AGM::point::setPts(std::vector<AGM::point> *vector) {
     point::pts = vector;
 }
 
-double &AGM::point::operator[](int i) {
+auto AGM::point::operator[](int i) -> double & {
     return xy[i];
 }
 
-const double &AGM::point::operator[](int i) const {
+auto AGM::point::operator[](int i) const -> const double & {
     return xy[i];
 }
 
-AGM::point *&AGM::point::operator[](AGM::EWNS ewns) {
+auto AGM::point::operator[](AGM::EWNS ewns) -> AGM::point *& {
     return element[ewns];
 }
 
-double &AGM::point::operator[](const std::string &string) {
+auto AGM::point::operator[](const std::string &string) -> double & {
     return values[string];
 }
 
-const double &AGM::point::operator[](const std::string &string) const {
+auto AGM::point::operator[](const std::string &string) const -> const double & {
     return values[string];
 }
 
-double AGM::point::operator-(const AGM::point &src) {
+auto AGM::point::operator-(const AGM::point &src) -> double {
     return (xy - src.xy).norm();
 }
 
-double AGM::point::operator-(axialLine &src) {
+auto AGM::point::operator-(axialLine &src) -> double {
     if (src.getMark() == 'x') {
         return xy[1] - src[2];
     } else if (src.getMark() == 'y') {
@@ -193,9 +193,10 @@ double AGM::point::operator-(axialLine &src) {
     } else {
         printError("AGM::point::operator-", "axialLine mark (which is %c) error", src.getMark());
     }
+    return ZEROVALUE;
 }
 
-AGM::point &AGM::point::operator=(const AGM::point &src) {
+auto AGM::point::operator=(const AGM::point &src) -> AGM::point & {
     if (this != &src) {
         idx = src.idx;
         xy = src.xy;
@@ -420,8 +421,8 @@ void AGM::point::findStencilInterface() {
         double vv{};
         for (const auto &item: {E, W, N, S}) {
             if (getElement()[item]) {
-                if (3e0 * (*getElement()[item] - *this) > vv) {
-                    vv = 3e0 * (*getElement()[item] - *this);
+                if (5e0 * (*getElement()[item] - *this) > vv) {
+                    vv = 5e0 * (*getElement()[item] - *this);
                 }
             }
         }
@@ -517,10 +518,10 @@ void AGM::point::findStencilInterface() {
     auto assignStencil = [&](EWNS ewns, EWNS ewns0, EWNS ewns1, auto func, char lineChar, int lineIdx,
                              double pt) -> void {
         auto alin = func(lineChar, lineIdx, pt);
-//        if (alin && std::fabs((*this) - *alin) > dist) {
-//            std::cout << "(xx, yy) = " << xy[0] << ", " << xy[1] << "\n";
-//            alin = nullptr;
-//        }
+        if (alin && std::fabs((*this) - *alin) > dist) {
+            std::cout << "(xx, yy) = " << xy[0] << ", " << xy[1] << "\n";
+            alin = nullptr;
+        }
         if (alin) {
             auto leftPt = findLeftPt(alin, lineIdx);
             auto rightPt = findRightPt(alin, lineIdx);
@@ -555,18 +556,21 @@ void AGM::point::findStencilInterface() {
             for (const auto &item: *(getBdLine())) {
                 if (line.iscross(item, vec) && item.getCondition() != 'I') {
                     crossLine.emplace_back(point(coordinate(vec[0], vec[1]), getMp()));
-                    crossLine.back().setCondition(std::tolower(item.getCondition()));
+                    crossLine.back().setCondition(char(std::tolower(item.getCondition())));
                     crossLine.back().setNormal(coordinate(item.getNormal()[0], item.getNormal()[1]));
                     crossLine.back()["bdv"] = item.getBoundaryValue();
                 }
             }
+            std::sort(crossLine.begin(), crossLine.end(), [this](point &a, point &b) -> bool {
+                return (a - *this) < (b - *this);
+            });
             if (crossLine.size() > 1) {
                 for (const auto &item: crossLine) {
                     std::cout << "(x, y) = " << item[0] << ", " << item[1] << "\n";
                 }
-                printError("AGM::point::findStencilInterface",
-                           "The size of crossLine (which is %d) more than 1, should be corrected later. (using sort algorithm)",
-                           crossLine.size());
+//                printError("AGM::point::findStencilInterface",
+//                           "The size of crossLine (which is %d) more than 1, should be corrected later. (using sort algorithm)",
+//                           crossLine.size());
             } else if (crossLine.empty()) {
                 std::cout << "(x, y) = (" << getXy()[0] << ", " << getXy()[1] << ")\n";
                 printError("AGM::point::findStencilInterface",
@@ -732,7 +736,7 @@ void AGM::point::calculateRepresentationFormulaNeumann() {
     else if (getCondition() == 'n') approximatePhiAtAppend();
 }
 
-AGM::matrixRow AGM::point::calculateRepresentationFormulaNeumannOnAxial(char axis, int axisInt) {
+auto AGM::point::calculateRepresentationFormulaNeumannOnAxial(char axis, int axisInt) -> AGM::matrixRow {
     auto Error = []() -> double {
         printError("AGM::point::calculateRepresentationFormulaNeumannOnAxial", "nullptr");
         return ZEROVALUE;
@@ -806,7 +810,7 @@ AGM::matrixRow AGM::point::calculateRepresentationFormulaNeumannOnAxial(char axi
     return row;
 }
 
-AGM::matrixRow AGM::point::calculateRepresentationFormulaNeumannOffAxial(char axis, int axisInt) {
+auto AGM::point::calculateRepresentationFormulaNeumannOffAxial(char axis, int axisInt) -> AGM::matrixRow {
     double tm{}, tb{}, tp{};
     if (axis == 'x') {
         tm = element[W] ? element[W]->getXy()[0] : element[WN]->getXy()[0];

@@ -14,11 +14,11 @@ namespace AGM {
         static double time, delta;
 
     public:
-        static double getTime();
+        static auto getTime() -> double;
 
         static void setTime(double d);
 
-        static double getDelta();
+        static auto getDelta() -> double;
 
         static void setDelta(double d);
 
@@ -26,9 +26,9 @@ namespace AGM {
 
         void calculateRepresentationFormulaCross() override;
 
-        matrixRow calculateRepresentationFormulaNeumannOnAxial(char axis, int axisInt) override;
+        auto calculateRepresentationFormulaNeumannOnAxial(char axis, int axisInt) -> matrixRow override;
 
-        matrixRow calculateRepresentationFormulaNeumannOffAxial(char axis, int axisInt) override;
+        auto calculateRepresentationFormulaNeumannOffAxial(char axis, int axisInt) -> matrixRow override;
 
         void calculateRepresentationFormulaInterface() override;
 

@@ -10,10 +10,10 @@ AGM::value::value() : std::array<double, 8>{} {
 
 AGM::value::~value() = default;
 
-double &AGM::value::operator[](const std::string &string) {
+auto AGM::value::operator[](const std::string &string) -> double & {
     return at(valueMap[string]);
 }
 
-const double &AGM::value::operator[](const std::string &string) const {
+auto AGM::value::operator[](const std::string &string) const -> const double & {
     return at(valueMap[string]);
 }

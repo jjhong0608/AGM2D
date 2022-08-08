@@ -14,15 +14,15 @@ namespace AGM {
 
         virtual ~ellipticFunction();
 
-        double u(const point &pt);
+        auto u(const point &pt) -> double;
 
-        double phi(const point &pt);
+        auto phi(const point &pt) -> double;
 
-        double f(const point &pt);
+        auto f(const point &pt) -> double;
 
-        double ux(const point &pt);
+        auto ux(const point &pt) -> double;
 
-        double uy(const point &pt);
+        auto uy(const point &pt) -> double;
 
         void assignBoundaryValue(point &pt);
     };
@@ -33,21 +33,21 @@ namespace AGM {
 
         virtual ~heatFunction();
 
-        static double initialTime();
+        static auto initialTime() -> double;
 
-        static double terminalTime();
+        static auto terminalTime() -> double;
 
-        static double deltaTime();
+        static auto deltaTime() -> double;
 
-        double u(double t, const point &pt);
+        auto u(double t, const point &pt) -> double;
 
-        double phi(double t, const point &pt);
+        auto phi(double t, const point &pt) -> double;
 
-        double f(double t, const point &pt);
+        auto f(double t, const point &pt) -> double;
 
-        double ux(double t, const point &pt);
+        auto ux(double t, const point &pt) -> double;
 
-        double uy(double t, const point &pt);
+        auto uy(double t, const point &pt) -> double;
 
         void assignPreviousValue(AGM::value &value, point &pt);
 
@@ -60,39 +60,39 @@ namespace AGM {
 
         virtual ~NavierStokesFunction();
 
-        static double initialTime();
+        static auto initialTime() -> double;
 
-        static double terminalTime();
+        static auto terminalTime() -> double;
 
-        static double deltaTime();
+        static auto deltaTime() -> double;
 
-        static double writeTime();
+        static auto writeTime() -> double;
 
-        double u(double t, const point &pt);
+        auto u(double t, const point &pt) -> double;
 
-        double v(double t, const point &pt);
+        auto v(double t, const point &pt) -> double;
 
-        double p(double t, const point &pt);
+        auto p(double t, const point &pt) -> double;
 
-        double phi(double t, const point &pt);
+        auto phi(double t, const point &pt) -> double;
 
-        double psi(double t, const point &pt);
+        auto psi(double t, const point &pt) -> double;
 
-        double ux(double t, const point &pt);
+        auto ux(double t, const point &pt) -> double;
 
-        double uy(double t, const point &pt);
+        auto uy(double t, const point &pt) -> double;
 
-        double vx(double t, const point &pt);
+        auto vx(double t, const point &pt) -> double;
 
-        double vy(double t, const point &pt);
+        auto vy(double t, const point &pt) -> double;
 
-        double px(double t, const point &pt);
+        auto px(double t, const point &pt) -> double;
 
-        double py(double t, const point &pt);
+        auto py(double t, const point &pt) -> double;
 
-        double f1(double t, const point &pt);
+        auto f1(double t, const point &pt) -> double;
 
-        double f2(double t, const point &pt);
+        auto f2(double t, const point &pt) -> double;
 
         void assignPreviousValue(AGM::value &pu, AGM::value &pv, AGM::value &pp, point &uvel, point &vvel, point &pres);
 

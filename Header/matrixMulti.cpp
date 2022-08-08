@@ -69,7 +69,9 @@ void AGM::matrixMulti<pt>::calculateMatrix() {
         rb[i + 3 * size] = pts0->at(i).getRb()[1];
     }
     double x[2 * matrix<pt>::pPram.n];
-    for (auto &i: x) i = ZEROVALUE;
+    for (int i = 0; i < 2 * matrix<pt>::pPram.n; ++i) {
+        x[i] = ZEROVALUE;
+    }
     matrix<pt>::pPram.iparm[12] = 2;
     matrix<pt>::pPram.phase = 33;
     pardiso(matrix<pt>::pPram.ppt, &matrix<pt>::pPram.maxfct, &matrix<pt>::pPram.mnum, &matrix<pt>::pPram.mtype,

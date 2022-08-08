@@ -19,17 +19,17 @@ namespace AGM {
 
         explicit writeFile(std::vector<T> *pts);
 
-        T *getPt() const;
+        auto getPt() const -> T *;
 
         void setPt(T *t);
 
-        std::vector<T> *getPts() const;
+        auto getPts() const -> std::vector<T> *;
 
         void setPts(std::vector<T> *vector);
 
         auto calculateErrorAtPoint(const std::string &string);
 
-        double calculateError(const std::string &string);
+        auto calculateError(const std::string &string) -> double;
 
         void writeResult(const std::string &string);
 

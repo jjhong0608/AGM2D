@@ -15,9 +15,9 @@ namespace AGM {
 
         virtual ~value();
 
-        double &operator[](const std::string &string);
+        auto operator[](const std::string &string) -> double &;
 
-        const double &operator[](const std::string &string) const;
+        auto operator[](const std::string &string) const -> const double &;
     };
 }
 

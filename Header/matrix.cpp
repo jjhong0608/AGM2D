@@ -11,7 +11,7 @@ template<typename pt>
 AGM::matrix<pt>::matrix(std::vector<pt> *pts) : pts(pts) {}
 
 template<typename pt>
-int *AGM::matrix<pt>::getIa() const {
+auto AGM::matrix<pt>::getIa() const -> int * {
     return ia;
 }
 
@@ -21,7 +21,7 @@ void AGM::matrix<pt>::setIa(int *pInt) {
 }
 
 template<typename pt>
-int *AGM::matrix<pt>::getJa() const {
+auto AGM::matrix<pt>::getJa() const -> int * {
     return ja;
 }
 
@@ -31,7 +31,7 @@ void AGM::matrix<pt>::setJa(int *pInt) {
 }
 
 template<typename pt>
-double *AGM::matrix<pt>::getEnt() const {
+auto AGM::matrix<pt>::getEnt() const -> double * {
     return ent;
 }
 
@@ -41,7 +41,7 @@ void AGM::matrix<pt>::setEnt(double *pDouble) {
 }
 
 template<typename pt>
-std::vector<pt> *AGM::matrix<pt>::getPts() const {
+auto AGM::matrix<pt>::getPts() const -> std::vector<pt> * {
     return pts;
 }
 
@@ -137,7 +137,9 @@ void AGM::matrix<pt>::calculateMatrix() {
         rb[i + size] = pts->at(i).getRb()[1];
     }
     double x[pPram.n];
-    for (auto &i: x) i = ZEROVALUE;
+    for (int i = 0; i < pPram.n; ++i) {
+        x[i] = ZEROVALUE;
+    }
     pPram.phase = 33;
     pardiso(pPram.ppt, &pPram.maxfct, &pPram.mnum, &pPram.mtype, &pPram.phase, &pPram.n, ent, ia, ja, &pPram.idum,
             &pPram.nrhs, pPram.iparm, &pPram.msglvl, rb, x, &pPram.error);

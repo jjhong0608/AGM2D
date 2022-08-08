@@ -11,7 +11,7 @@ template<typename T>
 AGM::writeFile<T>::writeFile(std::vector<T> *pts):pts(pts) {}
 
 template<typename T>
-T *AGM::writeFile<T>::getPt() const {
+auto AGM::writeFile<T>::getPt() const -> T * {
     return pt;
 }
 
@@ -21,7 +21,7 @@ void AGM::writeFile<T>::setPt(T *t) {
 }
 
 template<typename T>
-std::vector<T> *AGM::writeFile<T>::getPts() const {
+auto AGM::writeFile<T>::getPts() const -> std::vector<T> * {
     return pts;
 }
 
@@ -55,7 +55,7 @@ auto AGM::writeFile<T>::calculateErrorAtPoint(const std::string &string) {
 }
 
 template<typename T>
-double AGM::writeFile<T>::calculateError(const std::string &string) {
+auto AGM::writeFile<T>::calculateError(const std::string &string) -> double {
     double numerator{}, denominator{};
     auto error{std::pair<double, double>{}};
     for (auto &item: *pts) {
@@ -71,6 +71,9 @@ template<typename T>
 void AGM::writeFile<T>::writeResult(const std::string &string) {
     int bc{};
     std::ofstream f(string);
+    if (!f.is_open()) {
+        printError("AGM::writeFile<T>::writeResult", "file (%s) does not opened.", string.c_str());
+    }
     f.precision(16);
     for (const auto &item: *pts) {
         bc = item.getCondition() == 'C' ? 0 : item.getCondition() == 'D' ? 1 : item.getCondition() == 'N' ? 2 :

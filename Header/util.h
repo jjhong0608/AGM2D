@@ -44,27 +44,27 @@
 #endif
 
 namespace AGM {
-    bool isclose(double x, double y, double eps = NEARZERO);
+    auto isclose(double x, double y, double eps = NEARZERO) -> bool;
 
     void printError(const std::string &function_name);
 
     void printError(const char *function_name, const char *fmt, ...);
 
-    bool iszero(double x, double eps = NEARZERO);
+    auto iszero(double x, double eps = NEARZERO) -> bool;
 
-    double sgn(double d);
+    auto sgn(double d) -> double;
 
-    bool ispositive(double d);
+    auto ispositive(double d) -> bool;
 
-    bool isnegative(double d);
+    auto isnegative(double d) -> bool;
 
-    bool ispositivezero(double d);
+    auto ispositivezero(double d) -> bool;
 
-    bool isnegativezero(double d);
+    auto isnegativezero(double d) -> bool;
 
-    [[nodiscard]] double min(double d0, double d1);
+    [[nodiscard]] auto min(double d0, double d1) -> double;
 
-    [[nodiscard]] double max(double d0, double d1);
+    [[nodiscard]] auto max(double d0, double d1) -> double;
 
     enum EWNS {
         E, W, N, S, EN, ES, WN, WS, NE, NW, SE, SW

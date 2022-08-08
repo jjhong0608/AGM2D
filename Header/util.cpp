@@ -4,7 +4,7 @@
 
 #include "util.h"
 
-bool AGM::isclose(double x, double y, double eps) {
+auto AGM::isclose(double x, double y, double eps) -> bool {
     return std::fabs(x - y) < eps;
 }
 
@@ -29,31 +29,31 @@ void AGM::printError(const char *function_name, const char *fmt, ...) {
     exit(1);
 }
 
-bool AGM::iszero(double x, double eps) {
+auto AGM::iszero(double x, double eps) -> bool {
     return std::fabs(x) < eps;
 }
 
-double AGM::sgn(double d) {
+auto AGM::sgn(double d) -> double {
     return (d > ZEROVALUE) - (d < ZEROVALUE);
 }
 
-bool AGM::ispositive(double d) {
+auto AGM::ispositive(double d) -> bool {
     return d > NEARZERO;
 }
 
-bool AGM::isnegative(double d) {
+auto AGM::isnegative(double d) -> bool {
     return d < -NEARZERO;
 }
 
-bool AGM::ispositivezero(double d) {
+auto AGM::ispositivezero(double d) -> bool {
     return ispositive(d) || iszero(d);
 }
 
-bool AGM::isnegativezero(double d) {
+auto AGM::isnegativezero(double d) -> bool {
     return isnegative(d) || iszero(d);
 }
 
-double AGM::min(double d0, double d1) {
+auto AGM::min(double d0, double d1) -> double {
     if (d0 < d1) {
         return d0;
     } else {
@@ -61,7 +61,7 @@ double AGM::min(double d0, double d1) {
     }
 }
 
-double AGM::max(double d0, double d1) {
+auto AGM::max(double d0, double d1) -> double {
     if (d0 < d1) {
         return d1;
     } else {
