@@ -8,6 +8,15 @@ AGM::ellipticFunction::ellipticFunction() = default;
 
 auto AGM::ellipticFunction::u(const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
+
+    // for BFS flow
+    if (isclose(x, 1.5e1)) {
+        return (1.5e0 - y) * y * y;
+    } else if (isclose(x, ZEROVALUE) && y > HALFVALUE) {
+        return -2e0 * y * (4e0 * y * y - 9e0 * y + 6e0) + 2.5e0;
+    } else if (isclose(y, UNITVALUE)) {
+        return HALFVALUE;
+    }
     return ZEROVALUE;
 //    return UNITVALUE / std::sqrt(x * x + y * y);
 }
@@ -131,24 +140,30 @@ auto AGM::NavierStokesFunction::terminalTime() -> double {
 }
 
 auto AGM::NavierStokesFunction::deltaTime() -> double {
-    return 1e-4;
+    return 5e-3;
 }
 
 auto AGM::NavierStokesFunction::writeTime() -> double {
-    return 1e-1;
+    return 1e0;
 }
 
 auto AGM::NavierStokesFunction::u(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
-    // Air Foil
-    if (isclose(x, -7)) {
-        return UNITVALUE;
-    } else if (isclose(y, -7)) {
-        return UNITVALUE;
-    } else if (isclose(y, 6.5)) {
-        return UNITVALUE;
+    // BFS flow
+    if (isclose(x, ZEROVALUE) && y > HALFVALUE) {
+        return 2.4e1 * (y - HALFVALUE) * (UNITVALUE - y);
     }
     return ZEROVALUE;
+
+    // Air Foil
+//    if (isclose(x, -7)) {
+//        return UNITVALUE;
+//    } else if (isclose(y, -7)) {
+//        return UNITVALUE;
+//    } else if (isclose(y, 6.5)) {
+//        return UNITVALUE;
+//    }
+//    return ZEROVALUE;
 
     // Saccular aneurysm
     double c{-3. / 32};
@@ -263,6 +278,33 @@ void AGM::NavierStokesFunction::assignBoundaryValue(AGM::point &uvel, AGM::point
                       vy(pointHeat::getTime() + pointHeat::getDelta(), vvel) * vvel.getNormal()[1];
     }
     vvel["rhs"] = f2(pointHeat::getTime() + pointHeat::getDelta(), vvel);
+}
+
+void AGM::NavierStokesFunction::loadPreviousValue(const std::string &filename, std::vector<AGM::value> *pu,
+                                                  std::vector<AGM::value> *pv, std::vector<AGM::value> *pp) {
+    int idx{}, bc{};
+    double x{}, y{};
+    std::ifstream f(filename);
+    for (int i = 0; i < point::getNPts(); ++i) {
+        f >> idx >> x >> y;
+        if (idx > pu->size()) {
+            printError("AGM::NavierStokesFunction::loadPreviousValue",
+                       "idx (which is %d) is greater(or equal) then size of the point (which is %d)", idx, pu->size());
+        }
+        f >> pu->at(idx)["sol"];
+        f >> pv->at(idx)["sol"];
+        f >> pp->at(idx)["sol"];
+        f >> pu->at(idx)["dx"];
+        f >> pu->at(idx)["dy"];
+        f >> pu->at(idx)["dx"];
+        f >> pu->at(idx)["dy"];
+        f >> pv->at(idx)["dx"];
+        f >> pv->at(idx)["dy"];
+        f >> pu->at(idx)["phi"];
+        f >> pv->at(idx)["psi"];
+        f >> bc;
+    }
+    f.close();
 }
 
 AGM::NavierStokesFunction::~NavierStokesFunction() = default;

@@ -5,7 +5,7 @@
 #ifndef AGM_AXIALLINE_H
 #define AGM_AXIALLINE_H
 
-#include "GreenfunctionReactionDiffusion.h"
+#include "unboundedCondition.h"
 
 namespace AGM {
     class point;

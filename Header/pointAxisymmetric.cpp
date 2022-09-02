@@ -31,20 +31,50 @@ void AGM::pointAxisymmetric::checkOnAxis() {
 
 void AGM::pointAxisymmetric::EquationOnAxis() {
     if (!isOnAxis()) return;
-    std::array<matrixRow, 2> rows{}, rows0{};
+    std::array<matrixRow, 2> rows{};
     matrixRow row{};
 
     row[getIdx()] = -UNITVALUE;
     row[getElement()[E]->getIdx()] = UNITVALUE;
 
-    rows[0] = row;
-    rows[1] = getSolMatrixRow()[1];
-
-    setSolMatrixRow(rows);
-    rhsMatrixRow = rows0;
-    partMatrixRow = rows0;
+    setSolMatrixRow(std::array<matrixRow, 2>{row, getSolMatrixRow()[1]});
+    rhsMatrixRow = std::array<matrixRow, 2>{};
+    partMatrixRow = rhsMatrixRow;
     rb[0] = ZEROVALUE;
     rb[1] = ZEROVALUE;
+
+//    auto Error = []() -> double {
+//        printError("AGM::pointAxisymmetric::EquationOnAxis", "nullptr");
+//        return ZEROVALUE;
+//    };
+//    point *ptr{getAxialLine('x')->at(1)};
+//    double tp{ptr->getXy()[0]};
+//    auto gFunc{GreenfunctionAxisymmetric(ZEROVALUE, ZEROVALUE, tp, mp, mp)};
+//
+//    matrixRow row{};
+//    row[getIdx()] = -UNITVALUE;
+//    row[ptr->getIdx()] = UNITVALUE;
+//
+//    row[getIdx() + getNPts()] = gFunc.green_integral_ND('l') + gFunc.green_integral_ND('c');
+//    row[ptr->getIdx() + getNPts()] = gFunc.green_integral_ND('r');
+//
+//    row[getIdx() + 2 * getNPts()] = gFunc.green_integral_ND('l') + gFunc.green_integral_ND('c');
+//    row[ptr->getIdx() + 2 * getNPts()] = gFunc.green_integral_ND('r');
+//
+//    row[getIdx() + 4 * getNPts()] =
+//            gFunc.green_integral_t_ND('l') + gFunc.green_function_ND(ZEROVALUE) + gFunc.green_integral_t_ND('c');
+//    row[ptr->getIdx() + 4 * getNPts()] = gFunc.green_integral_t_ND('r');
+//
+//    for (const auto &item: row) {
+//        printf("row value = %f\n", item.value);
+//    }
+//    printf("\n");
+//
+//    setSolMatrixRow(std::array<matrixRow, 2>{row, getSolMatrixRow()[1]});
+//    rhsMatrixRow = std::array<matrixRow, 2>{};
+//    partMatrixRow = rhsMatrixRow;
+//    rb[0] = ZEROVALUE;
+//    rb[1] = ZEROVALUE;
 }
 
 void AGM::pointAxisymmetric::calculateRepresentationFormulaCross() {
@@ -67,7 +97,7 @@ auto AGM::pointAxisymmetric::calculateRepresentationFormulaCrossSymmetric() -> A
         auto checkInterface = [](point *pt) -> bool {
             auto getEachMp = [](point *pt, point *ptr, point *ptl) -> double {
                 auto Error = []() -> double {
-                    printError("AGM::point::calculateRepresentationFormulaCross", "getEachMp");
+                    printError("AGM::pointAxisymmetric::calculateRepresentationFormulaCross", "getEachMp");
                     return ZEROVALUE;
                 };
                 double rtv = pt ? pt->getMp() : ptr->getCondition() == 'C' ? ptr->getMp() : ptl->getCondition() == 'C'
@@ -118,7 +148,7 @@ auto AGM::pointAxisymmetric::calculateRepresentationFormulaCrossSymmetricNearAxi
         auto checkInterface = [](point *pt) -> bool {
             auto getEachMp = [](point *pt, point *ptr, point *ptl) -> double {
                 auto Error = []() -> double {
-                    printError("AGM::point::calculateRepresentationFormulaCross", "getEachMp");
+                    printError("AGM::pointAxisymmetric::calculateRepresentationFormulaCross", "getEachMp");
                     return ZEROVALUE;
                 };
                 double rtv = pt ? pt->getMp() : ptr->getCondition() == 'C' ? ptr->getMp() : ptl->getCondition() == 'C'
@@ -166,7 +196,7 @@ auto AGM::pointAxisymmetric::calculateRepresentationFormulaCrossNonSymmetric() -
         auto checkInterface = [](point *pt) -> bool {
             auto getEachMp = [](point *pt, point *ptr, point *ptl) -> double {
                 auto Error = []() -> double {
-                    printError("AGM::point::calculateRepresentationFormulaCross", "getEachMp");
+                    printError("AGM::pointAxisymmetric::calculateRepresentationFormulaCross", "getEachMp");
                     return ZEROVALUE;
                 };
                 double rtv = pt ? pt->getMp() : ptr->getCondition() == 'C' ? ptr->getMp() : ptl->getCondition() == 'C'
@@ -218,7 +248,7 @@ auto AGM::pointAxisymmetric::calculateRepresentationFormulaNeumannOnAxial(char a
 auto AGM::pointAxisymmetric::
 calculateRepresentationFormulaNeumannOnAxialSymmetric() -> AGM::matrixRow {
     auto Error = []() -> double {
-        printError("AGM::point::calculateRepresentationFormulaNeumannOnAxialSymmetric", "nullptr");
+        printError("AGM::pointAxisymmetric::calculateRepresentationFormulaNeumannOnAxialSymmetric", "nullptr");
         return ZEROVALUE;
     };
     point *ptc = getAxialLine('x')->front()->getIdx() == getIdx() ? getAxialLine('x')->at(1) :
@@ -476,7 +506,7 @@ AGM::pointAxisymmetric::calculateRepresentationFormulaNeumannOffAxialNonSymmetri
 void AGM::pointAxisymmetric::calculateRepresentationFormulaInterface() {
     auto getEachMp = [](point *pt, point *ptr, point *ptl) -> double {
         auto Error = []() -> double {
-            printError("AGM::point::calculateRepresentationFormulaInterface", "getEachMp");
+            printError("AGM::pointAxisymmetric::calculateRepresentationFormulaInterface", "getEachMp");
             return ZEROVALUE;
         };
         double rtv = pt ? pt->getMp() : ptr->getCondition() == 'C' ?
@@ -513,7 +543,7 @@ auto AGM::pointAxisymmetric::calculateRepresentationFormulaInterfaceSymmetric() 
     double xp = getElement()[E] ? getElement()[E]->getXy()[0] : getElement()[EN]->getXy()[0];
     auto getEachMp = [](point *pt, point *ptr, point *ptl) -> double {
         auto Error = []() -> double {
-            printError("AGM::point::calculateRepresentationFormulaInterface", "getEachMp");
+            printError("AGM::pointAxisymmetric::calculateRepresentationFormulaInterface", "getEachMp");
             return ZEROVALUE;
         };
         double rtv = pt ? pt->getMp() : ptr->getCondition() == 'C' ?
@@ -616,7 +646,7 @@ auto AGM::pointAxisymmetric::calculateRepresentationFormulaInterfaceSymmetricNea
     double xp = getElement()[E] ? getElement()[E]->getXy()[0] : getElement()[EN]->getXy()[0];
     auto getEachMp = [](point *pt, point *ptr, point *ptl) -> double {
         auto Error = []() -> double {
-            printError("AGM::point::calculateRepresentationFormulaInterface", "getEachMp");
+            printError("AGM::pointAxisymmetric::calculateRepresentationFormulaInterface", "getEachMp");
             return ZEROVALUE;
         };
         double rtv = pt ? pt->getMp() : ptr->getCondition() == 'C' ?
@@ -718,7 +748,7 @@ auto AGM::pointAxisymmetric::calculateRepresentationFormulaInterfaceNonSymmetric
     double yp = getElement()[N] ? getElement()[N]->getXy()[1] : getElement()[NE]->getXy()[1];
     auto getEachMp = [](point *pt, point *ptr, point *ptl) -> double {
         auto Error = []() -> double {
-            printError("AGM::point::calculateRepresentationFormulaInterface", "getEachMp");
+            printError("AGM::pointAxisymmetric::calculateRepresentationFormulaInterface", "getEachMp");
             return ZEROVALUE;
         };
         double rtv = pt ? pt->getMp() : ptr->getCondition() == 'C' ?
@@ -979,7 +1009,7 @@ void AGM::pointAxisymmetric::makeDerivativesInterfaceSymmetric() {
     double xp = getElement()[E] ? getElement()[E]->getXy()[0] : getElement()[EN]->getXy()[0];
     auto getEachMp = [](point *pt, point *ptr, point *ptl) -> double {
         auto Error = []() -> double {
-            printError("AGM::point::calculateRepresentationFormulaInterface", "getEachMp");
+            printError("AGM::pointAxisymmetric::calculateRepresentationFormulaInterface", "getEachMp");
             return ZEROVALUE;
         };
         double rtv = pt ? pt->getMp() : ptr->getCondition() == 'C' ?
@@ -1067,7 +1097,7 @@ void AGM::pointAxisymmetric::makeDerivativesInterfaceSymmetricNearAxis() {
     double xp = getElement()[E] ? getElement()[E]->getXy()[0] : getElement()[EN]->getXy()[0];
     auto getEachMp = [](point *pt, point *ptr, point *ptl) -> double {
         auto Error = []() -> double {
-            printError("AGM::point::calculateRepresentationFormulaInterface", "getEachMp");
+            printError("AGM::pointAxisymmetric::calculateRepresentationFormulaInterface", "getEachMp");
             return ZEROVALUE;
         };
         double rtv = pt ? pt->getMp() : ptr->getCondition() == 'C' ?
@@ -1155,7 +1185,7 @@ void AGM::pointAxisymmetric::makeDerivativesInterfaceNonSymmetric() {
     double yp = getElement()[N] ? getElement()[N]->getXy()[1] : getElement()[NE]->getXy()[1];
     auto getEachMp = [](point *pt, point *ptr, point *ptl) -> double {
         auto Error = []() -> double {
-            printError("AGM::point::calculateRepresentationFormulaInterface", "getEachMp");
+            printError("AGM::pointAxisymmetric::calculateRepresentationFormulaInterface", "getEachMp");
             return ZEROVALUE;
         };
         double rtv = pt ? pt->getMp() : ptr->getCondition() == 'C' ?

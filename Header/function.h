@@ -97,6 +97,9 @@ namespace AGM {
         void assignPreviousValue(AGM::value &pu, AGM::value &pv, AGM::value &pp, point &uvel, point &vvel, point &pres);
 
         void assignBoundaryValue(point &uvel, point &vvel);
+
+        void loadPreviousValue(const std::string &filename, std::vector<value> *pu, std::vector<value> *pv,
+                               std::vector<value> *pp);
     };
 }
 

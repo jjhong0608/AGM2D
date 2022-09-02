@@ -56,7 +56,7 @@ add_executable(AGM2D
         Header/GreenfunctionAxisymmetric.h
         Header/pointAxisymmetric.cpp
         Header/pointAxisymmetric.h
-        )
+        Header/unboundedCondition.cpp Header/unboundedCondition.h)
 
 find_library(
         ILP64_MODULE
@@ -108,6 +108,8 @@ find_library(
         NAMES dl
 )
 
-target_link_libraries(AGM2D ${ILP64_MODULE} ${THREAD_MODULE} ${CORE_MODULE} ${SEQUENTIAL_MODULE} ${IOMP_MODULE} ${LPTHREAD} ${LM} ${LDL})
+find_package(GSL REQUIRED)
+
+target_link_libraries(AGM2D ${ILP64_MODULE} ${THREAD_MODULE} ${CORE_MODULE} ${SEQUENTIAL_MODULE} ${IOMP_MODULE} ${LPTHREAD} ${LM} ${LDL} GSL::gsl GSL::gslcblas)
 
 target_compile_options(AGM2D PUBLIC -xCOMMON-AVX512)

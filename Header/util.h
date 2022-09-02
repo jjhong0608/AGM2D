@@ -27,21 +27,26 @@
 #include <cctype>
 #include <type_traits>
 
-#ifndef UNITVALUE
-#define UNITVALUE 1.0000000000000000E0
-#endif
-#ifndef HALFVALUE
-#define HALFVALUE 5.0000000000000000E-1
-#endif
-#ifndef ZEROVALUE
-#define ZEROVALUE 0.0000000000000000E0
-#endif
-#ifndef NEARZERO
-#define NEARZERO 1.0000000000000000E-10
-#endif
-#ifndef NT
-#define NT 10
-#endif
+constexpr auto UNITVALUE{1.0000000000000000E0};
+constexpr auto HALFVALUE{5.0000000000000000E-1};
+constexpr auto ZEROVALUE{0.0000000000000000E0};
+constexpr auto NEARZERO{1.0000000000000000E-10};
+
+//#ifndef UNITVALUE
+//#define UNITVALUE 1.0000000000000000E0
+//#endif
+//#ifndef HALFVALUE
+//#define HALFVALUE 5.0000000000000000E-1
+//#endif
+//#ifndef ZEROVALUE
+//#define ZEROVALUE 0.0000000000000000E0
+//#endif
+//#ifndef NEARZERO
+//#define NEARZERO 1.0000000000000000E-10
+//#endif
+//#ifndef NT
+//#define NT 10
+//#endif
 
 namespace AGM {
     auto isclose(double x, double y, double eps = NEARZERO) -> bool;

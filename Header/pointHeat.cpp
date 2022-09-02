@@ -111,19 +111,17 @@ auto AGM::pointHeat::calculateRepresentationFormulaNeumannOnAxial(char axis, int
         printError("AGM::pointHeat::calculateRepresentationFormulaNeumannOnAxial", "nullptr");
         return ZEROVALUE;
     };
-    point *ptc = getAxialLine(axis)->front()->getIdx() == getIdx() ? getAxialLine(axis)->at(1)
-                                                                   : getAxialLine(axis)->back()->getIdx() == getIdx()
-                                                                     ? *std::prev(getAxialLine(axis)->end() - 1)
-                                                                     : nullptr;
-    point *ptl =
-            getAxialLine(axis)->front()->getIdx() == getIdx() ? this : getAxialLine(axis)->back()->getIdx() == getIdx()
-                                                                       ? *std::prev(getAxialLine(axis)->end() - 2)
-                                                                       : nullptr;
+    point *ptc = getAxialLine(axis)->front()->getIdx() == getIdx() ? getAxialLine(axis)->at(1) :
+            getAxialLine(axis)->back()->getIdx() == getIdx() ? *std::prev(getAxialLine(axis)->end() - 1) :
+            nullptr;
+    point *ptl = getAxialLine(axis)->front()->getIdx() == getIdx() ? this :
+            getAxialLine(axis)->back()->getIdx() == getIdx() ? *std::prev(getAxialLine(axis)->end() - 2) :
+            nullptr;
     point *ptr = getAxialLine(axis)->front()->getIdx() == getIdx() ? getAxialLine(axis)->at(2) :
-                 getAxialLine(axis)->back()->getIdx() == getIdx() ? this : nullptr;
-    std::string string =
-            getAxialLine(axis)->front()->getIdx() == getIdx() ? "ND" : getAxialLine(axis)->back()->getIdx() == getIdx()
-                                                                       ? "DN" : "";
+            getAxialLine(axis)->back()->getIdx() == getIdx() ? this :
+            nullptr;
+    std::string string = getAxialLine(axis)->front()->getIdx() == getIdx() ? "ND" :
+            getAxialLine(axis)->back()->getIdx() == getIdx() ? "DN" : "";
     double tm = ptl ? ptl->getXy()[axisInt] : Error();
     double tb = ptc ? ptc->getXy()[axisInt] : Error();
     double tp = ptr ? ptr->getXy()[axisInt] : Error();

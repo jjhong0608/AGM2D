@@ -20,6 +20,8 @@ namespace AGM {
 
         void ellipticSolver();
 
+        void streamSolver();
+
         void axisymmetricEllipticSolver();
 
         void heatSolver();

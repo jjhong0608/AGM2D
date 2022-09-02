@@ -18,29 +18,29 @@ namespace AGM {
 
         virtual ~Greenfunction();
 
-        [[nodiscard]] virtual auto integrate_square(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_square(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_linear(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_linear(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_const(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_const(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_square_t(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_square_t(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_linear_t(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_linear_t(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_const_t(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_const_t(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_square_tau(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_square_tau(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_linear_tau(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_linear_tau(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_const_tau(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_const_tau(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_square_ttau(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_square_ttau(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_linear_ttau(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_linear_ttau(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_const_ttau(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_const_ttau(char pos) const -> double;
 
         [[nodiscard]] virtual auto green_function(double t) const -> double;
 
@@ -74,29 +74,29 @@ namespace AGM {
 
         [[nodiscard]] auto green_integral_ttau_linear(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_square_ND(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_square_ND(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_linear_ND(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_linear_ND(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_const_ND(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_const_ND(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_square_t_ND(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_square_t_ND(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_linear_t_ND(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_linear_t_ND(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_const_t_ND(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_const_t_ND(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_square_tau_ND(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_square_tau_ND(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_linear_tau_ND(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_linear_tau_ND(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_const_tau_ND(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_const_tau_ND(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_square_ttau_ND(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_square_ttau_ND(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_linear_ttau_ND(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_linear_ttau_ND(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_const_ttau_ND(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_const_ttau_ND(char pos) const -> double;
 
         [[nodiscard]] virtual auto green_function_ND(double t) const -> double;
 
@@ -130,29 +130,29 @@ namespace AGM {
 
         [[nodiscard]] virtual auto green_integral_ttau_linear_ND(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_square_DN(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_square_DN(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_linear_DN(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_linear_DN(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_const_DN(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_const_DN(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_square_t_DN(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_square_t_DN(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_linear_t_DN(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_linear_t_DN(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_const_t_DN(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_const_t_DN(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_square_tau_DN(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_square_tau_DN(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_linear_tau_DN(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_linear_tau_DN(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_const_tau_DN(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_const_tau_DN(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_square_ttau_DN(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_square_ttau_DN(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_linear_ttau_DN(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_linear_ttau_DN(char pos) const -> double;
 
-        [[nodiscard]] virtual auto integrate_const_ttau_DN(char i) const -> double;
+        [[nodiscard]] virtual auto integrate_const_ttau_DN(char pos) const -> double;
 
         [[nodiscard]] virtual auto green_function_DN(double t) const -> double;
 
@@ -168,7 +168,7 @@ namespace AGM {
 
         [[nodiscard]] virtual auto green_integral_tau_DN(char pos) const -> double;
 
-        [[nodiscard]] auto green_integral_ttau_DN(char pos) const -> double;
+        [[nodiscard]] virtual auto green_integral_ttau_DN(char pos) const -> double;
 
         [[nodiscard]] virtual auto green_integral_square_DN(char pos) const -> double;
 
@@ -176,7 +176,7 @@ namespace AGM {
 
         [[nodiscard]] virtual auto green_integral_tau_square_DN(char pos) const -> double;
 
-        [[nodiscard]] auto green_integral_ttau_square_DN(char pos) const -> double;
+        [[nodiscard]] virtual auto green_integral_ttau_square_DN(char pos) const -> double;
 
         [[nodiscard]] virtual auto green_integral_linear_DN(char pos) const -> double;
 
@@ -184,7 +184,64 @@ namespace AGM {
 
         [[nodiscard]] virtual auto green_integral_tau_linear_DN(char pos) const -> double;
 
-        [[nodiscard]] auto green_integral_ttau_linear_DN(char pos) const -> double;
+        [[nodiscard]] virtual auto green_integral_ttau_linear_DN(char pos) const -> double;
+
+        [[nodiscard]] virtual auto integrate_square_DF(char pos) const -> double;
+
+        [[nodiscard]] virtual auto integrate_linear_DF(char pos) const -> double;
+
+        [[nodiscard]] virtual auto integrate_const_DF(char pos) const -> double;
+
+        [[nodiscard]] virtual auto integrate_square_t_DF(char pos) const -> double;
+
+        [[nodiscard]] virtual auto integrate_linear_t_DF(char pos) const -> double;
+
+        [[nodiscard]] virtual auto integrate_const_t_DF(char pos) const -> double;
+
+        [[nodiscard]] virtual auto integrate_square_tau_DF(char pos) const -> double;
+
+        [[nodiscard]] virtual auto integrate_linear_tau_DF(char pos) const -> double;
+
+        [[nodiscard]] virtual auto integrate_const_tau_DF(char pos) const -> double;
+
+        [[nodiscard]] virtual auto integrate_square_ttau_DF(char pos) const -> double;
+
+        [[nodiscard]] virtual auto integrate_linear_ttau_DF(char pos) const -> double;
+
+        [[nodiscard]] virtual auto integrate_const_ttau_DF(char pos) const -> double;
+
+        [[nodiscard]] virtual auto green_function_DF(double t) const -> double;
+
+        [[nodiscard]] virtual auto green_function_t_DF(double t) const -> double;
+
+        [[nodiscard]] virtual auto green_function_tau_DF(double t) const -> double;
+
+        [[nodiscard]] virtual auto green_function_ttau_DF(double t) const -> double;
+
+        [[nodiscard]] virtual auto green_integral_DF(char pos) const -> double;
+
+        [[nodiscard]] virtual auto green_integral_t_DF(char pos) const -> double;
+
+        [[nodiscard]] virtual auto green_integral_tau_DF(char pos) const -> double;
+
+        [[nodiscard]] virtual auto green_integral_ttau_DF(char pos) const -> double;
+
+        [[nodiscard]] virtual auto green_integral_square_DF(char pos) const -> double;
+
+        [[nodiscard]] virtual auto green_integral_t_square_DF(char pos) const -> double;
+
+        [[nodiscard]] virtual auto green_integral_tau_square_DF(char pos) const -> double;
+
+        [[nodiscard]] virtual auto green_integral_ttau_square_DF(char pos) const -> double;
+
+        [[nodiscard]] virtual auto green_integral_linear_DF(char pos) const -> double;
+
+        [[nodiscard]] virtual auto green_integral_t_linear_DF(char pos) const -> double;
+
+        [[nodiscard]] virtual auto green_integral_tau_linear_DF(char pos) const -> double;
+
+        [[nodiscard]] virtual auto green_integral_ttau_linear_DF(char pos) const -> double;
+
     };
 }
 

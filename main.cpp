@@ -33,6 +33,7 @@ auto main() -> int {
     std::cout << "Reynols number = " << UNITVALUE / pts[0].getMp() << "\n";
 
     auto solver{AGM::solver(&pts)};
+//    solver.streamSolver();
 //    solver.axisymmetricEllipticSolver();
     solver.NavierStokesSolver();
 //    auto wf{AGM::writeFile<AGM::point>(&pts)};

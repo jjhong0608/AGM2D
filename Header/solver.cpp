@@ -63,6 +63,95 @@ void AGM::solver::ellipticSolver() {
     wf.writeResult("/home/jjhong0608/docker/AGM2D/Axisymmetric/AGM_Result");
 }
 
+void AGM::solver::streamSolver() {
+    auto f{AGM::ellipticFunction()};
+    point::setNPts(int(pts->size()));
+    auto uvel{std::vector<value>(point::getNPts())};
+    auto vvel{std::vector<value>(point::getNPts())};
+    auto rightbound{std::vector<double>()};
+    auto righty{std::vector<double>()};
+
+    auto rhsX = [&](int i) -> double {
+        return ZEROVALUE;
+    };
+    auto rhsY = [&](int i) -> double {
+        return ZEROVALUE;
+    };
+    auto rhsXp = [&](int i) -> double {
+        return -vvel.at(i)["sol"];
+    };
+    auto rhsYp = [&](int i) -> double {
+        return uvel.at(i)["sol"];
+    };
+
+    auto NS{std::ifstream(
+            "/home/jjhong0608/docker/AGM2D/Navier-Stokes/BFS_flow/non-uniform_axial_lines/Re800/AGM_Result_150.000000")};
+//    auto NS{std::ifstream(
+//            "/home/jjhong0608/docker/AGM_test/Navier-Stokes/BFS/Re800/AGM_Result")};
+    if (NS.fail()) {
+        printError("file is not opened");
+    }
+    int idx{}, bc{}, bdnum{};
+    double x{}, y{}, p{};
+    auto assignBoundary = [&](int i) -> double {
+        auto sum{ZEROVALUE};
+        for (int j = 1; j < i + 1; ++j) {
+            sum += HALFVALUE * (rightbound.at(j) + rightbound.at(j - 1)) * (righty.at(j) - righty.at(j - 1));
+        }
+        return sum;
+    };
+
+    rightbound.emplace_back(ZEROVALUE);
+    righty.emplace_back(ZEROVALUE);
+
+    std::for_each(pts->begin(), pts->end(), [&](point &pt) -> void {
+        NS >> idx >> x >> y >> uvel.at(idx)["sol"] >> vvel.at(idx)["sol"] >> p >> uvel.at(idx)["dx"]
+           >> uvel.at(idx)["dy"] >> vvel.at(idx)["dx"] >> vvel.at(idx)["dy"] >> uvel.at(idx)["phi"]
+           >> vvel.at(idx)["phi"] >> bc;
+        if (isclose(x, 1.5e1)) {
+            rightbound.emplace_back(uvel.at(idx)["sol"]);
+            righty.emplace_back(y);
+        }
+        if (pt.getCondition() == 'D') {
+            pt["bdv"] = f.u(pt);
+        } else if (pt.getCondition() == 'N') {
+            pt.setCondition('D');
+            pt["bdv"] = assignBoundary(++bdnum);
+//            pt["bdv"] = f.u(pt);
+        }
+        pt.setMp(UNITVALUE);
+    });
+
+    NS.close();
+
+    #pragma omp parallel for
+    for (auto item = pts->begin(); item != pts->end(); ++item) {
+        item->calculateRepresentationFormula();
+        item->makeDerivatives();
+        item->updateRightHandSide(rhsX, rhsY);
+        item->updateRightHandSidePart(rhsXp, rhsYp);
+    }
+
+    auto matrix = AGM::matrix<point>(pts);
+    matrix.makeMatrix();
+    matrix.factorizeMatrix();
+    matrix.calculateMatrix();
+    matrix.releaseMatrix();
+
+//    #pragma omp parallel for
+//    for (auto item = pts->begin(); item != pts->end(); ++item) {
+//        item->calculateDerivatives(pts, rhsX, rhsY, rhsXp, rhsYp);
+//    }
+//    #pragma omp parallel for
+//    for (auto item = pts->begin(); item != pts->end(); ++item) {
+//        item->approximateNaNDerivatives(pts);
+//    }
+
+    auto wf{AGM::writeFile<point>(pts)};
+    wf.writeResult(
+            "/home/jjhong0608/docker/AGM2D/Navier-Stokes/BFS_flow/non-uniform_axial_lines/Re800/AGM_Result_stream");
+}
+
 void AGM::solver::axisymmetricEllipticSolver() {
     auto f{AGM::ellipticFunction()};
     point::setNPts(int(pts->size()));
@@ -535,11 +624,11 @@ void AGM::solver::NavierStokesSolver() {
         std::cout << presentIter << "-th iteration, " << "current time = [" << pointHeat::getTime() << " / "
                   << AGM::NavierStokesFunction::terminalTime() << "]\n";
         if (presentIter % saveIter == 0) {
-            wf.writeResult("/home/jjhong0608/docker/AGM2D/air_foil/test5/AGM_Result_" +
+            wf.writeResult("/home/jjhong0608/docker/AGM2D/Navier-Stokes/BFS_flow/non-uniform_axial_lines/Re800/AGM_Result_" +
                            std::to_string(pointHeat::getTime()));
         }
-        wf.writeResult("/home/jjhong0608/docker/AGM2D/air_foil/test5/AGM_Result_" +
-                       std::to_string(pointHeat::getTime()));
+//        wf.writeResult("/home/jjhong0608/docker/AGM2D/Navier-Stokes/BFS_flow/non-uniform_axial_lines/Re800/AGM_Result_" +
+//                       std::to_string(pointHeat::getTime()));
 
     };
     findSaveIter();
@@ -583,5 +672,5 @@ void AGM::solver::NavierStokesSolver() {
     matrixVelocity.releaseMatrix();
     matrixPressure.releaseMatrix();
 
-    wf.writeResult("/home/jjhong0608/docker/AGM2D/air_foil/test5/AGM_Result");
+    wf.writeResult("/home/jjhong0608/docker/AGM2D/Navier-Stokes/BFS_flow/non-uniform_axial_lines/Re800/AGM_Result");
 }
