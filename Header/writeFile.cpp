@@ -96,7 +96,7 @@ void AGM::writeFile<T>::writeAxialLines(const std::string &pname, const std::str
                                         std::vector<axialLine> *xline, std::vector<axialLine> *yline) {
     int bc{};
     std::ofstream p(pname);
-    if (!p.is_open()) {
+    if (p.fail()) {
         printError("AGM::writeFile<T>::writeAxialLines", "file \"%s\" is not opened", pname.c_str());
     }
     p.precision(16);
@@ -107,7 +107,7 @@ void AGM::writeFile<T>::writeAxialLines(const std::string &pname, const std::str
     }
     p.close();
     std::ofstream fx(xname);
-    if (!fx.is_open()) {
+    if (fx.fail()) {
         printError("AGM::writeFile<T>::writeAxialLines", "file \"%s\" is not opened", xname.c_str());
     }
     fx.precision(16);
@@ -117,7 +117,7 @@ void AGM::writeFile<T>::writeAxialLines(const std::string &pname, const std::str
     }
     fx.close();
     std::ofstream fy(yname);
-    if (!fy.is_open()) {
+    if (fy.fail()) {
         printError("AGM::writeFile<T>::writeAxialLines", "file \"%s\" is not opened", xname.c_str());
     }
     fy.precision(16);

@@ -220,7 +220,7 @@ void AGM::readFile::loadBoundaryData(const std::string &filename, std::vector<AG
             f >> word;
         }
     };
-    if (!f.is_open()) {
+    if (f.fail()) {
         printError("AGM::readFile::loadBoundaryData", "No Boundary Data file: \"%s\"\n Please check file name",
                    filename.c_str());
     }

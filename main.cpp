@@ -18,6 +18,13 @@ auto main() -> int {
     AGM::point::setAxialLines(&yline, 'y');
     AGM::point::setBdLine(&bdline);
 
+    /* export axial lines */ /*
+    auto wf{AGM::writeFile<AGM::point>(&pts)};
+    wf.writeAxialLines("/home/jjhong0608/docker/ALG2D/point", "/home/jjhong0608/docker/ALG2D/xaxial",
+                       "/home/jjhong0608/docker/ALG2D/yaxial", &xline, &yline);
+    return 0;
+    */
+
     for (auto &item: pts) {
         AGM::point::setPts(&pts);
         item.findStencil();
@@ -33,16 +40,8 @@ auto main() -> int {
     std::cout << "Reynols number = " << UNITVALUE / pts[0].getMp() << "\n";
 
     auto solver{AGM::solver(&pts)};
-//    solver.streamSolver();
-//    solver.axisymmetricEllipticSolver();
-    solver.NavierStokesSolver();
-//    auto wf{AGM::writeFile<AGM::point>(&pts)};
-//    std::cout << "Relative L-2 Error = " << wf.calculateError("sol") << "\n";
-//    wf.writeResult("/home/jjhong0608/docker/AGM2D/air_foil/adaptive/AGM_Result");
-
-//    AGM::point::setNPts(int(pts.size()));
-//    auto wf{AGM::writeFileMultiple<AGM::point, AGM::point, AGM::point>(&pts, &pts, &pts)};
-//    wf.writeResult("/home/jjhong0608/docker/AGM2D/air_foil/adaptive/AGM_Result");
+    solver.streamSolver();
+//    solver.NavierStokesSolver();
 
     return 0;
 }

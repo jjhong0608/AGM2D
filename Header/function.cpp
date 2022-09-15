@@ -136,10 +136,11 @@ auto AGM::NavierStokesFunction::initialTime() -> double {
 }
 
 auto AGM::NavierStokesFunction::terminalTime() -> double {
-    return 1.5e2;
+    return 2.5e2;
 }
 
 auto AGM::NavierStokesFunction::deltaTime() -> double {
+//    return 1e-2;
     return 5e-3;
 }
 
@@ -149,6 +150,12 @@ auto AGM::NavierStokesFunction::writeTime() -> double {
 
 auto AGM::NavierStokesFunction::u(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
+    // Lid-driven cavity
+//    if (isclose(y, UNITVALUE)) {
+//        return UNITVALUE;
+//    }
+//    return ZEROVALUE;
+
     // BFS flow
     if (isclose(x, ZEROVALUE) && y > HALFVALUE) {
         return 2.4e1 * (y - HALFVALUE) * (UNITVALUE - y);
@@ -265,17 +272,17 @@ AGM::NavierStokesFunction::assignPreviousValue(AGM::value &pu, AGM::value &pv, A
 
 void AGM::NavierStokesFunction::assignBoundaryValue(AGM::point &uvel, AGM::point &vvel) {
     if (uvel.getCondition() == 'D') {
-        uvel["bdv"] = u(pointHeat::getTime() + pointHeat::getDelta(), uvel);
+        uvel["bdv"] = 2 * u(pointHeat::getTime() + pointHeat::getDelta(), uvel);
     } else if (uvel.getCondition() == 'N') {
-        uvel["bdv"] = ux(pointHeat::getTime() + pointHeat::getDelta(), uvel) * uvel.getNormal()[0] +
-                      uy(pointHeat::getTime() + pointHeat::getDelta(), uvel) * uvel.getNormal()[1];
+        uvel["bdv"] = 2 * ux(pointHeat::getTime() + pointHeat::getDelta(), uvel) * uvel.getNormal()[0] +
+                      2 * uy(pointHeat::getTime() + pointHeat::getDelta(), uvel) * uvel.getNormal()[1];
     }
     uvel["rhs"] = f1(pointHeat::getTime() + pointHeat::getDelta(), uvel);
     if (vvel.getCondition() == 'D') {
-        vvel["bdv"] = v(pointHeat::getTime() + pointHeat::getDelta(), vvel);
+        vvel["bdv"] = 2 * v(pointHeat::getTime() + pointHeat::getDelta(), vvel);
     } else if (vvel.getCondition() == 'N') {
-        vvel["bdv"] = vx(pointHeat::getTime() + pointHeat::getDelta(), vvel) * vvel.getNormal()[0] +
-                      vy(pointHeat::getTime() + pointHeat::getDelta(), vvel) * vvel.getNormal()[1];
+        vvel["bdv"] = 2 * vx(pointHeat::getTime() + pointHeat::getDelta(), vvel) * vvel.getNormal()[0] +
+                      2 * vy(pointHeat::getTime() + pointHeat::getDelta(), vvel) * vvel.getNormal()[1];
     }
     vvel["rhs"] = f2(pointHeat::getTime() + pointHeat::getDelta(), vvel);
 }
@@ -285,6 +292,10 @@ void AGM::NavierStokesFunction::loadPreviousValue(const std::string &filename, s
     int idx{}, bc{};
     double x{}, y{};
     std::ifstream f(filename);
+    if (f.fail()) {
+        printError("AGM::NavierStokesFunction::loadPreviousValue", "file %s is not opened", filename.c_str());
+    }
+    std::cout << "previous file: " << filename << " is opened\n";
     for (int i = 0; i < point::getNPts(); ++i) {
         f >> idx >> x >> y;
         if (idx > pu->size()) {
@@ -296,12 +307,10 @@ void AGM::NavierStokesFunction::loadPreviousValue(const std::string &filename, s
         f >> pp->at(idx)["sol"];
         f >> pu->at(idx)["dx"];
         f >> pu->at(idx)["dy"];
-        f >> pu->at(idx)["dx"];
-        f >> pu->at(idx)["dy"];
         f >> pv->at(idx)["dx"];
         f >> pv->at(idx)["dy"];
         f >> pu->at(idx)["phi"];
-        f >> pv->at(idx)["psi"];
+        f >> pv->at(idx)["phi"];
         f >> bc;
     }
     f.close();
