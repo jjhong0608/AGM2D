@@ -85,7 +85,7 @@ void AGM::solver::streamSolver() {
     };
 
     auto NS{std::ifstream(
-            "/home/jjhong0608/docker/AGM2D/Navier-Stokes/BFS_flow/non-uniform_axial_lines-45/Re800/AGM_Result_250.000000")};
+            "/home/jjhong0608/docker/AGM2D/New-nonlinear_algorithm/BFS_flow/Re800-4/AGM_Result_250.000000")};
     if (NS.fail()) {
         printError("file is not opened");
     }
@@ -148,7 +148,7 @@ void AGM::solver::streamSolver() {
 
     auto wf{AGM::writeFile<point>(pts)};
     wf.writeResult(
-            "/home/jjhong0608/docker/AGM2D/Navier-Stokes/BFS_flow/non-uniform_axial_lines-45/Re800/AGM_Result_stream");
+            "/home/jjhong0608/docker/AGM2D/New-nonlinear_algorithm/BFS_flow/Re800-4/AGM_Result_stream");
 }
 
 void AGM::solver::axisymmetricEllipticSolver() {
@@ -479,9 +479,9 @@ void AGM::solver::NavierStokesSolver() {
             f.assignPreviousValue(puvel.at(i), pvvel.at(i), ppvel.at(i), uvel.at(i), vvel.at(i), pts->at(i));
             f.assignBoundaryValue(uvel.at(i), vvel.at(i));
         }
-        f.loadPreviousValue(
-                "/home/jjhong0608/docker/AGM2D/New-nonlinear_algorithm/BFS_flow/Re800-2/AGM_Result_180.000000", &puvel,
-                &pvvel, &ppvel);
+//        f.loadPreviousValue(
+//                "/home/jjhong0608/docker/AGM2D/New-nonlinear_algorithm/BFS_flow/Re800-3/AGM_Result_3.000000", &puvel,
+//                &pvvel, &ppvel);
     };
     auto assignBoundaryValue = [&f, &uvel, &vvel]() -> void {
         #pragma omp parallel for
@@ -527,12 +527,12 @@ void AGM::solver::NavierStokesSolver() {
         double dx{}, dy{};
         #pragma omp parallel for private(dx, dy)
         for (int i = 0; i < point::getNPts(); ++i) {
-            dx = uvel.at(i)["dx"];
-            dy = vvel.at(i)["dy"];
+//            dx = uvel.at(i)["dx"];
+//            dy = vvel.at(i)["dy"];
             uvel.at(i).calculateDerivatives(&uvel, uRhsX1, uRhsY1, uRhsXp1, uRhsYp1);
             vvel.at(i).calculateDerivatives(&vvel, vRhsX1, vRhsY1, vRhsXp1, vRhsYp1);
-            uvel.at(i)["dx"] = dx + puvel.at(i)["dx"];
-            vvel.at(i)["dy"] = dy + pvvel.at(i)["dy"];
+//            uvel.at(i)["dx"] = dx + puvel.at(i)["dx"];
+//            vvel.at(i)["dy"] = dy + pvvel.at(i)["dy"];
         }
         #pragma omp parallel for
         for (int i = 0; i < point::getNPts(); ++i) {
@@ -620,7 +620,7 @@ void AGM::solver::NavierStokesSolver() {
                   << AGM::NavierStokesFunction::terminalTime() << "]\n";
         if (presentIter % saveIter == 0) {
             wf.writeResult(
-                    "/home/jjhong0608/docker/AGM2D/New-nonlinear_algorithm/BFS_flow/Re800-2/AGM_Result_" +
+                    "/home/jjhong0608/docker/AGM2D/New-nonlinear_algorithm/BFS_flow/Re800-4/AGM_Result_" +
                     std::to_string(pointHeat::getTime()));
         }
     };
@@ -669,5 +669,5 @@ void AGM::solver::NavierStokesSolver() {
     matrixVelocity.releaseMatrix();
     matrixPressure.releaseMatrix();
 
-    wf.writeResult("/home/jjhong0608/docker/AGM2D/New-nonlinear_algorithm/BFS_flow/Re800-2/AGM_Result");
+    wf.writeResult("/home/jjhong0608/docker/AGM2D/New-nonlinear_algorithm/BFS_flow/Re800-4/AGM_Result");
 }

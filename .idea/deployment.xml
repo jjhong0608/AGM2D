@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="Remote Host (09a733e6-8f4e-4ca9-a73d-8d22a7dedff9)" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" serverName="Remote Development" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
-      <paths name="Remote Host (09a733e6-8f4e-4ca9-a73d-8d22a7dedff9)">
+      <paths name="Remote Host (1015c95d-d53a-4cc2-9037-aa6fe87d73a9)">
         <serverdata>
           <mappings>
-            <mapping deploy="/AGM2D" local="$PROJECT_DIR$" />
+            <mapping deploy="/AGM2D" local="$PROJECT_DIR$" web="/" />
           </mappings>
           <excludedPaths>
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug" />

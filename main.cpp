@@ -40,8 +40,8 @@ auto main() -> int {
     std::cout << "Reynols number = " << UNITVALUE / pts[0].getMp() << "\n";
 
     auto solver{AGM::solver(&pts)};
-//    solver.streamSolver();
-    solver.NavierStokesSolver();
+    solver.streamSolver();
+//    solver.NavierStokesSolver();
 
     return 0;
 }
