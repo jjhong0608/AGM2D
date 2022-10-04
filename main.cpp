@@ -8,6 +8,12 @@ auto main() -> int {
     rlim.rlim_max = -1;
     setrlimit(RLIMIT_STACK, &rlim);
 
+    mkl_set_dynamic(0);
+    mkl_set_num_threads(mkl_get_max_threads());
+
+    omp_set_dynamic(0);
+    omp_set_num_threads(omp_get_max_threads());
+
     auto pts{std::vector<AGM::point>{}};
     auto xline{std::vector<AGM::axialLine>{}};
     auto yline{std::vector<AGM::axialLine>{}};
@@ -40,8 +46,8 @@ auto main() -> int {
     std::cout << "Reynols number = " << UNITVALUE / pts[0].getMp() << "\n";
 
     auto solver{AGM::solver(&pts)};
-    solver.streamSolver();
-//    solver.NavierStokesSolver();
+//    solver.streamSolver();
+    solver.NavierStokesSolver();
 
     return 0;
 }

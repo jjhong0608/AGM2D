@@ -7,6 +7,7 @@
 
 #include "function.h"
 #include "mkl_pardiso.h"
+#include "mkl.h"
 
 namespace AGM {
     struct pardisoParameters {
