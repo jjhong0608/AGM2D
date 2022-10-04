@@ -140,7 +140,7 @@ auto AGM::NavierStokesFunction::terminalTime() -> double {
 }
 
 auto AGM::NavierStokesFunction::deltaTime() -> double {
-    return 2e-2;
+    return 1e-2;
 //    return 5e-3;
 }
 

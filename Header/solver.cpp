@@ -366,22 +366,24 @@ void AGM::solver::NavierStokesSolver() {
     auto ppvel{std::vector<value>(point::getNPts())};
     auto uvalue{std::vector<value>(point::getNPts())};
     auto vvalue{std::vector<value>(point::getNPts())};
+    auto ppuvel{std::vector<value>(point::getNPts())};
+    auto ppvvel{std::vector<value>(point::getNPts())};
     pointHeat::setTime(AGM::NavierStokesFunction::initialTime());
     pointHeat::setDelta(AGM::NavierStokesFunction::deltaTime());
     auto uRhsX = [&](int i) -> double {
-        return HALFVALUE * (uvel.at(i)["rhs"] + puvel.at(i)["rhs"]) + puvel.at(i)["phi"] +
+        return HALFVALUE * (uvel.at(i)["rhs"] + puvel.at(i)["rhs"]) +
                2 * puvel.at(i)["sol"] / pointHeat::getDelta();
     };
     auto uRhsY = [&](int i) -> double {
-        return HALFVALUE * (uvel.at(i)["rhs"] + puvel.at(i)["rhs"]) - puvel.at(i)["phi"] +
+        return HALFVALUE * (uvel.at(i)["rhs"] + puvel.at(i)["rhs"]) +
                2 * puvel.at(i)["sol"] / pointHeat::getDelta();
     };
     auto vRhsX = [&](int i) -> double {
-        return HALFVALUE * (vvel.at(i)["rhs"] + pvvel.at(i)["rhs"]) + pvvel.at(i)["phi"] +
+        return HALFVALUE * (vvel.at(i)["rhs"] + pvvel.at(i)["rhs"]) +
                2 * pvvel.at(i)["sol"] / pointHeat::getDelta();
     };
     auto vRhsY = [&](int i) -> double {
-        return HALFVALUE * (vvel.at(i)["rhs"] + pvvel.at(i)["rhs"]) - pvvel.at(i)["phi"] +
+        return HALFVALUE * (vvel.at(i)["rhs"] + pvvel.at(i)["rhs"]) +
                2 * pvvel.at(i)["sol"] / pointHeat::getDelta();
     };
     auto pRhsX = [&](int i) -> double {
@@ -596,6 +598,13 @@ void AGM::solver::NavierStokesSolver() {
             ppvel.at(i) = pts->at(i).getValue();
         }
     };
+    auto updatePreviousValues = [&puvel, &pvvel, &ppuvel, &ppvvel]() -> void {
+        #pragma omp parallel for
+        for (int i = 0; i < point::getNPts(); ++i) {
+            ppuvel.at(i) = puvel.at(i);
+            ppvvel.at(i) = pvvel.at(i);
+        }
+    };
     auto subtractPreviousVelocity = [&uvel, &vvel, &puvel, &pvvel]() -> void {
         #pragma omp parallel for
         for (int i = 0; i < point::getNPts(); ++i) {
@@ -613,11 +622,11 @@ void AGM::solver::NavierStokesSolver() {
         pointHeat::setTime(pointHeat::getTime() + pointHeat::getDelta());
         std::cout << presentIter << "-th iteration, " << "current time = [" << pointHeat::getTime() << " / "
                   << AGM::NavierStokesFunction::terminalTime() << "]\n";
-//        if (presentIter % saveIter == 0) {
-//            wf.writeResult(
-//                    "/home/jjhong0608/docker/AGM2D/New-nonlinear_algorithm/BFS_flow/Re800-4/AGM_Result_" +
-//                    std::to_string(pointHeat::getTime()));
-//        }
+        if (presentIter % saveIter == 0) {
+            wf.writeResult(
+                    "/home/jjhong0608/docker/AGM2D/Navier-Stokes/BFS_flow/test/AGM_Result_" +
+                    std::to_string(pointHeat::getTime()));
+        }
     };
     findSaveIter();
     copyPointInformation();
@@ -641,6 +650,7 @@ void AGM::solver::NavierStokesSolver() {
     matrixVelocity.calculateMatrix();
     calculateDifferentiationVelocity1();
     subtractPreviousVelocity();
+    updatePreviousValues();
     updateValues1();
     while (pointHeat::getTime() + pointHeat::getDelta() <
            AGM::NavierStokesFunction::terminalTime() - HALFVALUE * pointHeat::getDelta()) {
@@ -658,6 +668,7 @@ void AGM::solver::NavierStokesSolver() {
         matrixVelocity.calculateMatrix();
         calculateDifferentiationVelocity1();
         subtractPreviousVelocity();
+        updatePreviousValues();
         updateValues1();
     }
     updateTime();
