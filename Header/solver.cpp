@@ -372,19 +372,19 @@ void AGM::solver::NavierStokesSolver() {
     pointHeat::setTime(AGM::NavierStokesFunction::initialTime());
     pointHeat::setDelta(AGM::NavierStokesFunction::deltaTime());
     auto old_uRhsX = [&](int i) -> double {
-        return HALFVALUE * (uvel.at(i)["rhs"] + puvel.at(i)["rhs"]) + puvel.at(i)["phi"] +
+        return HALFVALUE * (uvel.at(i)["rhs"] + puvel.at(i)["rhs"]) +
                puvel.at(i)["sol"] / pointHeat::getDelta();
     };
     auto old_uRhsY = [&](int i) -> double {
-        return HALFVALUE * (uvel.at(i)["rhs"] + puvel.at(i)["rhs"]) - puvel.at(i)["phi"] +
+        return HALFVALUE * (uvel.at(i)["rhs"] + puvel.at(i)["rhs"]) +
                puvel.at(i)["sol"] / pointHeat::getDelta();
     };
     auto old_vRhsX = [&](int i) -> double {
-        return HALFVALUE * (vvel.at(i)["rhs"] + pvvel.at(i)["rhs"]) + pvvel.at(i)["phi"] +
+        return HALFVALUE * (vvel.at(i)["rhs"] + pvvel.at(i)["rhs"]) +
                pvvel.at(i)["sol"] / pointHeat::getDelta();
     };
     auto old_vRhsY = [&](int i) -> double {
-        return HALFVALUE * (vvel.at(i)["rhs"] + pvvel.at(i)["rhs"]) - pvvel.at(i)["phi"] +
+        return HALFVALUE * (vvel.at(i)["rhs"] + pvvel.at(i)["rhs"]) +
                pvvel.at(i)["sol"] / pointHeat::getDelta();
     };
     auto uRhsX = [&](int i) -> double {
@@ -634,15 +634,6 @@ void AGM::solver::NavierStokesSolver() {
         #pragma omp parallel for
         for (auto item = pts->begin(); item != pts->end(); ++item) {
             item->calculateDerivativesTwice(pRhsX1, pRhsY1);
-        }
-    };
-    auto updateRHSVelocityOld = [&]() -> void {
-        #pragma omp parallel for
-        for (int i = 0; i < point::getNPts(); ++i) {
-            uvel.at(i).updateRightHandSide(old_uRhsX, old_uRhsY);
-            uvel.at(i).updateRightHandSidePart(old_uRhsXp, old_uRhsYp);
-            vvel.at(i).updateRightHandSide(old_vRhsX, old_vRhsY);
-            vvel.at(i).updateRightHandSidePart(old_vRhsXp, old_vRhsYp);
         }
     };
     auto updateRHSVelocityOld1 = [&]() -> void {
