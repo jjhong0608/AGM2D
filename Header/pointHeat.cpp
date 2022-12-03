@@ -527,7 +527,7 @@ void AGM::pointHeat::calculateDerivatives(const std::vector<pointHeat> *points, 
                                           const std::function<double(int)> &g, const std::function<double(int)> &fp,
                                           const std::function<double(int)> &gp) {
     auto assignDerivatives = [&](int i) -> double {
-        double d{};
+        auto d{ZEROVALUE};
         for (const auto &item: deriMatrixRow[i]) {
             if (item.idx < getNPts()) {
                 d += item.value * points->at(item.idx)["sol"];

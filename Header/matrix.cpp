@@ -205,6 +205,12 @@ void AGM::matrix<pt>::releaseMatrix() {
     pPram.phase = -1;
     pardiso(pPram.ppt, &pPram.maxfct, &pPram.mnum, &pPram.mtype, &pPram.phase, &pPram.n, ent, ia, ja, &pPram.idum,
             &pPram.nrhs, pPram.iparm, &pPram.msglvl, &pPram.ddum, &pPram.ddum, &pPram.error);
+    delete[] ia;
+    delete[] ja;
+    delete[] ent;
+    ia = nullptr;
+    ja = nullptr;
+    ent = nullptr;
 }
 
 template<typename pt>

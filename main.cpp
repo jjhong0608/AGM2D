@@ -9,9 +9,11 @@ auto main() -> int {
     setrlimit(RLIMIT_STACK, &rlim);
 
     mkl_set_dynamic(0);
+//    mkl_set_num_threads(2);
     mkl_set_num_threads(mkl_get_max_threads());
 
     omp_set_dynamic(0);
+//    omp_set_num_threads(2);
     omp_set_num_threads(omp_get_max_threads());
 
     auto pts{std::vector<AGM::point>{}};
@@ -26,8 +28,11 @@ auto main() -> int {
 
     /* export axial lines */ /*
     auto wf{AGM::writeFile<AGM::point>(&pts)};
-    wf.writeAxialLines("/home/jjhong0608/docker/ALG2D/point", "/home/jjhong0608/docker/ALG2D/xaxial",
-                       "/home/jjhong0608/docker/ALG2D/yaxial", &xline, &yline);
+    wf.writeAxialLines("/home/jjhong0608/docker/Navier-Stokes_Result/2D/1.Lid-driven_cavity_flow/Re_400_random/point",
+                       "/home/jjhong0608/docker/Navier-Stokes_Result/2D/1.Lid-driven_cavity_flow/Re_400_random/xaxial",
+                       "/home/jjhong0608/docker/Navier-Stokes_Result/2D/1.Lid-driven_cavity_flow/Re_400_random/yaxial",
+                       &xline,
+                       &yline);
     return 0;
     */
 
@@ -36,14 +41,22 @@ auto main() -> int {
         item.findStencil();
     }
     for (auto &item: pts) {
+        item.setMp(UNITVALUE / 1e1);
+    }
+    for (auto &item: pts) {
         if (item.getCondition() == 'd' || item.getCondition() == 'n') {
             item.findStencil();
             std::cout << "condition = " << item.getCondition() << "\n";
         }
     }
 
-    std::cout << "Total Points number = " << pts.size() << "\n";
-    std::cout << "Reynols number = " << UNITVALUE / pts[0].getMp() << "\n";
+    std::cout << "-----< information >-----" << "\n";
+    std::cout << "# of the points = " << pts.size() << "\n";
+    std::cout << "# of the x-axial lines = " << xline.size() << "\n";
+    std::cout << "# of the y-axial lines = " << yline.size() << "\n";
+    std::cout << "epsilon (Reynolds number) = " << pts.at(0).getMp() << "\n";
+    std::cout << "Reynolds number = " << UNITVALUE / pts.at(0).getMp() << "\n";
+    std::cout << "-------------------------" << "\n";
 
     auto solver{AGM::solver(&pts)};
 //    solver.streamSolver();

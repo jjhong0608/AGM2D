@@ -9,10 +9,13 @@ AGM::ellipticFunction::ellipticFunction() = default;
 auto AGM::ellipticFunction::u(const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
 
+    // for Lid-driven cavity flow
+//    return ZEROVALUE;
+
     // for BFS flow
-    if (isclose(x, 1.5e1)) {
+    if (isclose(x, 3e1)) {
         return (1.5e0 - y) * y * y;
-    } else if (isclose(x, ZEROVALUE) && y > HALFVALUE) {
+    } else if (isclose(x, -1e1) && y > HALFVALUE) {
         return -2e0 * y * (4e0 * y * y - 9e0 * y + 6e0) + 2.5e0;
     } else if (isclose(y, UNITVALUE)) {
         return HALFVALUE;
@@ -136,16 +139,22 @@ auto AGM::NavierStokesFunction::initialTime() -> double {
 }
 
 auto AGM::NavierStokesFunction::terminalTime() -> double {
-    return 2.5e2;
+//    return ZEROVALUE;
+    return 1e3;
+//    return 5e2;
+//    return 2.5e2;
 }
 
 auto AGM::NavierStokesFunction::deltaTime() -> double {
-    return 1e-2;
+//    return 1e-2;
 //    return 5e-3;
+    return 2.5e-3;
+//    return 1.25e-3;
 }
 
 auto AGM::NavierStokesFunction::writeTime() -> double {
-    return 1e0;
+//    return deltaTime();
+    return 1e1;
 }
 
 auto AGM::NavierStokesFunction::u(double t, const AGM::point &pt) -> double {
@@ -157,10 +166,10 @@ auto AGM::NavierStokesFunction::u(double t, const AGM::point &pt) -> double {
 //    return ZEROVALUE;
 
     // BFS flow
-    if (isclose(x, ZEROVALUE) && y > HALFVALUE) {
-        return 2.4e1 * (y - HALFVALUE) * (UNITVALUE - y);
-    }
-    return ZEROVALUE;
+//    if (isclose(x, -1e1) && y > HALFVALUE) {
+//        return 2.4e1 * (y - HALFVALUE) * (UNITVALUE - y);
+//    }
+//    return ZEROVALUE;
 
     // Air Foil
 //    if (isclose(x, -7)) {
@@ -173,11 +182,11 @@ auto AGM::NavierStokesFunction::u(double t, const AGM::point &pt) -> double {
 //    return ZEROVALUE;
 
     // Saccular aneurysm
-    double c{-3. / 32};
-    if (isclose(x, -12.)) {
-        return c * y * (y - 4.);
-    }
-    return ZEROVALUE;
+//    double c{-3. / 32};
+//    if (isclose(x, -12.)) {
+//        return c * y * (y - 4.);
+//    }
+//    return ZEROVALUE;
     // Kalman vortex
     double a{HALFVALUE};
     if (pow(x, 2) + pow(y, 2) < pow(0.51, 2)) {
@@ -188,7 +197,7 @@ auto AGM::NavierStokesFunction::u(double t, const AGM::point &pt) -> double {
 
 auto AGM::NavierStokesFunction::v(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
-    return ZEROVALUE;
+//    return ZEROVALUE;
     // Kalman vortex
     double a{HALFVALUE};
     if (pow(x, 2) + pow(y, 2) < pow(0.51, 2)) {
@@ -199,57 +208,57 @@ auto AGM::NavierStokesFunction::v(double t, const AGM::point &pt) -> double {
 
 auto AGM::NavierStokesFunction::p(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
-    return 0;
+    return ZEROVALUE;
 }
 
 auto AGM::NavierStokesFunction::phi(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
-    return 0;
+    return ZEROVALUE;
 }
 
 auto AGM::NavierStokesFunction::psi(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
-    return 0;
+    return ZEROVALUE;
 }
 
 auto AGM::NavierStokesFunction::ux(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
-    return 0;
+    return ZEROVALUE;
 }
 
 auto AGM::NavierStokesFunction::uy(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
-    return 0;
+    return ZEROVALUE;
 }
 
 auto AGM::NavierStokesFunction::vx(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
-    return 0;
+    return ZEROVALUE;
 }
 
 auto AGM::NavierStokesFunction::vy(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
-    return 0;
+    return ZEROVALUE;
 }
 
 auto AGM::NavierStokesFunction::px(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
-    return 0;
+    return ZEROVALUE;
 }
 
 auto AGM::NavierStokesFunction::py(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
-    return 0;
+    return ZEROVALUE;
 }
 
 auto AGM::NavierStokesFunction::f1(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
-    return 0;
+    return ZEROVALUE;
 }
 
 auto AGM::NavierStokesFunction::f2(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
-    return 0;
+    return ZEROVALUE;
 }
 
 void
