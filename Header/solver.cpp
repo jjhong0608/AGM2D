@@ -369,6 +369,8 @@ void AGM::solver::NavierStokesSolver() {
     auto ppvel{std::vector<value>(point::getNPts())};
     auto uvalue{std::vector<value>(point::getNPts())};
     auto vvalue{std::vector<value>(point::getNPts())};
+    auto puvalue{std::vector<value>(point::getNPts())};
+    auto pvvalue{std::vector<value>(point::getNPts())};
     pointHeat::setTime(AGM::NavierStokesFunction::initialTime());
     pointHeat::setDelta(AGM::NavierStokesFunction::deltaTime());
     auto old_uRhsX = [&](int i) -> double {
@@ -540,6 +542,16 @@ void AGM::solver::NavierStokesSolver() {
             f.assignBoundaryValue(uvel.at(i), vvel.at(i));
             uvel.at(i)["bdv"] *= HALFVALUE;
             vvel.at(i)["bdv"] *= HALFVALUE;
+
+            if (uvel.at(i).getCondition() == 'D' &&
+                std::pow(uvel.at(i)[0], 2) + std::pow(uvel.at(i)[1], 2) < UNITVALUE) {
+                uvel.at(i).setNormal(coordinate(
+                        -uvel.at(i)[0] / std::sqrt(std::pow(uvel.at(i)[0], 2) + std::pow(uvel.at(i)[1], 2)),
+                        -uvel.at(i)[1] / std::sqrt(std::pow(uvel.at(i)[0], 2) + std::pow(uvel.at(i)[1], 2))));
+                vvel.at(i).setNormal(uvel.at(i).getNormal());
+                pts->at(i).setNormal(uvel.at(i).getNormal());
+            }
+
         }
 //        f.loadPreviousValue(
 //                "/home/jjhong0608/docker/Navier-Stokes_Result/2D/1.Lid-driven_cavity_flow/Re_7500-2/AGM_Result_380.000000",
@@ -550,6 +562,8 @@ void AGM::solver::NavierStokesSolver() {
         #pragma omp parallel for
         for (int i = 0; i < point::getNPts(); ++i) {
             f.assignBoundaryValue(uvel.at(i), vvel.at(i));
+            uvel.at(i)["bdv"] *= HALFVALUE;
+            vvel.at(i)["bdv"] *= HALFVALUE;
         }
     };
     auto makeMatrixVelocity = [&]() -> void {
@@ -608,7 +622,7 @@ void AGM::solver::NavierStokesSolver() {
         for (int i = 0; i < point::getNPts(); ++i) {
             uvel.at(i).approximateNaNDerivatives(&uvel);
             vvel.at(i).approximateNaNDerivatives(&vvel);
-        }
+        }ˆ
     };
     auto calculateDifferentiationVelocity1 = [&]() -> void {
         #pragma omp parallel for
@@ -634,6 +648,15 @@ void AGM::solver::NavierStokesSolver() {
         #pragma omp parallel for
         for (auto item = pts->begin(); item != pts->end(); ++item) {
             item->calculateDerivativesTwice(pRhsX1, pRhsY1);
+        }
+    };
+    auto updateRHSVelocityOld = [&]() -> void {
+        #pragma omp parallel for
+        for (int i = 0; i < point::getNPts(); ++i) {
+            uvel.at(i).updateRightHandSide(old_uRhsX, old_uRhsY);
+            uvel.at(i).updateRightHandSidePart(old_uRhsXp, old_uRhsYp);
+            vvel.at(i).updateRightHandSide(old_vRhsX, old_vRhsY);
+            vvel.at(i).updateRightHandSidePart(old_vRhsXp, old_vRhsYp);
         }
     };
     auto updateRHSVelocityOld1 = [&]() -> void {
@@ -737,7 +760,7 @@ void AGM::solver::NavierStokesSolver() {
                   << AGM::NavierStokesFunction::terminalTime() << "], Stopping Error = [" << stopCondition << "]\n";
         if (presentIter % saveIter == 0) {
             wf.writeResult(
-                    "/home/jjhong0608/docker/Navier-Stokes_Result/2D/3.External_flow_past_circular_cylinder/Re_10/AGM_Result_"
+                    "/home/jjhong0608/docker/Navier-Stokes_Result/2D/3.External_flow_past_circular_cylinder/Re_40/AGM_Result_"
                     + std::to_string(pointHeat::getTime()));
         }
     };
@@ -768,7 +791,7 @@ void AGM::solver::NavierStokesSolver() {
            AGM::NavierStokesFunction::terminalTime() - HALFVALUE * pointHeat::getDelta()) {
         updateTime();
         assignBoundaryValue();
-        updateRHSVelocity();
+        updateRHSVelocityOld();
         matrixVelocity.calculateMatrix();
         calculateDifferentiationVelocity();
         subtractPreviousVelocity();
@@ -788,5 +811,5 @@ void AGM::solver::NavierStokesSolver() {
     updateTime();
     matrixVelocity.releaseMatrix();
     matrixPressure.releaseMatrix();
-    wf.writeResult("/home/jjhong0608/docker/Navier-Stokes_Result/2D/3.External_flow_past_circular_cylinder/Re_10/AGM_Result");
+    wf.writeResult("/home/jjhong0608/docker/Navier-Stokes_Result/2D/3.External_flow_past_circular_cylinder/Re_40/AGM_Result");
 }

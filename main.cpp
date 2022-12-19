@@ -28,9 +28,9 @@ auto main() -> int {
 
     /* export axial lines */ /*
     auto wf{AGM::writeFile<AGM::point>(&pts)};
-    wf.writeAxialLines("/home/jjhong0608/docker/Navier-Stokes_Result/2D/1.Lid-driven_cavity_flow/Re_400_random/point",
-                       "/home/jjhong0608/docker/Navier-Stokes_Result/2D/1.Lid-driven_cavity_flow/Re_400_random/xaxial",
-                       "/home/jjhong0608/docker/Navier-Stokes_Result/2D/1.Lid-driven_cavity_flow/Re_400_random/yaxial",
+    wf.writeAxialLines("/home/jjhong0608/docker/Navier-Stokes_Result/2D/3.External_flow_past_circular_cylinder/point",
+                       "/home/jjhong0608/docker/Navier-Stokes_Result/2D/3.External_flow_past_circular_cylinder/xaxial",
+                       "/home/jjhong0608/docker/Navier-Stokes_Result/2D/3.External_flow_past_circular_cylinder/yaxial",
                        &xline,
                        &yline);
     return 0;
@@ -40,9 +40,9 @@ auto main() -> int {
         AGM::point::setPts(&pts);
         item.findStencil();
     }
-    for (auto &item: pts) {
-        item.setMp(UNITVALUE / 1e1);
-    }
+//    for (auto &item: pts) {
+//        item.setMp(UNITVALUE / 1e1);
+//    }
     for (auto &item: pts) {
         if (item.getCondition() == 'd' || item.getCondition() == 'n') {
             item.findStencil();

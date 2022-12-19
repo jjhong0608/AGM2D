@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="NIMS (57c5e6ef-6b91-49c0-9866-2518a3bc78d4)" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" serverName="dokim" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
-      <paths name="NIMS (57c5e6ef-6b91-49c0-9866-2518a3bc78d4)">
+      <paths name="dokim">
         <serverdata>
           <mappings>
-            <mapping deploy="/AGM2D/" local="$PROJECT_DIR$" />
+            <mapping deploy="/AGM2D" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="dokim (d41c1e1c-2ef2-4641-b4ca-dfc40189255e)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/AGM2D" local="$PROJECT_DIR$" />
           </mappings>
           <excludedPaths>
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug" />

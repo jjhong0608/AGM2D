@@ -187,6 +187,8 @@ namespace AGM {
         virtual void approximateNaNDerivatives(std::vector<point> *points);
 
         void calculateDerivativesTwice(const std::function<double(int)> &f, const std::function<double(int)> &g);
+
+        void printInformation();
     };
 
 }

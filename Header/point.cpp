@@ -709,7 +709,7 @@ void AGM::point::calculateRepresentationFormulaCross() {
 
 void AGM::point::calculateRepresentationFormulaDirichlet() {
     solMatrixRow[0][getIdx()] = UNITVALUE;
-    if (getCondition() == 'D') approximatePhiAtBoundary(1);
+    if (getCondition() == 'D') approximatePhiAtBoundary(0);
     else if (getCondition() == 'd') approximatePhiAtAppend();
 }
 
@@ -732,7 +732,7 @@ void AGM::point::calculateRepresentationFormulaNeumann() {
             solMatrixRow[0] += row[i] * normal[i];
         }
     }
-    if (getCondition() == 'N') approximatePhiAtBoundary(1);
+    if (getCondition() == 'N') approximatePhiAtBoundary(0);
     else if (getCondition() == 'n') approximatePhiAtAppend();
 }
 
@@ -1496,6 +1496,7 @@ void AGM::point::approximateNaNDerivatives(std::vector<AGM::point> *points) {
                 return *std::prev(getAxialLine(item)->end() - 1);
             }
         }
+        printInformation();
         printError("AGM::point::approximateNaNDerivatives", "findInnerPointOfBoundary");
         return nullptr;
     };
@@ -1506,6 +1507,19 @@ void AGM::point::approximateNaNDerivatives(std::vector<AGM::point> *points) {
 void AGM::point::calculateDerivativesTwice(const std::function<double(int)> &f, const std::function<double(int)> &g) {
     values["dxx"] = -(f(getIdx()) + values["phi"]) / mp;
     values["dyy"] = -(g(getIdx()) - values["phi"]) / mp;
+}
+
+void AGM::point::printInformation() {
+    char c0[256]{""}, c1[256]{""}, c2[256]{""}, c3[256]{""};
+    sprintf(c0, "(%f, %f), with boundary condition %c", getXy()[0], getXy()[1], getCondition());
+    if (getCondition() == 'D' || getCondition() == 'N') {
+        sprintf(c1, ", boundary value = %f", getValue()["bdv"]);
+        if (getCondition() == 'N') {
+            sprintf(c2, ", norval vector = (%f, %f)", getNormal()[0], getNormal()[1]);
+        }
+    }
+    sprintf(c3, "\n");
+    printf("%s%s%s%s", c0, c1, c2, c3);
 }
 
 AGM::point::~point() = default;

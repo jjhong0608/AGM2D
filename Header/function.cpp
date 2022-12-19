@@ -140,21 +140,21 @@ auto AGM::NavierStokesFunction::initialTime() -> double {
 
 auto AGM::NavierStokesFunction::terminalTime() -> double {
 //    return ZEROVALUE;
+//    return 1e1;
     return 1e3;
-//    return 5e2;
 //    return 2.5e2;
 }
 
 auto AGM::NavierStokesFunction::deltaTime() -> double {
-//    return 1e-2;
+    return 1e-2;
 //    return 5e-3;
-    return 2.5e-3;
+//    return 2.5e-3;
 //    return 1.25e-3;
 }
 
 auto AGM::NavierStokesFunction::writeTime() -> double {
 //    return deltaTime();
-    return 1e1;
+    return 1e0;
 }
 
 auto AGM::NavierStokesFunction::u(double t, const AGM::point &pt) -> double {

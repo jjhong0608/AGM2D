@@ -10,7 +10,7 @@ endif ()
 
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories(Header /usr/local/intel/compilers_and_libraries_2018.5.274/linux/mkl/include Header/Eigen)
+include_directories(Header /opt/intel/compilers_and_libraries_2020.3.275/linux/mkl/include Header/Eigen)
 
 add_executable(AGM2D
         main.cpp
@@ -61,35 +61,35 @@ add_executable(AGM2D
 find_library(
         ILP64_MODULE
         NAMES libmkl_intel_lp64.so
-        HINTS /usr/local/intel/compilers_and_libraries_2018.5.274/linux/mkl/lib/intel64
+        HINTS /opt/intel/compilers_and_libraries_2020.3.275/linux/mkl/lib/intel64
         REQUIRED
 )
 
 find_library(
         THREAD_MODULE
         NAMES libmkl_intel_thread.so
-        HINTS /usr/local/intel/compilers_and_libraries_2018.5.274/linux/mkl/lib/intel64
+        HINTS /opt/intel/compilers_and_libraries_2020.3.275/linux/mkl/lib/intel64
         REQUIRED
 )
 
 find_library(
         CORE_MODULE
         NAMES libmkl_core.so
-        HINTS /usr/local/intel/compilers_and_libraries_2018.5.274/linux/mkl/lib/intel64
+        HINTS /opt/intel/compilers_and_libraries_2020.3.275/linux/mkl/lib/intel64
         REQUIRED
 )
 
 find_library(
         SEQUENTIAL_MODULE
         NAMES libmkl_sequential.so
-        HINTS /usr/local/intel/compilers_and_libraries_2018.5.274/linux/mkl/lib/intel64
+        HINTS /opt/intel/compilers_and_libraries_2020.3.275/linux/mkl/lib/intel64
         REQUIRED
 )
 
 find_library(
         IOMP_MODULE
         NAMES libiomp5.a
-        HINTS /usr/local/intel/compilers_and_libraries_2018.5.274/linux/compiler/lib/intel64
+        HINTS /opt/intel/compilers_and_libraries_2020.3.275/linux/compiler/lib/intel64
         REQUIRED
 )
 
@@ -108,8 +108,6 @@ find_library(
         NAMES dl
 )
 
-find_package(GSL REQUIRED)
-
-target_link_libraries(AGM2D ${ILP64_MODULE} ${THREAD_MODULE} ${CORE_MODULE} ${SEQUENTIAL_MODULE} ${IOMP_MODULE} ${LPTHREAD} ${LM} ${LDL} GSL::gsl GSL::gslcblas)
+target_link_libraries(AGM2D ${ILP64_MODULE} ${THREAD_MODULE} ${CORE_MODULE} ${SEQUENTIAL_MODULE} ${IOMP_MODULE} ${LPTHREAD} ${LM} ${LDL})
 
 target_compile_options(AGM2D PUBLIC -xCOMMON-AVX512)
