@@ -8,6 +8,7 @@ auto main() -> int {
     rlim.rlim_max = -1;
     setrlimit(RLIMIT_STACK, &rlim);
 
+    kmp_set_warnings_off();
     mkl_set_dynamic(0);
 //    mkl_set_num_threads(2);
     mkl_set_num_threads(mkl_get_max_threads());
@@ -41,7 +42,7 @@ auto main() -> int {
         item.findStencil();
     }
 //    for (auto &item: pts) {
-//        item.setMp(UNITVALUE / 1e1);
+//        item.setMp(UNITVALUE / 1e3);
 //    }
     for (auto &item: pts) {
         if (item.getCondition() == 'd' || item.getCondition() == 'n') {
@@ -63,4 +64,4 @@ auto main() -> int {
     solver.NavierStokesSolver();
 
     return 0;
-}
+}`

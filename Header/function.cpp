@@ -10,7 +10,7 @@ auto AGM::ellipticFunction::u(const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
 
     // for Lid-driven cavity flow
-//    return ZEROVALUE;
+    return ZEROVALUE;
 
     // for BFS flow
     if (isclose(x, 3e1)) {
@@ -146,8 +146,8 @@ auto AGM::NavierStokesFunction::terminalTime() -> double {
 }
 
 auto AGM::NavierStokesFunction::deltaTime() -> double {
-    return 1e-2;
-//    return 5e-3;
+//    return 1e-2;ˆ
+    return 5e-3;
 //    return 2.5e-3;
 //    return 1.25e-3;
 }
@@ -160,10 +160,10 @@ auto AGM::NavierStokesFunction::writeTime() -> double {
 auto AGM::NavierStokesFunction::u(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
     // Lid-driven cavity
-//    if (isclose(y, UNITVALUE)) {
-//        return UNITVALUE;
-//    }
-//    return ZEROVALUE;
+    if (isclose(y, UNITVALUE)) {
+        return UNITVALUE;
+    }
+    return ZEROVALUE;
 
     // BFS flow
 //    if (isclose(x, -1e1) && y > HALFVALUE) {
@@ -197,7 +197,7 @@ auto AGM::NavierStokesFunction::u(double t, const AGM::point &pt) -> double {
 
 auto AGM::NavierStokesFunction::v(double t, const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
-//    return ZEROVALUE;
+    return ZEROVALUE;
     // Kalman vortex
     double a{HALFVALUE};
     if (pow(x, 2) + pow(y, 2) < pow(0.51, 2)) {

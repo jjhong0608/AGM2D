@@ -709,7 +709,7 @@ void AGM::point::calculateRepresentationFormulaCross() {
 
 void AGM::point::calculateRepresentationFormulaDirichlet() {
     solMatrixRow[0][getIdx()] = UNITVALUE;
-    if (getCondition() == 'D') approximatePhiAtBoundary(0);
+    if (getCondition() == 'D') approximatePhiAtBoundary(1);
     else if (getCondition() == 'd') approximatePhiAtAppend();
 }
 
@@ -732,7 +732,7 @@ void AGM::point::calculateRepresentationFormulaNeumann() {
             solMatrixRow[0] += row[i] * normal[i];
         }
     }
-    if (getCondition() == 'N') approximatePhiAtBoundary(0);
+    if (getCondition() == 'N') approximatePhiAtBoundary(1);
     else if (getCondition() == 'n') approximatePhiAtAppend();
 }
 
