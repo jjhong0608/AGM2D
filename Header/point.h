@@ -44,47 +44,47 @@ namespace AGM {
 
         virtual ~point();
 
-        auto getIdx() const -> int;
+        [[nodiscard]] auto getIdx() const -> int;
 
         void setIdx(int i);
 
-        auto getXy() const -> const coordinate &;
+        [[nodiscard]] auto getXy() const -> const coordinate &;
 
         void setXy(const coordinate &coordinate);
 
-        auto getNormal() const -> const coordinate &;
+        [[nodiscard]] auto getNormal() const -> const coordinate &;
 
         void setNormal(const coordinate &coordinate);
 
-        auto getMp() const -> double;
+        [[nodiscard]] auto getMp() const -> double;
 
         void setMp(double d);
 
-        auto getCondition() const -> char;
+        [[nodiscard]] auto getCondition() const -> char;
 
         void setCondition(char i);
 
-        auto getElement() const -> const std::array<point *, 12> &;
+        [[nodiscard]] auto getElement() const -> const std::array<point *, 12> &;
 
         void setElement(const std::array<point *, 12> &array);
 
-        auto getValue() const -> const value &;
+        [[nodiscard]] auto getValue() const -> const value &;
 
         void setValue(const value &value);
 
-        auto getSolMatrixRow() const -> const std::array<matrixRow, 2> &;
+        [[nodiscard]] auto getSolMatrixRow() const -> const std::array<matrixRow, 2> &;
 
         void setSolMatrixRow(const std::array<matrixRow, 2> &row);
 
-        auto getDeriMatrixRow() const -> const std::array<matrixRow, 2> &;
+        [[nodiscard]] auto getDeriMatrixRow() const -> const std::array<matrixRow, 2> &;
 
         void setDeriMatrixRow(const std::array<matrixRow, 2> &row);
 
-        auto getRb() const -> const std::array<double, 2> &;
+        [[nodiscard]] auto getRb() const -> const std::array<double, 2> &;
 
         void setRb(const std::array<double, 2> &array);
 
-        auto getAxialLine() const -> const std::array<AGM::axialLine *, 2> &;
+        [[nodiscard]] auto getAxialLine() const -> const std::array<AGM::axialLine *, 2> &;
 
         auto getAxialLine(char i) -> axialLine *&;
 
@@ -149,6 +149,8 @@ namespace AGM {
         virtual void calculateRepresentationFormulaInterface();
 
         void approximatePhiAtBoundary(int order);
+
+        void approximatePhiAtBoundary1(int order);
 
         void approximatePhiAtAppend();
 

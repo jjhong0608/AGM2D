@@ -145,17 +145,17 @@ void AGM::readFile::loadData(const std::string &filename, std::vector<point> *pt
             if (item0 == item.front()) {
                 if (item0->getCondition() != 'I') {
                     (*item0)[W] = item0;
-                    if (ispositive(item0->getNormal()[1]) && !item0->getAxialLine('y')) (*item0)[N] = item0;
-                    if (isnegative(item0->getNormal()[1]) && !item0->getAxialLine('y')) (*item0)[S] = item0;
-                    if (iszero(item0->getNormal()[1]) && !item0->getAxialLine('y')) (*item0)[N] = (*item0)[S] = item0;
+                    if (ispositive(item0->getNormal()[0]) && !item0->getAxialLine('x')) (*item0)[N] = item0;
+                    if (isnegative(item0->getNormal()[0]) && !item0->getAxialLine('x')) (*item0)[S] = item0;
+                    if (iszero(item0->getNormal()[0]) && !item0->getAxialLine('x')) (*item0)[N] = (*item0)[S] = item0;
                 }
             } else if (item0 == item.back()) {
                 (**std::prev(&item0))[E] = item0;
                 if (item0->getCondition() != 'I') {
                     (*item0)[E] = item0;
-                    if (ispositive(item0->getNormal()[1]) && !item0->getAxialLine('y')) (*item0)[N] = item0;
-                    if (isnegative(item0->getNormal()[1]) && !item0->getAxialLine('y')) (*item0)[S] = item0;
-                    if (iszero(item0->getNormal()[1]) && !item0->getAxialLine('y')) (*item0)[N] = (*item0)[S] = item0;
+                    if (ispositive(item0->getNormal()[0]) && !item0->getAxialLine('x')) (*item0)[N] = item0;
+                    if (isnegative(item0->getNormal()[0]) && !item0->getAxialLine('x')) (*item0)[S] = item0;
+                    if (iszero(item0->getNormal()[0]) && !item0->getAxialLine('x')) (*item0)[N] = (*item0)[S] = item0;
                 }
                 (*item0)[W] = *std::prev(&item0);
             } else {

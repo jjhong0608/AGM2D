@@ -85,7 +85,7 @@ void AGM::solver::streamSolver() {
     };
 
     auto NS{std::ifstream(
-            "/home/jhjo/extHD1/Navier-Stokes_Result/2D/1.Lid-driven_cavity_flow_test/Re_400/AGM_Result_33.000000"
+            "/home/jhjo/extHD1/Navier-Stokes_Result/2D/1.Lid-driven_cavity_flow_test/Re_5000/AGM_Result_266.000000"
             )};
     if (NS.fail()) {
         printError("file is not opened");
@@ -150,7 +150,7 @@ void AGM::solver::streamSolver() {
 
     auto wf{AGM::writeFile<point>(pts)};
     wf.writeResult(
-            "/home/jhjo/extHD1/Navier-Stokes_Result/2D/1.Lid-driven_cavity_flow_test/Re_400/AGM_Result_stream"
+            "/home/jhjo/extHD1/Navier-Stokes_Result/2D/1.Lid-driven_cavity_flow_test/Re_5000/AGM_Result_stream"
             );
 }
 
@@ -367,10 +367,10 @@ void AGM::solver::NavierStokesSolver() {
     auto puvel{std::vector<value>(point::getNPts())};
     auto pvvel{std::vector<value>(point::getNPts())};
     auto ppvel{std::vector<value>(point::getNPts())};
-    auto uvalue{std::vector<value>(point::getNPts())};
-    auto vvalue{std::vector<value>(point::getNPts())};
-    auto puvalue{std::vector<value>(point::getNPts())};
-    auto pvvalue{std::vector<value>(point::getNPts())};
+    auto tildeuvel{std::vector<value>(point::getNPts())};
+    auto tildevvel{std::vector<value>(point::getNPts())};
+    auto hatuvel{std::vector<value>(point::getNPts())};
+    auto hatvvel{std::vector<value>(point::getNPts())};
     pointHeat::setTime(AGM::NavierStokesFunction::initialTime());
     pointHeat::setDelta(AGM::NavierStokesFunction::deltaTime());
     auto old_uRhsX = [&](int i) -> double {
@@ -411,29 +411,17 @@ void AGM::solver::NavierStokesSolver() {
     auto pRhsY = [&](int i) -> double {
         return ZEROVALUE;
     };
-    auto old_uRhsX1 = [&](int i) -> double {
-        return old_uRhsX(i);
-    };
-    auto old_uRhsY1 = [&](int i) -> double {
-        return old_uRhsY(i);
-    };
-    auto old_vRhsX1 = [&](int i) -> double {
-        return old_vRhsX(i);
-    };
-    auto old_vRhsY1 = [&](int i) -> double {
-        return old_vRhsY(i);
-    };
     auto uRhsX1 = [&](int i) -> double {
-        return uRhsX(i);
+        return HALFVALUE * (uvel.at(i)["rhs"] + puvel.at(i)["rhs"]);
     };
     auto uRhsY1 = [&](int i) -> double {
-        return uRhsY(i);
+        return HALFVALUE * (uvel.at(i)["rhs"] + puvel.at(i)["rhs"]);
     };
     auto vRhsX1 = [&](int i) -> double {
-        return vRhsX(i);
+        return HALFVALUE * (vvel.at(i)["rhs"] + pvvel.at(i)["rhs"]);
     };
     auto vRhsY1 = [&](int i) -> double {
-        return vRhsY(i);
+        return HALFVALUE * (vvel.at(i)["rhs"] + pvvel.at(i)["rhs"]);
     };
     auto old_uRhsXp = [&](int i) -> double {
         return 2 * puvel.at(i)["sol"] * puvel.at(i)["sol"] - uvel.at(i).getMp() * puvel.at(i)["dx"];
@@ -448,16 +436,16 @@ void AGM::solver::NavierStokesSolver() {
         return 2 * pvvel.at(i)["sol"] * pvvel.at(i)["sol"] - vvel.at(i).getMp() * pvvel.at(i)["dy"];
     };
     auto uRhsXp = [&](int i) -> double {
-        return 2 * puvalue.at(i)["sol"] * puvalue.at(i)["sol"];
+        return 2 * puvel.at(i)["sol"] * puvel.at(i)["sol"];
     };
     auto uRhsYp = [&](int i) -> double {
-        return 2 * puvalue.at(i)["sol"] * pvvalue.at(i)["sol"];
+        return 2 * puvel.at(i)["sol"] * pvvel.at(i)["sol"];
     };
     auto vRhsXp = [&](int i) -> double {
-        return 2 * puvalue.at(i)["sol"] * pvvalue.at(i)["sol"];
+        return 2 * puvel.at(i)["sol"] * pvvel.at(i)["sol"];
     };
     auto vRhsYp = [&](int i) -> double {
-        return 2 * pvvalue.at(i)["sol"] * pvvalue.at(i)["sol"];
+        return 2 * pvvel.at(i)["sol"] * pvvel.at(i)["sol"];
     };
     auto pRhsXp = [&](int i) -> double {
         return uvel.at(i)["sol"] / pointHeat::getDelta();
@@ -465,41 +453,19 @@ void AGM::solver::NavierStokesSolver() {
     auto pRhsYp = [&](int i) -> double {
         return vvel.at(i)["sol"] / pointHeat::getDelta();
     };
-    auto old_uRhsXp1 = [&](int i) -> double {
-        return uvalue.at(i)["sol"] * uvalue.at(i)["sol"] + puvel.at(i)["sol"] * puvel.at(i)["sol"] + pts->at(i)["sol"] +
-               ppvel.at(i)["sol"] - uvel.at(i).getMp() * puvel.at(i)["dx"];
-    };
-    auto old_uRhsYp1 = [&](int i) -> double {
-        return uvalue.at(i)["sol"] * vvalue.at(i)["sol"] + puvel.at(i)["sol"] * pvvel.at(i)["sol"] -
-               uvel.at(i).getMp() * puvel.at(i)["dy"];
-    };
-    auto old_vRhsXp1 = [&](int i) -> double {
-        return uvalue.at(i)["sol"] * vvalue.at(i)["sol"] + puvel.at(i)["sol"] * pvvel.at(i)["sol"] -
-               vvel.at(i).getMp() * pvvel.at(i)["dx"];
-    };
-    auto old_vRhsYp1 = [&](int i) -> double {
-        return vvalue.at(i)["sol"] * vvalue.at(i)["sol"] + pvvel.at(i)["sol"] * pvvel.at(i)["sol"] + pts->at(i)["sol"] +
-               ppvel.at(i)["sol"] - vvel.at(i).getMp() * pvvel.at(i)["dy"];
-    };
     auto uRhsXp1 = [&](int i) -> double {
-        return uvalue.at(i)["sol"] * uvalue.at(i)["sol"] + puvalue.at(i)["sol"] * puvalue.at(i)["sol"] +
+        return hatuvel.at(i)["sol"] * hatuvel.at(i)["sol"] - puvel.at(i)["sol"] * puvel.at(i)["sol"] +
                pts->at(i)["sol"] + ppvel.at(i)["sol"];
     };
     auto uRhsYp1 = [&](int i) -> double {
-        return uvalue.at(i)["sol"] * vvalue.at(i)["sol"] + puvalue.at(i)["sol"] * pvvalue.at(i)["sol"];
+        return hatuvel.at(i)["sol"] * hatvvel.at(i)["sol"] - puvel.at(i)["sol"] * pvvel.at(i)["sol"];
     };
     auto vRhsXp1 = [&](int i) -> double {
-        return uvalue.at(i)["sol"] * vvalue.at(i)["sol"] + puvalue.at(i)["sol"] * pvvalue.at(i)["sol"];
+        return hatuvel.at(i)["sol"] * hatvvel.at(i)["sol"] - puvel.at(i)["sol"] * pvvel.at(i)["sol"];
     };
     auto vRhsYp1 = [&](int i) -> double {
-        return vvalue.at(i)["sol"] * vvalue.at(i)["sol"] + pvvalue.at(i)["sol"] * pvvalue.at(i)["sol"] +
+        return hatvvel.at(i)["sol"] * hatvvel.at(i)["sol"] - pvvel.at(i)["sol"] * pvvel.at(i)["sol"] +
                pts->at(i)["sol"] + ppvel.at(i)["sol"];
-    };
-    auto pRhsX1 = [&](int i) -> double {
-        return -uvel.at(i)["dx"] / pointHeat::getDelta();
-    };
-    auto pRhsY1 = [&](int i) -> double {
-        return -vvel.at(i)["dy"] / pointHeat::getDelta();
     };
     auto findSaveIter = [&presentIter, &saveIter]() -> void {
         saveIter = int(std::floor(NavierStokesFunction::writeTime() / NavierStokesFunction::deltaTime() + 0.5));
@@ -521,7 +487,7 @@ void AGM::solver::NavierStokesSolver() {
             }
         }
     };
-    auto assignInitial = [this, &f, &uvel, &vvel, &puvel, &pvvel, &ppvel, &puvalue, &pvvalue]() -> void {
+    auto assignInitial = [this, &f, &uvel, &vvel, &puvel, &pvvel, &ppvel, &tildeuvel, &tildevvel]() -> void {
         #pragma omp parallel for
         for (int i = 0; i < point::getNPts(); ++i) {
             pts->at(i).setMp(UNITVALUE);
@@ -542,8 +508,6 @@ void AGM::solver::NavierStokesSolver() {
             f.assignBoundaryValue(uvel.at(i), vvel.at(i));
             uvel.at(i)["bdv"] *= HALFVALUE;
             vvel.at(i)["bdv"] *= HALFVALUE;
-            puvalue.at(i) = puvel.at(i);
-            pvvalue.at(i) = pvvel.at(i);
 
 //            if (uvel.at(i).getCondition() == 'D' &&
 //                std::pow(uvel.at(i)[0], 2) + std::pow(uvel.at(i)[1], 2) < UNITVALUE) {
@@ -600,18 +564,6 @@ void AGM::solver::NavierStokesSolver() {
             vvel.at(i).approximateNaNDerivatives(&vvel);
         }
     };
-    auto calculateDifferentiationVelocityOld1 = [&]() -> void {
-        #pragma omp parallel for
-        for (int i = 0; i < point::getNPts(); ++i) {
-            uvel.at(i).calculateDerivatives(&uvel, old_uRhsX1, old_uRhsY1, old_uRhsXp1, old_uRhsYp1);
-            vvel.at(i).calculateDerivatives(&vvel, old_vRhsX1, old_vRhsY1, old_vRhsXp1, old_vRhsYp1);
-        }
-        #pragma omp parallel for
-        for (int i = 0; i < point::getNPts(); ++i) {
-            uvel.at(i).approximateNaNDerivatives(&uvel);
-            vvel.at(i).approximateNaNDerivatives(&vvel);
-        }
-    };
     auto calculateDifferentiationVelocity = [&]() -> void {
         #pragma omp parallel for
         for (int i = 0; i < point::getNPts(); ++i) {
@@ -645,28 +597,6 @@ void AGM::solver::NavierStokesSolver() {
         for (auto item = pts->begin(); item != pts->end(); ++item) {
             item->approximateNaNDerivatives(pts);
         }
-        #pragma omp parallel for
-        for (auto item = pts->begin(); item != pts->end(); ++item) {
-            item->calculateDerivativesTwice(pRhsX1, pRhsY1);
-        }
-    };
-    auto updateRHSVelocityOld = [&]() -> void {
-        #pragma omp parallel for
-        for (int i = 0; i < point::getNPts(); ++i) {
-            uvel.at(i).updateRightHandSide(old_uRhsX, old_uRhsY);
-            uvel.at(i).updateRightHandSidePart(old_uRhsXp, old_uRhsYp);
-            vvel.at(i).updateRightHandSide(old_vRhsX, old_vRhsY);
-            vvel.at(i).updateRightHandSidePart(old_vRhsXp, old_vRhsYp);
-        }
-    };
-    auto updateRHSVelocityOld1 = [&]() -> void {
-        #pragma omp parallel for
-        for (int i = 0; i < point::getNPts(); ++i) {
-            uvel.at(i).updateRightHandSide(old_uRhsX1, old_uRhsY1);
-            uvel.at(i).updateRightHandSidePart(old_uRhsXp1, old_uRhsYp1);
-            vvel.at(i).updateRightHandSide(old_vRhsX1, old_vRhsY1);
-            vvel.at(i).updateRightHandSidePart(old_vRhsXp1, old_vRhsYp1);
-        }
     };
     auto updateRHSVelocity = [&]() -> void {
         #pragma omp parallel for
@@ -693,27 +623,29 @@ void AGM::solver::NavierStokesSolver() {
             item->updateRightHandSidePart(pRhsXp, pRhsYp);
         }
     };
-    auto updateValues = [this, &uvel, &vvel, &uvalue, &vvalue, &ppvel]() -> void {
+    auto updateValues = [&]() -> void {
         #pragma omp parallel for
         for (int i = 0; i < point::getNPts(); ++i) {
+            tildeuvel.at(i) = uvel.at(i).getValue();
+            tildevvel.at(i) = vvel.at(i).getValue();
             if (pts->at(i).getCondition() != 'N') {
                 uvel.at(i)["sol"] -= pts->at(i)["dx"] * pointHeat::getDelta();
                 vvel.at(i)["sol"] -= pts->at(i)["dy"] * pointHeat::getDelta();
             }
 //            pts->at(i)["sol"] -= HALFVALUE * uvel.at(i).getMp() * (uvel.at(i)["dx"] + vvel.at(i)["dy"]);
             pts->at(i)["sol"] = 2 * pts->at(i)["sol"] - uvel.at(i).getMp() * (uvel.at(i)["dx"] + vvel.at(i)["dy"]) - ppvel.at(i)["sol"];
-            uvalue.at(i) = uvel.at(i).getValue();
-            vvalue.at(i) = vvel.at(i).getValue();
+            hatuvel.at(i) = uvel.at(i).getValue();
+            hatvvel.at(i) = vvel.at(i).getValue();
+            uvel.at(i)["bdv"] = ZEROVALUE;
+            vvel.at(i)["bdv"] = ZEROVALUE;
         }
     };
-    auto updateValues1 = [this, &uvel, &vvel, &uvalue, &vvalue, &puvel, &pvvel, &ppvel, &puvalue, &pvvalue]() -> void {
+    auto updateValues1 = [&]() -> void {
         #pragma omp parallel for
         for (int i = 0; i < point::getNPts(); ++i) {
             puvel.at(i) = uvel.at(i).getValue();
             pvvel.at(i) = vvel.at(i).getValue();
             ppvel.at(i) = pts->at(i).getValue();
-            puvalue.at(i) = uvalue.at(i);
-            pvvalue.at(i) = vvalue.at(i);
         }
     };
     auto subtractPreviousVelocity = [&uvel, &vvel, &puvel, &pvvel]() -> void {
@@ -725,6 +657,17 @@ void AGM::solver::NavierStokesSolver() {
             vvel.at(i)["dx"] -= pvvel.at(i)["dx"];
             uvel.at(i)["dy"] -= puvel.at(i)["dy"];
             vvel.at(i)["dy"] -= pvvel.at(i)["dy"];
+        }
+    };
+    auto addPreviousVelocity = [&uvel, &vvel, &tildeuvel, &tildevvel]() -> void {
+        #pragma omp parallel for
+        for (int i = 0; i < point::getNPts(); ++i) {
+            uvel.at(i)["sol"] += tildeuvel.at(i)["sol"];
+            vvel.at(i)["sol"] += tildevvel.at(i)["sol"];
+            uvel.at(i)["dx"] += tildeuvel.at(i)["dx"];
+            vvel.at(i)["dx"] += tildevvel.at(i)["dx"];
+            uvel.at(i)["dy"] += tildeuvel.at(i)["dy"];
+            vvel.at(i)["dy"] += tildevvel.at(i)["dy"];
         }
     };
     auto stopCondition{ZEROVALUE};
@@ -753,15 +696,18 @@ void AGM::solver::NavierStokesSolver() {
         return false;
     };
     auto wf{writeFileMultiple<pointHeat, pointHeat, point>(&uvel, &vvel, pts)};
-    auto updateTime = [&presentIter, &saveIter, &wf, &stopCondition]() -> void {
+    auto updateTime = [&]() -> void {
         ++presentIter;
         pointHeat::setTime(pointHeat::getTime() + pointHeat::getDelta());
         std::cout << presentIter << "-th iteration, " << "current time = [" << pointHeat::getTime() << " / "
                   << AGM::NavierStokesFunction::terminalTime() << "], Stopping Error = [" << stopCondition << "]\n";
         if (presentIter % saveIter == 0) {
+            for (int i = 0; i < point::getNPts(); ++i) {
+                vvel.at(i)["dx"] = tildevvel.at(i)["dx"];
+            }
+
             wf.writeResult(
-//                    "/home/jjhong0608/docker/Navier-Stokes_Result/2D/3.External_flow_past_circular_cylinder/Re_40/AGM_Result_"
-                    "/home/jhjo/extHD1/Navier-Stokes_Result/2D/1.Lid-driven_cavity_flow_test/Re_1000/AGM_Result_"
+                    "/home/jhjo/extHD1/cavity_flow_test/Re_10000/AGM_Result_"
                     + std::to_string(pointHeat::getTime()));
         }
     };
@@ -783,11 +729,21 @@ void AGM::solver::NavierStokesSolver() {
     matrixPressure.calculateMatrix();
     calculateDifferentiationPressure();
     updateValues();
-    updateRHSVelocityOld1();
+    updateRHSVelocity1();
     matrixVelocity.calculateMatrix();
-    calculateDifferentiationVelocityOld1();
-//    subtractPreviousVelocity();
+    calculateDifferentiationVelocity1();
+    addPreviousVelocity();
     updateValues1();
+
+    auto checkValue = [&uvel](int idx) -> void {
+        for (const auto &item: uvel.at(idx).getSolMatrixRow()[1]) {
+            std::cout << "[" << idx << "][" << item.idx << "] = " << item.value << "\n";
+        }
+        std::cout << "\n";
+    };
+//    checkValue(83521);
+//    checkValue(83319);
+
     while (pointHeat::getTime() + pointHeat::getDelta() <
            AGM::NavierStokesFunction::terminalTime() - HALFVALUE * pointHeat::getDelta()) {
         updateTime();
@@ -803,7 +759,7 @@ void AGM::solver::NavierStokesSolver() {
         updateRHSVelocity1();
         matrixVelocity.calculateMatrix();
         calculateDifferentiationVelocity1();
-        subtractPreviousVelocity();
+        addPreviousVelocity();
         if (checkStopCondition()) {
             break;
         }
@@ -812,5 +768,5 @@ void AGM::solver::NavierStokesSolver() {
     updateTime();
     matrixVelocity.releaseMatrix();
     matrixPressure.releaseMatrix();
-//    wf.writeResult("/home/jjhong0608/docker/Navier-Stokes_Result/2D/3.External_flow_past_circular_cylinder/Re_40/AGM_Result");
+//    wf.writeResult("/home/jhjo/extHD1/Navier-Stokes_Result/2D/3.External_flow_past_circular_cylinder/Re_10/AGM_Result");
 }

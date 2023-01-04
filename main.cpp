@@ -27,11 +27,19 @@ auto main() -> int {
     AGM::point::setAxialLines(&yline, 'y');
     AGM::point::setBdLine(&bdline);
 
+    std::cout << "-----< information >-----" << "\n";
+    std::cout << "# of the points = " << pts.size() << "\n";
+    std::cout << "# of the x-axial lines = " << xline.size() << "\n";
+    std::cout << "# of the y-axial lines = " << yline.size() << "\n";
+    std::cout << "epsilon (Reynolds number) = " << pts.at(0).getMp() << "\n";
+    std::cout << "Reynolds number = " << UNITVALUE / pts.at(0).getMp() << "\n";
+    std::cout << "-------------------------" << "\n";
+
     /* export axial lines */ /*
     auto wf{AGM::writeFile<AGM::point>(&pts)};
-    wf.writeAxialLines("/home/jjhong0608/docker/Navier-Stokes_Result/2D/3.External_flow_past_circular_cylinder/point",
-                       "/home/jjhong0608/docker/Navier-Stokes_Result/2D/3.External_flow_past_circular_cylinder/xaxial",
-                       "/home/jjhong0608/docker/Navier-Stokes_Result/2D/3.External_flow_past_circular_cylinder/yaxial",
+    wf.writeAxialLines("/home/jhjo/extHD1/Navier-Stokes_Result/2D/3.External_flow_past_circular_cylinder/point",
+                       "/home/jhjo/extHD1/Navier-Stokes_Result/2D/3.External_flow_past_circular_cylinder/xaxial",
+                       "/home/jhjo/extHD1/Navier-Stokes_Result/2D/3.External_flow_past_circular_cylinder/yaxial",
                        &xline,
                        &yline);
     return 0;
@@ -49,19 +57,24 @@ auto main() -> int {
             item.findStencil();
             std::cout << "condition = " << item.getCondition() << "\n";
         }
-    }
 
-    std::cout << "-----< information >-----" << "\n";
-    std::cout << "# of the points = " << pts.size() << "\n";
-    std::cout << "# of the x-axial lines = " << xline.size() << "\n";
-    std::cout << "# of the y-axial lines = " << yline.size() << "\n";
-    std::cout << "epsilon (Reynolds number) = " << pts.at(0).getMp() << "\n";
-    std::cout << "Reynolds number = " << UNITVALUE / pts.at(0).getMp() << "\n";
-    std::cout << "-------------------------" << "\n";
+//        if (AGM::isclose(5e-1, item.getXy()[0]) && AGM::iszero(item.getXy()[1])) {
+//            item.setAxialLine(nullptr, 'y');
+//        }
+//        if (AGM::isclose(5e-1, item.getXy()[1]) && AGM::iszero(item.getXy()[0])) {
+//            item.setAxialLine(nullptr, 'x');
+//        }
+//        if (AGM::isclose(-5e-1, item.getXy()[0]) && AGM::iszero(item.getXy()[1])) {
+//            item.setAxialLine(nullptr, 'y');
+//        }
+//        if (AGM::isclose(-5e-1, item.getXy()[1]) && AGM::iszero(item.getXy()[0])) {
+//            item.setAxialLine(nullptr, 'x');
+//        }
+    }
 
     auto solver{AGM::solver(&pts)};
 //    solver.streamSolver();
     solver.NavierStokesSolver();
 
     return 0;
-}`
+}

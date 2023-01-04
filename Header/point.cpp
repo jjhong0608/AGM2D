@@ -324,6 +324,7 @@ void AGM::point::findStencilBoundary() {
             element[ewns] = this;
         }
     };
+
     if (!element[E]) assignStencil(E, EN, ES, findRightLine, 'y', 1, xy[1], UNITVALUE, normal[0]);
     if (!element[W]) assignStencil(W, WN, WS, findLeftLine, 'y', 1, xy[1], -UNITVALUE, normal[0]);
 
@@ -709,7 +710,7 @@ void AGM::point::calculateRepresentationFormulaCross() {
 
 void AGM::point::calculateRepresentationFormulaDirichlet() {
     solMatrixRow[0][getIdx()] = UNITVALUE;
-    if (getCondition() == 'D') approximatePhiAtBoundary(1);
+    if (getCondition() == 'D') approximatePhiAtBoundary1(2);
     else if (getCondition() == 'd') approximatePhiAtAppend();
 }
 
@@ -732,7 +733,7 @@ void AGM::point::calculateRepresentationFormulaNeumann() {
             solMatrixRow[0] += row[i] * normal[i];
         }
     }
-    if (getCondition() == 'N') approximatePhiAtBoundary(1);
+    if (getCondition() == 'N') approximatePhiAtBoundary1(2);
     else if (getCondition() == 'n') approximatePhiAtAppend();
 }
 
@@ -743,15 +744,12 @@ auto AGM::point::calculateRepresentationFormulaNeumannOnAxial(char axis, int axi
     };
     point *ptc = getAxialLine(axis)->front()->getIdx() == getIdx() ? getAxialLine(axis)->at(1) :
                  getAxialLine(axis)->back()->getIdx() == getIdx() ? *std::prev(getAxialLine(axis)->end() - 1) : nullptr;
-    point *ptl =
-            getAxialLine(axis)->front()->getIdx() == getIdx() ? this : getAxialLine(axis)->back()->getIdx() == getIdx()
-                                                                       ? *std::prev(getAxialLine(axis)->end() - 2)
-                                                                       : nullptr;
+    point *ptl = getAxialLine(axis)->front()->getIdx() == getIdx() ? this :
+                 getAxialLine(axis)->back()->getIdx() == getIdx() ? *std::prev(getAxialLine(axis)->end() - 2) : nullptr;
     point *ptr = getAxialLine(axis)->front()->getIdx() == getIdx() ? getAxialLine(axis)->at(2) :
                  getAxialLine(axis)->back()->getIdx() == getIdx() ? this : nullptr;
-    std::string string =
-            getAxialLine(axis)->front()->getIdx() == getIdx() ? "ND" : getAxialLine(axis)->back()->getIdx() == getIdx()
-                                                                       ? "DN" : "";
+    std::string string = getAxialLine(axis)->front()->getIdx() == getIdx() ? "ND" :
+                         getAxialLine(axis)->back()->getIdx() == getIdx() ? "DN" : "";
     double tm = ptl ? ptl->getXy()[axisInt] : Error();
     double tb = ptc ? ptc->getXy()[axisInt] : Error();
     double tp = ptr ? ptr->getXy()[axisInt] : Error();
@@ -1070,6 +1068,9 @@ void AGM::point::approximatePhiAtBoundary(int order) {
         solMatrixRow[1][pt[ewns1]->getIdx() + getNPts()] = UNITVALUE;
         solMatrixRow[1][getIdx() + getNPts()] = -UNITVALUE;
     };
+    auto zeroAssign = [this]() -> void {
+        solMatrixRow[1][getIdx() + getNPts()] = UNITVALUE;
+    };
     if (getAxialLine('x')) {
         if (order == 2) {
             secondOrderExtrapolation(0, tm, tb, tp, W, E);
@@ -1083,6 +1084,8 @@ void AGM::point::approximatePhiAtBoundary(int order) {
             }
         } else if (order == 0) {
             zeroOrderExtrapolation(ewns);
+        } else if (order == -1) {
+            zeroAssign();
         } else {
             printError("AGM::point::approximatePhiAtBoundary", "order (which is %d) is wrong", order);
         }
@@ -1099,12 +1102,109 @@ void AGM::point::approximatePhiAtBoundary(int order) {
             }
         } else if (order == 0) {
             zeroOrderExtrapolation(ewns);
+        } else if (order == -1) {
+            zeroAssign();
         } else {
             printError("AGM::point::approximatePhiAtBoundary", "order (which is %d) is wrong", order);
         }
     } else {
         printError("AGM::point::approximatePhiAtBoundary", "getAxialLine error");
     }
+}
+
+void AGM::point::approximatePhiAtBoundary1(int order) {
+    auto axisInt{0};
+    auto findInnerPointOfBoundary = [this, &axisInt](int i) -> point * {
+        for (const auto &item: {'x', 'y'}) {
+            if (item == 'x') {
+                axisInt = 0;
+            } else {
+                axisInt = 1;
+            }
+            if (getAxialLine(item) && getAxialLine(item)->front()->getIdx() == getIdx()) {
+                return getAxialLine(item)->at(i);
+            }
+            if (getAxialLine(item) && getAxialLine(item)->back()->getIdx() == getIdx()) {
+                return *std::prev(getAxialLine(item)->end() - i);
+            }
+        }
+        printInformation();
+        printError("AGM::point::approximatePhiAtBoundary", "findInnerPointOfBoundary");
+        return {};
+    };
+    auto pt1{*findInnerPointOfBoundary(1)};
+    auto pt2 = order > 0 ? *findInnerPointOfBoundary(2) : point();
+    auto pt3 = order > 1 ? *findInnerPointOfBoundary(3) : point();
+    auto pt4 = order > 2 ? *findInnerPointOfBoundary(4) : point();
+    auto pt5 = order > 3 ? *findInnerPointOfBoundary(5) : point();
+    auto zeroOrderExtrapolation = [this, &pt1]() -> void {
+        solMatrixRow[1][pt1.getIdx() + getNPts()] = UNITVALUE;
+        solMatrixRow[1][getIdx() + getNPts()] = -UNITVALUE;
+    };
+    auto firstOrderExtrapolation = [this, &axisInt, &pt1, &pt2]() -> void {
+        auto t0{getXy()[axisInt]}, t1{pt1.getXy()[axisInt]}, t2{pt2.getXy()[axisInt]};
+        auto firstOrder = [](double t, double t1, double t2) -> double {
+            return (t - t2) / (t1 - t2);
+        };
+        solMatrixRow[1][pt2.getIdx() + getNPts()] = firstOrder(t0, t2, t1);
+        solMatrixRow[1][pt1.getIdx() + getNPts()] = firstOrder(t0, t1, t2);
+        solMatrixRow[1][getIdx() + getNPts()] = -UNITVALUE;
+    };
+    auto secondOrderExtrapolation = [this, &axisInt, &pt1, &pt2, &pt3]() -> void {
+        auto t0{getXy()[axisInt]}, t1{pt1.getXy()[axisInt]}, t2{pt2.getXy()[axisInt]}, t3{pt3.getXy()[axisInt]};
+        auto secondOrder = [](double t, double t1, double t2, double t3) -> double {
+            return (std::pow(t, 2) - t * (t2 + t3) + t2 * t3) / (std::pow(t1, 2) - t1 * (t2 + t3) + t2 * t3);
+        };
+        solMatrixRow[1][pt3.getIdx() + getNPts()] = secondOrder(t0, t3, t1, t2);
+        solMatrixRow[1][pt2.getIdx() + getNPts()] = secondOrder(t0, t2, t3, t1);
+        solMatrixRow[1][pt1.getIdx() + getNPts()] = secondOrder(t0, t1, t2, t3);
+        solMatrixRow[1][getIdx() + getNPts()] = -UNITVALUE;
+    };
+    auto thirdOrderExtrapolation = [this, &axisInt, &pt1, &pt2, &pt3, &pt4]() -> void {
+        auto t0{getXy()[axisInt]}, t1{pt1.getXy()[axisInt]}, t2{pt2.getXy()[axisInt]}, t3{pt3.getXy()[axisInt]};
+        auto t4{pt4.getXy()[axisInt]};
+        auto thirdOrder = [](double t, double t1, double t2, double t3, double t4) -> double {
+            return (std::pow(t, 3) - std::pow(t, 2) * (t2 + t3 + t4) + t * (t2 * t3 + t2 * t4 + t3 * t4) -
+                    t2 * t3 * t4) /
+                   (std::pow(t1, 3) - std::pow(t1, 2) * (t2 + t3 + t4) + t1 * (t2 * t3 + t2 * t4 + t3 * t4) -
+                    t2 * t3 * t4);
+        };
+        solMatrixRow[1][pt4.getIdx() + getNPts()] = thirdOrder(t0, t4, t1, t2, t3);
+        solMatrixRow[1][pt3.getIdx() + getNPts()] = thirdOrder(t0, t3, t4, t1, t2);
+        solMatrixRow[1][pt2.getIdx() + getNPts()] = thirdOrder(t0, t2, t3, t4, t1);
+        solMatrixRow[1][pt1.getIdx() + getNPts()] = thirdOrder(t0, t1, t2, t3, t4);
+        solMatrixRow[1][getIdx() + getNPts()] = -UNITVALUE;
+    };
+    auto fourthOrderExtrapolation = [this, &axisInt, &pt1, &pt2, &pt3, &pt4, &pt5]() -> void {
+        auto t0{getXy()[axisInt]}, t1{pt1.getXy()[axisInt]}, t2{pt2.getXy()[axisInt]}, t3{pt3.getXy()[axisInt]};
+        auto t4{pt4.getXy()[axisInt]}, t5{pt5.getXy()[axisInt]};
+        auto fourthOrder = [](double t, double t1, double t2, double t3, double t4, double t5) -> double {
+            return (std::pow(t, 4) - std::pow(t, 3) * (t2 + t3 + t4 + t5) +
+                    std::pow(t, 2) * (t2 * t3 + t2 * t4 + t2 * t5 + t3 * t4 + t3 * t5 + t4 * t5) -
+                    t * (t3 * t4 * t5 + t2 * t4 * t5 + t2 * t3 * t5 + t2 * t3 * t4) + t2 * t3 * t4 * t5) /
+                   (std::pow(t1, 4) - std::pow(t1, 3) * (t2 + t3 + t4 + t5) +
+                    std::pow(t1, 2) * (t2 * t3 + t2 * t4 + t2 * t5 + t3 * t4 + t3 * t5 + t4 * t5) -
+                    t1 * (t3 * t4 * t5 + t2 * t4 * t5 + t2 * t3 * t5 + t2 * t3 * t4) + t2 * t3 * t4 * t5);
+//            return (std::pow(t, 3) - std::pow(t, 2) * (t2 + t3 + t4) + t * (t2 * t3 + t2 * t4 + t3 * t4) -
+//                    t2 * t3 * t4) /
+//                   (std::pow(t1, 3) - std::pow(t1, 2) * (t2 + t3 + t4) + t1 * (t2 * t3 + t2 * t4 + t3 * t4) -
+//                    t2 * t3 * t4);
+        };
+        solMatrixRow[1][pt5.getIdx() + getNPts()] = fourthOrder(t0, t5, t1, t2, t3, t4);
+        solMatrixRow[1][pt4.getIdx() + getNPts()] = fourthOrder(t0, t4, t5, t1, t2, t3);
+        solMatrixRow[1][pt3.getIdx() + getNPts()] = fourthOrder(t0, t3, t4, t5, t1, t2);
+        solMatrixRow[1][pt2.getIdx() + getNPts()] = fourthOrder(t0, t2, t3, t4, t5, t1);
+        solMatrixRow[1][pt1.getIdx() + getNPts()] = fourthOrder(t0, t1, t2, t3, t4, t5);
+        solMatrixRow[1][getIdx() + getNPts()] = -UNITVALUE;
+    };
+    return order == 4 ? fourthOrderExtrapolation()
+                      : order == 3 ? thirdOrderExtrapolation()
+                                   : order == 2 ? secondOrderExtrapolation()
+                                                : order == 1 ? firstOrderExtrapolation()
+                                                             : order == 0 ? zeroOrderExtrapolation()
+                                                                          : printError(
+                                                    "void AGM::point::approximatePhiAtBoundary",
+                                                    "order (which is %d) is wrong", order);
 }
 
 void AGM::point::approximatePhiAtAppend() {
