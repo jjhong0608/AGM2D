@@ -24,6 +24,8 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/jhjo/AGM2D/Header/pointHeat.cpp" "CMakeFiles/AGM2D.dir/Header/pointHeat.cpp.o" "gcc" "CMakeFiles/AGM2D.dir/Header/pointHeat.cpp.o.d"
   "/home/jhjo/AGM2D/Header/readFile.cpp" "CMakeFiles/AGM2D.dir/Header/readFile.cpp.o" "gcc" "CMakeFiles/AGM2D.dir/Header/readFile.cpp.o.d"
   "/home/jhjo/AGM2D/Header/solver.cpp" "CMakeFiles/AGM2D.dir/Header/solver.cpp.o" "gcc" "CMakeFiles/AGM2D.dir/Header/solver.cpp.o.d"
+  "/home/jhjo/AGM2D/Header/structure.cpp" "CMakeFiles/AGM2D.dir/Header/structure.cpp.o" "gcc" "CMakeFiles/AGM2D.dir/Header/structure.cpp.o.d"
+  "/home/jhjo/AGM2D/Header/unboundedCondition.cpp" "CMakeFiles/AGM2D.dir/Header/unboundedCondition.cpp.o" "gcc" "CMakeFiles/AGM2D.dir/Header/unboundedCondition.cpp.o.d"
   "/home/jhjo/AGM2D/Header/util.cpp" "CMakeFiles/AGM2D.dir/Header/util.cpp.o" "gcc" "CMakeFiles/AGM2D.dir/Header/util.cpp.o.d"
   "/home/jhjo/AGM2D/Header/value.cpp" "CMakeFiles/AGM2D.dir/Header/value.cpp.o" "gcc" "CMakeFiles/AGM2D.dir/Header/value.cpp.o.d"
   "/home/jhjo/AGM2D/Header/vector.cpp" "CMakeFiles/AGM2D.dir/Header/vector.cpp.o" "gcc" "CMakeFiles/AGM2D.dir/Header/vector.cpp.o.d"

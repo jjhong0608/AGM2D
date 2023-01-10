@@ -56,7 +56,7 @@ add_executable(AGM2D
         Header/GreenfunctionAxisymmetric.h
         Header/pointAxisymmetric.cpp
         Header/pointAxisymmetric.h
-        Header/unboundedCondition.cpp Header/unboundedCondition.h)
+        Header/unboundedCondition.cpp Header/unboundedCondition.h Header/structure.cpp Header/structure.h)
 
 find_library(
         ILP64_MODULE

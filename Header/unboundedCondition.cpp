@@ -3,8 +3,8 @@
 //
 
 #include "unboundedCondition.h"
-#include "gsl/gsl_integration.h"
-#include <gsl/gsl_errno.h>
+//#include "gsl/gsl_integration.h"
+//#include <gsl/gsl_errno.h>
 
 auto AGM::unwrap(double x, void *p) -> double {
     auto params{(struct unbounded_f_param *) p};
@@ -94,73 +94,74 @@ auto AGM::unboundedCondition::rho_m(double t) const -> double {
 }
 
 auto AGM::unboundedCondition::A_DF(const std::function<double(double, double)> &f) -> double {
-    auto f0 = std::function<double(double, double)>{[this](double x, double y) -> double {
-        return rho_p(x);
-    }};
-    auto f1 = std::function<double(double, double)>{[this, &f](double x, double y) -> double {
-        return f(x, y) * rho_p(x);
-    }};
-    auto params0{unbounded_f_param{tm, tau, tp, tau0, &f0}};
-    auto params1{unbounded_f_param{tm, tau, tp, tau0, &f1}};
-    auto w0{gsl_integration_workspace_alloc(1000)};
-    auto w1{gsl_integration_workspace_alloc(1000)};
-    double result0{}, result1{}, error0{}, error1{};
-
-    auto F0{gsl_function{unwrap, &params0}};
-    auto F1{gsl_function{unwrap, &params1}};
-
-    int status0{gsl_integration_qagiu(&F0, tm, 0, 1e-10, 1000, w0, &result0, &error0)};
-    int status1{gsl_integration_qagiu(&F1, tm, 0, 1e-10, 1000, w1, &result1, &error1)};
-
-    if (status0) {
-        printf("error: %s\n", gsl_strerror(status0));
-        printError("AGM::unboundedCondition::A_DF", "status0 error");
-    }
-
-    if (status1) {
-        printf("error: %s\n", gsl_strerror(status1));
-        printError("AGM::unboundedCondition::A_DF", "status1 error");
-    }
-
-    gsl_integration_workspace_free(w0);
-    gsl_integration_workspace_free(w1);
-
-    return result1 / result0;
-}
-
-auto AGM::unboundedCondition::A_FD(const std::function<double(double, double)> &f) -> double {
-    auto f0 = std::function<double(double, double)>{[this](double x, double y) -> double {
-        return rho_m(x);
-    }};
-    auto f1 = std::function<double(double, double)>{[this, &f](double x, double y) -> double {
-        return f(x, y) * rho_m(x);
-    }};
-    auto params0{unbounded_f_param{tm, tau, tp, tau0, &f0}};
-    auto params1{unbounded_f_param{tm, tau, tp, tau0, &f1}};
-    auto w0{gsl_integration_workspace_alloc(1000)};
-    auto w1{gsl_integration_workspace_alloc(1000)};
-    double result0{}, result1{}, error0{}, error1{};
-
-    auto F0{gsl_function{unwrap, &params0}};
-    auto F1{gsl_function{unwrap, &params1}};
-
-    int status0{gsl_integration_qagil(&F0, tp, 0, 1e-10, 1000, w0, &result0, &error0)};
-    int status1{gsl_integration_qagil(&F1, tp, 0, 1e-10, 1000, w1, &result1, &error1)};
-
-    if (status0) {
-        printf("error: %s\n", gsl_strerror(status0));
-        printError("AGM::unboundedCondition::A_FD", "status0 error");
-    }
-
-    if (status1) {
-        printf("error: %s\n", gsl_strerror(status1));
-        printError("AGM::unboundedCondition::A_FD", "status1 error");
-    }
-
-    gsl_integration_workspace_free(w0);
-    gsl_integration_workspace_free(w1);
-
-    return result1 / result0;
+//    auto f0 = std::function<double(double, double)>{[this](double x, double y) -> double {
+//        return rho_p(x);
+//    }};
+//    auto f1 = std::function<double(double, double)>{[this, &f](double x, double y) -> double {
+//        return f(x, y) * rho_p(x);
+//    }};
+//    auto params0{unbounded_f_param{tm, tau, tp, tau0, &f0}};
+//    auto params1{unbounded_f_param{tm, tau, tp, tau0, &f1}};
+//    auto w0{gsl_integration_workspace_alloc(1000)};
+//    auto w1{gsl_integration_workspace_alloc(1000)};
+//    double result0{}, result1{}, error0{}, error1{};
+//
+//    auto F0{gsl_function{unwrap, &params0}};
+//    auto F1{gsl_function{unwrap, &params1}};
+//
+//    int status0{gsl_integration_qagiu(&F0, tm, 0, 1e-10, 1000, w0, &result0, &error0)};
+//    int status1{gsl_integration_qagiu(&F1, tm, 0, 1e-10, 1000, w1, &result1, &error1)};
+//
+//    if (status0) {
+//        printf("error: %s\n", gsl_strerror(status0));
+//        printError("AGM::unboundedCondition::A_DF", "status0 error");
+//    }
+//
+//    if (status1) {
+//        printf("error: %s\n", gsl_strerror(status1));
+//        printError("AGM::unboundedCondition::A_DF", "status1 error");
+//    }
+//
+//    gsl_integration_workspace_free(w0);
+//    gsl_integration_workspace_free(w1);
+//
+//    return result1 / result0;
+//}
+//
+//auto AGM::unboundedCondition::A_FD(const std::function<double(double, double)> &f) -> double {
+//    auto f0 = std::function<double(double, double)>{[this](double x, double y) -> double {
+//        return rho_m(x);
+//    }};
+//    auto f1 = std::function<double(double, double)>{[this, &f](double x, double y) -> double {
+//        return f(x, y) * rho_m(x);
+//    }};
+//    auto params0{unbounded_f_param{tm, tau, tp, tau0, &f0}};
+//    auto params1{unbounded_f_param{tm, tau, tp, tau0, &f1}};
+//    auto w0{gsl_integration_workspace_alloc(1000)};
+//    auto w1{gsl_integration_workspace_alloc(1000)};
+//    double result0{}, result1{}, error0{}, error1{};
+//
+//    auto F0{gsl_function{unwrap, &params0}};
+//    auto F1{gsl_function{unwrap, &params1}};
+//
+//    int status0{gsl_integration_qagil(&F0, tp, 0, 1e-10, 1000, w0, &result0, &error0)};
+//    int status1{gsl_integration_qagil(&F1, tp, 0, 1e-10, 1000, w1, &result1, &error1)};
+//
+//    if (status0) {
+//        printf("error: %s\n", gsl_strerror(status0));
+//        printError("AGM::unboundedCondition::A_FD", "status0 error");
+//    }
+//
+//    if (status1) {
+//        printf("error: %s\n", gsl_strerror(status1));
+//        printError("AGM::unboundedCondition::A_FD", "status1 error");
+//    }
+//
+//    gsl_integration_workspace_free(w0);
+//    gsl_integration_workspace_free(w1);
+//
+//    return result1 / result0;
+    return ZEROVALUE;
 }
 
 AGM::unboundedCondition::~unboundedCondition() = default;

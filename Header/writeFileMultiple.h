@@ -20,6 +20,8 @@ namespace AGM {
 
         void writeResult(const std::string &string);
 
+        void writeStruct(const std::string &string);
+
     private:
         T0 *pt0{};
         T1 *pt1{};

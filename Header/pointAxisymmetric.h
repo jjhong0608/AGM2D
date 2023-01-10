@@ -13,7 +13,7 @@ namespace AGM {
         bool is_on_axis{false};
 
     public:
-        auto isOnAxis() const -> bool;
+        [[nodiscard]] auto isOnAxis() const -> bool;
 
         void setIsOnAxis(bool isOnAxis);
 

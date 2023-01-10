@@ -21,9 +21,9 @@ void AGM::writeFileMultiple<T0, T1, T2>::writeResult(const std::string &string) 
     }
     f.precision(16);
     for (int i = 0; i < point::getNPts(); ++i) {
-        bc = pts0->at(i).getCondition() == 'C' ? 0 : pts0->at(i).getCondition() == 'D' ? 1 :
-                                                     pts0->at(i).getCondition() == 'N' ? 2 :
-                                                     pts0->at(i).getCondition() == 'I' ? 3 : 4;
+//        bc = pts0->at(i).getCondition() == 'C' ? 0 : pts0->at(i).getCondition() == 'D' ? 1 :
+//                                                     pts0->at(i).getCondition() == 'N' ? 2 :
+//                                                     pts0->at(i).getCondition() == 'I' ? 3 : 4;
         f << std::scientific;
         f << i << "\t";                    // idx
         f << pts0->at(i)[0] << "\t";       // x
@@ -43,6 +43,25 @@ void AGM::writeFileMultiple<T0, T1, T2>::writeResult(const std::string &string) 
 }
 
 template<typename T0, typename T1, typename T2>
+void AGM::writeFileMultiple<T0, T1, T2>::writeStruct(const std::string &string) {
+    int bc{};
+    std::ofstream f(string);
+    if (f.fail()) {
+        printError("AGM::writeFileMultiple<T0, T1, T2>::writeStruct", "file (%s) does not opened.", string.c_str());
+    }
+    f.precision(16);
+    for (int i = 0; i < pts0->size(); ++i) {
+        f << std::scientific;
+        f << i << "\t";                    // idx
+        f << pts0->at(i)[0] << "\t";       // x
+        f << pts0->at(i)[1] << "\t";       // y
+        f << pts0->at(i)["sol"] << "\t";   // u
+        f << pts1->at(i)["sol"] << "\n";   // v
+    }
+    f.close();
+}
+
+template<typename T0, typename T1, typename T2>
 AGM::writeFileMultiple<T0, T1, T2>::~writeFileMultiple() = default;
 
 template
@@ -50,3 +69,6 @@ class AGM::writeFileMultiple<AGM::pointHeat, AGM::pointHeat, AGM::point>;
 
 template
 class AGM::writeFileMultiple<AGM::point, AGM::point, AGM::point>;
+
+template
+class AGM::writeFileMultiple<AGM::structure, AGM::structure, AGM::point>;

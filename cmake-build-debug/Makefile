@@ -513,6 +513,54 @@ Header/solver.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/solver.cpp.s
 .PHONY : Header/solver.cpp.s
 
+Header/structure.o: Header/structure.cpp.o
+.PHONY : Header/structure.o
+
+# target to build an object file
+Header/structure.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/structure.cpp.o
+.PHONY : Header/structure.cpp.o
+
+Header/structure.i: Header/structure.cpp.i
+.PHONY : Header/structure.i
+
+# target to preprocess a source file
+Header/structure.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/structure.cpp.i
+.PHONY : Header/structure.cpp.i
+
+Header/structure.s: Header/structure.cpp.s
+.PHONY : Header/structure.s
+
+# target to generate assembly for a file
+Header/structure.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/structure.cpp.s
+.PHONY : Header/structure.cpp.s
+
+Header/unboundedCondition.o: Header/unboundedCondition.cpp.o
+.PHONY : Header/unboundedCondition.o
+
+# target to build an object file
+Header/unboundedCondition.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/unboundedCondition.cpp.o
+.PHONY : Header/unboundedCondition.cpp.o
+
+Header/unboundedCondition.i: Header/unboundedCondition.cpp.i
+.PHONY : Header/unboundedCondition.i
+
+# target to preprocess a source file
+Header/unboundedCondition.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/unboundedCondition.cpp.i
+.PHONY : Header/unboundedCondition.cpp.i
+
+Header/unboundedCondition.s: Header/unboundedCondition.cpp.s
+.PHONY : Header/unboundedCondition.s
+
+# target to generate assembly for a file
+Header/unboundedCondition.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AGM2D.dir/build.make CMakeFiles/AGM2D.dir/Header/unboundedCondition.cpp.s
+.PHONY : Header/unboundedCondition.cpp.s
+
 Header/util.o: Header/util.cpp.o
 .PHONY : Header/util.o
 
@@ -714,6 +762,12 @@ help:
 	@echo "... Header/solver.o"
 	@echo "... Header/solver.i"
 	@echo "... Header/solver.s"
+	@echo "... Header/structure.o"
+	@echo "... Header/structure.i"
+	@echo "... Header/structure.s"
+	@echo "... Header/unboundedCondition.o"
+	@echo "... Header/unboundedCondition.i"
+	@echo "... Header/unboundedCondition.s"
 	@echo "... Header/util.o"
 	@echo "... Header/util.i"
 	@echo "... Header/util.s"

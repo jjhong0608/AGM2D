@@ -200,6 +200,18 @@
 		<Unit filename="/home/jhjo/AGM2D/Header/solver.h">
 			<Option target="AGM2D"/>
 		</Unit>
+		<Unit filename="/home/jhjo/AGM2D/Header/structure.cpp">
+			<Option target="AGM2D"/>
+		</Unit>
+		<Unit filename="/home/jhjo/AGM2D/Header/structure.h">
+			<Option target="AGM2D"/>
+		</Unit>
+		<Unit filename="/home/jhjo/AGM2D/Header/unboundedCondition.cpp">
+			<Option target="AGM2D"/>
+		</Unit>
+		<Unit filename="/home/jhjo/AGM2D/Header/unboundedCondition.h">
+			<Option target="AGM2D"/>
+		</Unit>
 		<Unit filename="/home/jhjo/AGM2D/Header/util.cpp">
 			<Option target="AGM2D"/>
 		</Unit>

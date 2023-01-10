@@ -5,7 +5,7 @@
 #ifndef AGM_FUNCTION_H
 #define AGM_FUNCTION_H
 
-#include "pointHeat.h"
+#include "structure.h"
 
 namespace AGM {
     class ellipticFunction {

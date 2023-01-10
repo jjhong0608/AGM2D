@@ -10,12 +10,12 @@ auto main() -> int {
 
     kmp_set_warnings_off();
     mkl_set_dynamic(0);
-//    mkl_set_num_threads(2);
-    mkl_set_num_threads(mkl_get_max_threads());
+//    mkl_set_num_threads(4);
+    mkl_set_num_threads(mkl_get_max_threads() / 2);
 
     omp_set_dynamic(0);
-//    omp_set_num_threads(2);
-    omp_set_num_threads(omp_get_max_threads());
+//    omp_set_num_threads(4);
+    omp_set_num_threads(omp_get_max_threads() / 2);
 
     auto pts{std::vector<AGM::point>{}};
     auto xline{std::vector<AGM::axialLine>{}};
@@ -37,9 +37,9 @@ auto main() -> int {
 
     /* export axial lines */ /*
     auto wf{AGM::writeFile<AGM::point>(&pts)};
-    wf.writeAxialLines("/home/jhjo/extHD1/Navier-Stokes_Result/2D/3.External_flow_past_circular_cylinder/point",
-                       "/home/jhjo/extHD1/Navier-Stokes_Result/2D/3.External_flow_past_circular_cylinder/xaxial",
-                       "/home/jhjo/extHD1/Navier-Stokes_Result/2D/3.External_flow_past_circular_cylinder/yaxial",
+    wf.writeAxialLines("/home/jhjo/extHD1/Navier-Stokes_Result/2D/0.Taylor-Green_vortex/point",
+                       "/home/jhjo/extHD1/Navier-Stokes_Result/2D/0.Taylor-Green_vortex/xaxial",
+                       "/home/jhjo/extHD1/Navier-Stokes_Result/2D/0.Taylor-Green_vortex/yaxial",
                        &xline,
                        &yline);
     return 0;
@@ -74,7 +74,7 @@ auto main() -> int {
 
     auto solver{AGM::solver(&pts)};
 //    solver.streamSolver();
-    solver.NavierStokesSolver();
+    solver.FluidStructureInteraction();
 
     return 0;
 }

@@ -200,7 +200,7 @@ auto AGM::Greenfunction::integrate_const_ttau(char pos) const -> double {
 }
 
 auto AGM::Greenfunction::green_integral(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
+    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
         return green_integral_linear(pos);
     } else {
 //        return green_integral_linear(pos);
@@ -209,7 +209,7 @@ auto AGM::Greenfunction::green_integral(char pos) const -> double {
 }
 
 auto AGM::Greenfunction::green_integral_t(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
+    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
         return green_integral_t_linear(pos);
     } else {
 //        return green_integral_t_linear(pos);
@@ -218,7 +218,7 @@ auto AGM::Greenfunction::green_integral_t(char pos) const -> double {
 }
 
 auto AGM::Greenfunction::green_integral_tau(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
+    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
         return green_integral_tau_linear(pos);
     } else {
 //        return green_integral_tau_linear(pos);
@@ -227,7 +227,7 @@ auto AGM::Greenfunction::green_integral_tau(char pos) const -> double {
 }
 
 auto AGM::Greenfunction::green_integral_ttau(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
+    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
         return green_integral_ttau_linear(pos);
     } else {
 //        return green_integral_ttau_linear(pos);
@@ -585,7 +585,7 @@ auto AGM::Greenfunction::green_function_ttau_ND(double t) const -> double {
 }
 
 auto AGM::Greenfunction::green_integral_ND(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
+    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
         return green_integral_linear_ND(pos);
     } else {
 //        return green_integral_linear_ND(pos);
@@ -594,7 +594,7 @@ auto AGM::Greenfunction::green_integral_ND(char pos) const -> double {
 }
 
 auto AGM::Greenfunction::green_integral_t_ND(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
+    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
         return green_integral_t_linear_ND(pos);
     } else {
 //        return green_integral_t_linear_ND(pos);
@@ -603,7 +603,7 @@ auto AGM::Greenfunction::green_integral_t_ND(char pos) const -> double {
 }
 
 auto AGM::Greenfunction::green_integral_tau_ND(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
+    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
         return green_integral_tau_linear_ND(pos);
     } else {
 //        return green_integral_tau_linear_ND(pos);
@@ -612,7 +612,7 @@ auto AGM::Greenfunction::green_integral_tau_ND(char pos) const -> double {
 }
 
 auto AGM::Greenfunction::green_integral_ttau_ND(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
+    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
         return green_integral_ttau_linear_ND(pos);
     } else {
 //        return green_integral_ttau_linear_ND(pos);
@@ -1087,7 +1087,7 @@ auto AGM::Greenfunction::green_function_ttau_DN(double t) const -> double {
 }
 
 auto AGM::Greenfunction::green_integral_DN(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
+    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
         return green_integral_linear_DN(pos);
     } else {
 //        return green_integral_linear_DN(pos);
@@ -1096,7 +1096,7 @@ auto AGM::Greenfunction::green_integral_DN(char pos) const -> double {
 }
 
 auto AGM::Greenfunction::green_integral_t_DN(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
+    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
         return green_integral_t_linear_DN(pos);
     } else {
 //        return green_integral_t_linear_DN(pos);
@@ -1105,7 +1105,7 @@ auto AGM::Greenfunction::green_integral_t_DN(char pos) const -> double {
 }
 
 auto AGM::Greenfunction::green_integral_tau_DN(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
+    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
         return green_integral_tau_linear_DN(pos);
     } else {
 //        return green_integral_tau_linear_DN(pos);
@@ -1114,7 +1114,7 @@ auto AGM::Greenfunction::green_integral_tau_DN(char pos) const -> double {
 }
 
 auto AGM::Greenfunction::green_integral_ttau_DN(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
+    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
         return green_integral_ttau_linear_DN(pos);
     } else {
 //        return green_integral_ttau_linear_DN(pos);
@@ -1693,7 +1693,7 @@ auto AGM::Greenfunction::green_function_ttau_DF(double t) const -> double {
 
 auto AGM::Greenfunction::green_integral_DF(char pos) const -> double {
 
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
+    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
         return green_integral_linear_DF(pos);
     } else {
         return green_integral_square_DF(pos);
@@ -1701,7 +1701,7 @@ auto AGM::Greenfunction::green_integral_DF(char pos) const -> double {
 }
 
 auto AGM::Greenfunction::green_integral_t_DF(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
+    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
         return green_integral_t_linear_DF(pos);
     } else {
         return green_integral_t_square_DF(pos);
@@ -1709,7 +1709,7 @@ auto AGM::Greenfunction::green_integral_t_DF(char pos) const -> double {
 }
 
 auto AGM::Greenfunction::green_integral_tau_DF(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
+    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
         return green_integral_tau_linear_DF(pos);
     } else {
         return green_integral_tau_square_DF(pos);
@@ -1717,7 +1717,7 @@ auto AGM::Greenfunction::green_integral_tau_DF(char pos) const -> double {
 }
 
 auto AGM::Greenfunction::green_integral_ttau_DF(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.3) {
+    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
         return green_integral_ttau_linear_DF(pos);
     } else {
         return green_integral_ttau_square_DF(pos);

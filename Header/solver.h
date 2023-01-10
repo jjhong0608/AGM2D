@@ -28,6 +28,8 @@ namespace AGM {
 
         void NavierStokesSolver();
 
+        void FluidStructureInteraction();
+
     private:
         std::vector<point> *pts{};
     };

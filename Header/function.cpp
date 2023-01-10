@@ -140,25 +140,32 @@ auto AGM::NavierStokesFunction::initialTime() -> double {
 
 auto AGM::NavierStokesFunction::terminalTime() -> double {
 //    return ZEROVALUE;
-//    return 1e-1;
     return 1e3;
+//    return 1e1;
 //    return 2.5e2;
 }
 
 auto AGM::NavierStokesFunction::deltaTime() -> double {
-//    return 1e-2;
-    return 5e-3;
-//    return 2.5e-3;
-//    return 1.25e-3;
+//    return 2e-2;
+    return 1e-2;
 }
 
 auto AGM::NavierStokesFunction::writeTime() -> double {
-//    return deltaTime();
-    return 1e1;
+    return deltaTime();
+//    return 1e-1;
 }
 
 auto AGM::NavierStokesFunction::u(double t, const AGM::point &pt) -> double {
-    double x{pt[0]}, y{pt[1]};
+    auto x{pt[0]}, y{pt[1]};
+    // FSI
+    return isclose(y, UNITVALUE) ? UNITVALUE
+                                 : isclose(y, -UNITVALUE) ? -UNITVALUE
+                                                          : ZEROVALUE;
+
+//    auto Re{1e3};
+    // Taylor-Green vortex
+//    return -std::cos(2 * M_PI * x) * std::sin(2 * M_PI * y) * std::exp(-8 * std::pow(M_PI, 2) * t / Re);
+
     // Lid-driven cavity
     if (isclose(y, UNITVALUE)) {
         return UNITVALUE;
@@ -196,7 +203,11 @@ auto AGM::NavierStokesFunction::u(double t, const AGM::point &pt) -> double {
 }
 
 auto AGM::NavierStokesFunction::v(double t, const AGM::point &pt) -> double {
-    double x{pt[0]}, y{pt[1]};
+    auto x{pt[0]}, y{pt[1]};
+    auto Re{1e3};
+    // Taylor-Green vortex
+//    return std::sin(2 * M_PI * x) * std::cos(2 * M_PI * y) * std::exp(-8 * std::pow(M_PI, 2) * t / Re);
+
     return ZEROVALUE;
     // Kalman vortex
     double a{HALFVALUE};
@@ -207,7 +218,12 @@ auto AGM::NavierStokesFunction::v(double t, const AGM::point &pt) -> double {
 }
 
 auto AGM::NavierStokesFunction::p(double t, const AGM::point &pt) -> double {
-    double x{pt[0]}, y{pt[1]};
+    auto x{pt[0]}, y{pt[1]};
+    auto Re{1e3};
+    // Taylor-Green vortex
+    return -(std::cos(4 * M_PI * x) + std::cos(4 * M_PI * y)) / 4 * std::exp(-16 * std::pow(M_PI, 2) * t / Re);
+
+    //
     return ZEROVALUE;
 }
 
@@ -280,20 +296,56 @@ AGM::NavierStokesFunction::assignPreviousValue(AGM::value &pu, AGM::value &pv, A
 }
 
 void AGM::NavierStokesFunction::assignBoundaryValue(AGM::point &uvel, AGM::point &vvel) {
-    if (uvel.getCondition() == 'D') {
-        uvel["bdv"] = 2 * u(pointHeat::getTime() + pointHeat::getDelta(), uvel);
-    } else if (uvel.getCondition() == 'N') {
-        uvel["bdv"] = 2 * ux(pointHeat::getTime() + pointHeat::getDelta(), uvel) * uvel.getNormal()[0] +
-                      2 * uy(pointHeat::getTime() + pointHeat::getDelta(), uvel) * uvel.getNormal()[1];
+    if (iszero(pointHeat::getTime())) {
+        if (uvel.getCondition() == 'D') {
+            uvel["bdv"] = u(pointHeat::getTime() + pointHeat::getDelta(), uvel);
+        } else if (uvel.getCondition() == 'N') {
+            uvel["bdv"] = ux(pointHeat::getTime() + pointHeat::getDelta(), uvel) * uvel.getNormal()[0] +
+                          uy(pointHeat::getTime() + pointHeat::getDelta(), uvel) * uvel.getNormal()[1];
+        }
+//        uvel["rhs"] = f1(pointHeat::getTime() + pointHeat::getDelta(), uvel);
+        if (vvel.getCondition() == 'D') {
+            vvel["bdv"] = v(pointHeat::getTime() + pointHeat::getDelta(), vvel);
+        } else if (vvel.getCondition() == 'N') {
+            vvel["bdv"] = vx(pointHeat::getTime() + pointHeat::getDelta(), vvel) * vvel.getNormal()[0] +
+                          vy(pointHeat::getTime() + pointHeat::getDelta(), vvel) * vvel.getNormal()[1];
+        }
+//        vvel["rhs"] = f2(pointHeat::getTime() + pointHeat::getDelta(), vvel);
+    } else {
+        if (uvel.getCondition() == 'D') {
+            uvel["bdv"] = u(pointHeat::getTime(), uvel) + u(pointHeat::getTime() + pointHeat::getDelta(), uvel);
+        } else if (uvel.getCondition() == 'N') {
+            uvel["bdv"] = ux(pointHeat::getTime(), uvel) * uvel.getNormal()[0] +
+                          uy(pointHeat::getTime(), uvel) * uvel.getNormal()[1] +
+                          ux(pointHeat::getTime() + pointHeat::getDelta(), uvel) * uvel.getNormal()[0] +
+                          uy(pointHeat::getTime() + pointHeat::getDelta(), uvel) * uvel.getNormal()[1];
+        }
+//        uvel["rhs"] = f1(pointHeat::getTime() + pointHeat::getDelta(), uvel);
+        if (vvel.getCondition() == 'D') {
+            vvel["bdv"] = v(pointHeat::getTime(), vvel) + v(pointHeat::getTime() + pointHeat::getDelta(), vvel);
+        } else if (vvel.getCondition() == 'N') {
+            vvel["bdv"] = vx(pointHeat::getTime(), vvel) * vvel.getNormal()[0] +
+                          vy(pointHeat::getTime(), vvel) * vvel.getNormal()[1] +
+                          vx(pointHeat::getTime() + pointHeat::getDelta(), vvel) * vvel.getNormal()[0] +
+                          vy(pointHeat::getTime() + pointHeat::getDelta(), vvel) * vvel.getNormal()[1];
+        }
+//        vvel["rhs"] = f2(pointHeat::getTime() + pointHeat::getDelta(), vvel);
     }
-    uvel["rhs"] = f1(pointHeat::getTime() + pointHeat::getDelta(), uvel);
-    if (vvel.getCondition() == 'D') {
-        vvel["bdv"] = 2 * v(pointHeat::getTime() + pointHeat::getDelta(), vvel);
-    } else if (vvel.getCondition() == 'N') {
-        vvel["bdv"] = 2 * vx(pointHeat::getTime() + pointHeat::getDelta(), vvel) * vvel.getNormal()[0] +
-                      2 * vy(pointHeat::getTime() + pointHeat::getDelta(), vvel) * vvel.getNormal()[1];
-    }
-    vvel["rhs"] = f2(pointHeat::getTime() + pointHeat::getDelta(), vvel);
+
+//    if (uvel.getCondition() == 'D') {
+//        uvel["bdv"] = 2 * u(pointHeat::getTime() + pointHeat::getDelta(), uvel);
+//    } else if (uvel.getCondition() == 'N') {
+//        uvel["bdv"] = 2 * ux(pointHeat::getTime() + pointHeat::getDelta(), uvel) * uvel.getNormal()[0] +
+//                      2 * uy(pointHeat::getTime() + pointHeat::getDelta(), uvel) * uvel.getNormal()[1];
+//    }
+//    uvel["rhs"] = f1(pointHeat::getTime() + pointHeat::getDelta(), uvel);
+//    if (vvel.getCondition() == 'D') {
+//        vvel["bdv"] = 2 * v(pointHeat::getTime() + pointHeat::getDelta(), vvel);
+//    } else if (vvel.getCondition() == 'N') {
+//        vvel["bdv"] = 2 * vx(pointHeat::getTime() + pointHeat::getDelta(), vvel) * vvel.getNormal()[0] +
+//                      2 * vy(pointHeat::getTime() + pointHeat::getDelta(), vvel) * vvel.getNormal()[1];
+//    }
+//    vvel["rhs"] = f2(pointHeat::getTime() + pointHeat::getDelta(), vvel);
 }
 
 void AGM::NavierStokesFunction::loadPreviousValue(const std::string &filename, std::vector<AGM::value> *pu,
