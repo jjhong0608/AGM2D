@@ -139,28 +139,42 @@ auto AGM::NavierStokesFunction::initialTime() -> double {
 }
 
 auto AGM::NavierStokesFunction::terminalTime() -> double {
-//    return ZEROVALUE;
-    return 1e3;
-//    return 1e1;
-//    return 2.5e2;
+    return 2.5e2;
 }
 
 auto AGM::NavierStokesFunction::deltaTime() -> double {
-//    return 2e-2;
     return 1e-2;
+    return (M_PI / 40.) * (M_PI / 40.) * 2.;
 }
 
 auto AGM::NavierStokesFunction::writeTime() -> double {
-    return deltaTime();
-//    return 1e-1;
+    return 2. * deltaTime();
 }
 
 auto AGM::NavierStokesFunction::u(double t, const AGM::point &pt) -> double {
     auto x{pt[0]}, y{pt[1]};
+    // Tesla valve
+    auto ymin{-1.917302}, ymax{-1.849869};
+    if (isclose(x, 5.1220367000000003e-01)) {
+        return (y - ymin) * (ymax - y)  / (ymax - ymin);
+    } else {
+        return ZEROVALUE;
+    }
+
+    // two-square cylinders
+    if (isclose(x, -7.5) | isclose(y, -7.5) | isclose(y, 7.5)) {
+        return UNITVALUE;
+    } else {
+        return ZEROVALUE;
+    }
+
+    // Kin and Moin
+    return -std::cos(x) * std::sin(y) * std::exp(-2. * t);
+
     // FSI
-    return isclose(y, UNITVALUE) ? UNITVALUE
-                                 : isclose(y, -UNITVALUE) ? -UNITVALUE
-                                                          : ZEROVALUE;
+//    return isclose(y, UNITVALUE) ? UNITVALUE
+//                                 : isclose(y, -UNITVALUE) ? -UNITVALUE
+//                                                          : ZEROVALUE;
 
 //    auto Re{1e3};
     // Taylor-Green vortex
@@ -205,6 +219,12 @@ auto AGM::NavierStokesFunction::u(double t, const AGM::point &pt) -> double {
 auto AGM::NavierStokesFunction::v(double t, const AGM::point &pt) -> double {
     auto x{pt[0]}, y{pt[1]};
     auto Re{1e3};
+    // two-square cylinders
+    return ZEROVALUE;
+
+    // Kim and Moin
+    return std::sin(x) * std::cos(y) * std::exp(-2. * t);
+
     // Taylor-Green vortex
 //    return std::sin(2 * M_PI * x) * std::cos(2 * M_PI * y) * std::exp(-8 * std::pow(M_PI, 2) * t / Re);
 
@@ -220,8 +240,14 @@ auto AGM::NavierStokesFunction::v(double t, const AGM::point &pt) -> double {
 auto AGM::NavierStokesFunction::p(double t, const AGM::point &pt) -> double {
     auto x{pt[0]}, y{pt[1]};
     auto Re{1e3};
+    // two-sqaure cylinders
+    return ZEROVALUE;
+
+    // Kim and Moin
+    return -(std::cos(2. * x) + std::cos(2. * y)) * std::exp(-4. * t) / 4.;
+
     // Taylor-Green vortex
-    return -(std::cos(4 * M_PI * x) + std::cos(4 * M_PI * y)) / 4 * std::exp(-16 * std::pow(M_PI, 2) * t / Re);
+//    return -(std::cos(4 * M_PI * x) + std::cos(4 * M_PI * y)) / 4 * std::exp(-16 * std::pow(M_PI, 2) * t / Re);
 
     //
     return ZEROVALUE;
@@ -348,8 +374,8 @@ void AGM::NavierStokesFunction::assignBoundaryValue(AGM::point &uvel, AGM::point
 //    vvel["rhs"] = f2(pointHeat::getTime() + pointHeat::getDelta(), vvel);
 }
 
-void AGM::NavierStokesFunction::loadPreviousValue(const std::string &filename, std::vector<AGM::value> *pu,
-                                                  std::vector<AGM::value> *pv, std::vector<AGM::value> *pp) {
+void AGM::NavierStokesFunction::loadPreviousValue(const std::string &filename, std::vector <AGM::value> *pu,
+                                                  std::vector <AGM::value> *pv, std::vector <AGM::value> *pp) {
     int idx{}, bc{};
     double x{}, y{};
     std::ifstream f(filename);

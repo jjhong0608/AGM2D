@@ -1,3 +1,0 @@
-/home/jhjo/AGM2D/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/jhjo/AGM2D/cmake-build-debug/CMakeFiles/AGM2D.dir
-/home/jhjo/AGM2D/cmake-build-debug/CMakeFiles/edit_cache.dir

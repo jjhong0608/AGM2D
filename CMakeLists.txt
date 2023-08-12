@@ -12,7 +12,8 @@ set(CMAKE_CXX_STANDARD 17)
 
 include_directories(Header /opt/intel/compilers_and_libraries_2020.3.275/linux/mkl/include Header/Eigen)
 
-add_executable(AGM2D
+add_executable(
+        AGM2D
         main.cpp
         Header/util.cpp
         Header/util.h
@@ -56,7 +57,8 @@ add_executable(AGM2D
         Header/GreenfunctionAxisymmetric.h
         Header/pointAxisymmetric.cpp
         Header/pointAxisymmetric.h
-        Header/unboundedCondition.cpp Header/unboundedCondition.h Header/structure.cpp Header/structure.h)
+        Header/unboundedCondition.cpp Header/unboundedCondition.h Header/structure.cpp Header/structure.h
+)
 
 find_library(
         ILP64_MODULE
@@ -108,6 +110,16 @@ find_library(
         NAMES dl
 )
 
-target_link_libraries(AGM2D ${ILP64_MODULE} ${THREAD_MODULE} ${CORE_MODULE} ${SEQUENTIAL_MODULE} ${IOMP_MODULE} ${LPTHREAD} ${LM} ${LDL})
+target_link_libraries(
+        AGM2D
+        ${ILP64_MODULE}
+        ${THREAD_MODULE}
+        ${CORE_MODULE}
+        ${SEQUENTIAL_MODULE}
+        ${IOMP_MODULE}
+        ${LPTHREAD}
+        ${LM}
+        ${LDL}
+)
 
 target_compile_options(AGM2D PUBLIC -xCOMMON-AVX512)

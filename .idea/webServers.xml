@@ -2,7 +2,7 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="1c13f331-965b-474f-90b7-aa937b865caf" name="dokim">
+      <webServer id="1c13f331-965b-474f-90b7-aa937b865caf" name="dokim(프로젝트 수준)">
         <fileTransfer rootFolder="/home/jhjo" accessType="SFTP" host="165.246.142.45" port="22" sshConfigId="23183254-7e26-4e40-bb06-9dc618d18cae" sshConfig="jhjo@165.246.142.45:22 password">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" isUseRsync="true" />

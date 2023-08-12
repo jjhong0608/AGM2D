@@ -1185,10 +1185,6 @@ void AGM::point::approximatePhiAtBoundary1(int order) {
                    (std::pow(t1, 4) - std::pow(t1, 3) * (t2 + t3 + t4 + t5) +
                     std::pow(t1, 2) * (t2 * t3 + t2 * t4 + t2 * t5 + t3 * t4 + t3 * t5 + t4 * t5) -
                     t1 * (t3 * t4 * t5 + t2 * t4 * t5 + t2 * t3 * t5 + t2 * t3 * t4) + t2 * t3 * t4 * t5);
-//            return (std::pow(t, 3) - std::pow(t, 2) * (t2 + t3 + t4) + t * (t2 * t3 + t2 * t4 + t3 * t4) -
-//                    t2 * t3 * t4) /
-//                   (std::pow(t1, 3) - std::pow(t1, 2) * (t2 + t3 + t4) + t1 * (t2 * t3 + t2 * t4 + t3 * t4) -
-//                    t2 * t3 * t4);
         };
         solMatrixRow[1][pt5.getIdx() + getNPts()] = fourthOrder(t0, t5, t1, t2, t3, t4);
         solMatrixRow[1][pt4.getIdx() + getNPts()] = fourthOrder(t0, t4, t5, t1, t2, t3);

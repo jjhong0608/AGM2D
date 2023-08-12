@@ -74,7 +74,8 @@ auto main() -> int {
 
     auto solver{AGM::solver(&pts)};
 //    solver.streamSolver();
-    solver.FluidStructureInteraction();
+//    solver.FluidStructureInteraction();
+    solver.NavierStokesSolver();
 
     return 0;
 }

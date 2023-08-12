@@ -21,9 +21,9 @@ void AGM::writeFileMultiple<T0, T1, T2>::writeResult(const std::string &string) 
     }
     f.precision(16);
     for (int i = 0; i < point::getNPts(); ++i) {
-//        bc = pts0->at(i).getCondition() == 'C' ? 0 : pts0->at(i).getCondition() == 'D' ? 1 :
-//                                                     pts0->at(i).getCondition() == 'N' ? 2 :
-//                                                     pts0->at(i).getCondition() == 'I' ? 3 : 4;
+        bc = pts2->at(i).getCondition() == 'C' ? 0 : pts2->at(i).getCondition() == 'D' ? 1 :
+                                                     pts2->at(i).getCondition() == 'N' ? 2 :
+                                                     pts2->at(i).getCondition() == 'I' ? 3 : 4;
         f << std::scientific;
         f << i << "\t";                    // idx
         f << pts0->at(i)[0] << "\t";       // x
