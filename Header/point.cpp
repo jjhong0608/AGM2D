@@ -316,15 +316,17 @@ void AGM::point::findStencilBoundary() {
                 printError("assignStencil in findStencil", "rightPt & leftPt do not exist");
             }
         } else {
-            n = ZEROVALUE;
-            double norm{std::sqrt(std::pow(normal[0], 2) + std::pow(normal[1], 2))};
-            for (int i = 0; i < 2; ++i) {
-                normal[i] /= norm;
+            if (isnegative(sign * n)) {
+                n = ZEROVALUE;
+                double norm{std::sqrt(std::pow(normal[0], 2) + std::pow(normal[1], 2))};
+                for (int i = 0; i < 2; ++i) {
+                    normal[i] /= norm;
+                }
+                printInformation();
             }
             element[ewns] = this;
         }
     };
-
     if (!element[E]) assignStencil(E, EN, ES, findRightLine, 'y', 1, xy[1], UNITVALUE, normal[0]);
     if (!element[W]) assignStencil(W, WN, WS, findLeftLine, 'y', 1, xy[1], -UNITVALUE, normal[0]);
 
@@ -710,7 +712,7 @@ void AGM::point::calculateRepresentationFormulaCross() {
 
 void AGM::point::calculateRepresentationFormulaDirichlet() {
     solMatrixRow[0][getIdx()] = UNITVALUE;
-    if (getCondition() == 'D') approximatePhiAtBoundary1(2);
+    if (getCondition() == 'D') approximatePhiAtBoundary2();
     else if (getCondition() == 'd') approximatePhiAtAppend();
 }
 
@@ -733,7 +735,7 @@ void AGM::point::calculateRepresentationFormulaNeumann() {
             solMatrixRow[0] += row[i] * normal[i];
         }
     }
-    if (getCondition() == 'N') approximatePhiAtBoundary1(2);
+    if (getCondition() == 'N') approximatePhiAtBoundary2();
     else if (getCondition() == 'n') approximatePhiAtAppend();
 }
 
@@ -1203,6 +1205,74 @@ void AGM::point::approximatePhiAtBoundary1(int order) {
                                                     "order (which is %d) is wrong", order);
 }
 
+void AGM::point::approximatePhiAtBoundary2() {
+    auto Error = []() -> double {
+        printError("AGM::point::approximatePhiAtBoundary2", "nullptr");
+        return ZEROVALUE;
+    };
+    auto axis{'x'};
+    if (getAxialLine('x')) {
+        axis = 'x';
+    } else if (getAxialLine('y')) {
+        axis = 'y';
+    } else {
+        printError("AGM::point::approximatePhiAtAppend", "There is no axial line");
+    }
+    point *ptc = getAxialLine(axis)->front()->getIdx() == getIdx() ? getAxialLine(axis)->at(1) :
+                 getAxialLine(axis)->back()->getIdx() == getIdx() ? *std::prev(getAxialLine(axis)->end() - 1) : nullptr;
+    point *ptl = getAxialLine(axis)->front()->getIdx() == getIdx() ? this :
+                 getAxialLine(axis)->back()->getIdx() == getIdx() ? *std::prev(getAxialLine(axis)->end() - 2) : nullptr;
+    point *ptr = getAxialLine(axis)->front()->getIdx() == getIdx() ? getAxialLine(axis)->at(2) :
+                 getAxialLine(axis)->back()->getIdx() == getIdx() ? this : nullptr;
+    auto pt0 = getAxialLine(axis)->front()->getIdx() == getIdx() ? ptr : ptl;
+    auto pt1{ptc};
+    point *pt2{nullptr};
+    point *pt3{nullptr};
+    if (!getAxialLine('x')) {
+        if (element[EN] && element[ES]) {
+            pt2 = element[EN];
+            pt3 = element[ES];
+        } else if (element[WN] && element[WS]) {
+            pt2 = element[WN];
+            pt3 = element[WS];
+        } else if (element[E] && element[W]) {
+            if (element[E]->getIdx() != getIdx()) {
+                pt2 = element[E];
+            }
+            if (element[W]->getIdx() != getIdx()) {
+                pt3 = element[W];
+            }
+        }
+    } else if (!getAxialLine('y')) {
+        if (element[NE] && element[NW]) {
+            pt2 = element[NE];
+            pt3 = element[NW];
+        } else if (element[SE] && element[SW]) {
+            pt2 = element[SE];
+            pt3 = element[SW];
+        } else if (element[N] && element[S]) {
+            if (element[N]->getIdx() != getIdx()) {
+                pt2 = element[N];
+            }
+            if (element[S]->getIdx() != getIdx()) {
+                pt3 = element[S];
+            }
+        }
+    }
+    solMatrixRow[1][getIdx() + getNPts()] = -1.;
+    solMatrixRow[1][pt0->getIdx() + getNPts()] = 1.;
+    solMatrixRow[1][pt1->getIdx() + getNPts()] = (*this - *pt0) / (*pt1 - *pt0);
+    solMatrixRow[1][pt0->getIdx() + getNPts()] -= solMatrixRow[1][pt1->getIdx() + getNPts()];
+    if (pt2) {
+        solMatrixRow[1][pt2->getIdx() + getNPts()] = (*this - *pt0) / (*pt2 - *pt0);
+        solMatrixRow[1][pt0->getIdx() + getNPts()] -= solMatrixRow[1][pt2->getIdx() + getNPts()];
+    }
+    if (pt3) {
+        solMatrixRow[1][pt3->getIdx() + getNPts()] = (*this - *pt0) / (*pt3 - *pt0);
+        solMatrixRow[1][pt0->getIdx() + getNPts()] -= solMatrixRow[1][pt3->getIdx() + getNPts()];
+    }
+}
+
 void AGM::point::approximatePhiAtAppend() {
     for (const auto &item: {E, W, N, S}) {
         if (getElement()[item] && getIdx() != getElement()[item]->getIdx()) {
@@ -1610,9 +1680,10 @@ void AGM::point::printInformation() {
     sprintf(c0, "(%f, %f), with boundary condition %c", getXy()[0], getXy()[1], getCondition());
     if (getCondition() == 'D' || getCondition() == 'N') {
         sprintf(c1, ", boundary value = %f", getValue()["bdv"]);
-        if (getCondition() == 'N') {
-            sprintf(c2, ", norval vector = (%f, %f)", getNormal()[0], getNormal()[1]);
-        }
+        sprintf(c2, ", norval vector = (%f, %f)", getNormal()[0], getNormal()[1]);
+//        if (getCondition() == 'N') {
+//            sprintf(c2, ", norval vector = (%f, %f)", getNormal()[0], getNormal()[1]);
+//        }
     }
     sprintf(c3, "\n");
     printf("%s%s%s%s", c0, c1, c2, c3);

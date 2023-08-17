@@ -570,6 +570,7 @@ void AGM::pointHeat::approximateNaNDerivatives(std::vector<AGM::pointHeat> *poin
             }
         }
         printf("condition = %c\n", getCondition());
+        printInformation();
         printError("AGM::pointHeat::approximateNaNDerivatives", "findInnerPointOfBoundary");
         return nullptr;
     };

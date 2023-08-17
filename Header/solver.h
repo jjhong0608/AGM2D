@@ -28,6 +28,8 @@ namespace AGM {
 
         void NavierStokesSolver();
 
+        void TwoStepNS();
+
         void FluidStructureInteraction();
 
     private:

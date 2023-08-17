@@ -27,6 +27,10 @@ auto main() -> int {
     AGM::point::setAxialLines(&yline, 'y');
     AGM::point::setBdLine(&bdline);
 
+    for (auto &item: pts) {
+        item.setMp(UNITVALUE / 500.);
+    }
+
     std::cout << "-----< information >-----" << "\n";
     std::cout << "# of the points = " << pts.size() << "\n";
     std::cout << "# of the x-axial lines = " << xline.size() << "\n";
@@ -44,7 +48,6 @@ auto main() -> int {
                        &yline);
     return 0;
     */
-
     for (auto &item: pts) {
         AGM::point::setPts(&pts);
         item.findStencil();
@@ -71,11 +74,11 @@ auto main() -> int {
 //            item.setAxialLine(nullptr, 'x');
 //        }
     }
-
     auto solver{AGM::solver(&pts)};
 //    solver.streamSolver();
 //    solver.FluidStructureInteraction();
     solver.NavierStokesSolver();
+//    solver.TwoStepNS();
 
     return 0;
 }

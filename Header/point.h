@@ -152,6 +152,8 @@ namespace AGM {
 
         void approximatePhiAtBoundary1(int order);
 
+        void approximatePhiAtBoundary2();
+
         void approximatePhiAtAppend();
 
         void updateRightHandSide(const std::function<double(int)> &f, const std::function<double(int)> &g);

@@ -143,20 +143,21 @@ auto AGM::NavierStokesFunction::terminalTime() -> double {
 }
 
 auto AGM::NavierStokesFunction::deltaTime() -> double {
-    return 1e-2;
+    return 5e-6;
     return (M_PI / 40.) * (M_PI / 40.) * 2.;
 }
 
 auto AGM::NavierStokesFunction::writeTime() -> double {
-    return 2. * deltaTime();
+    return deltaTime();
 }
 
 auto AGM::NavierStokesFunction::u(double t, const AGM::point &pt) -> double {
     auto x{pt[0]}, y{pt[1]};
     // Tesla valve
+//    auto ymin{-1.915503}, ymax{-1.845503};
     auto ymin{-1.917302}, ymax{-1.849869};
     if (isclose(x, 5.1220367000000003e-01)) {
-        return (y - ymin) * (ymax - y)  / (ymax - ymin);
+        return 6. * (y - ymin) * (ymax - y)  / std::pow(ymax - ymin, 3.);
     } else {
         return ZEROVALUE;
     }
