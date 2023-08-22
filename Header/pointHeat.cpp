@@ -577,3 +577,19 @@ void AGM::pointHeat::approximateNaNDerivatives(std::vector<AGM::pointHeat> *poin
     if (std::isnan(values["dx"])) values["dx"] = points->at(findInnerPointOfBoundary()->getIdx()).getValue()["dx"];
     if (std::isnan(values["dy"])) values["dy"] = points->at(findInnerPointOfBoundary()->getIdx()).getValue()["dy"];
 }
+
+void AGM::pointHeat::approximateDiff(std::vector<pointHeat> *points) {
+    for (auto &axis: {'x', 'y'}) {
+        if (getAxialLine(axis)) {
+            if (getAxialLine(axis)->front()->getIdx() == getIdx()) {
+                values["dx"] = points->at(getAxialLine(axis)->at(1)->getIdx()).getValue()["dx"];
+                values["dy"] = points->at(getAxialLine(axis)->at(1)->getIdx()).getValue()["dy"];
+                return;
+            } else if (getAxialLine(axis)->back()->getIdx() == getIdx()) {
+                values["dx"] = points->at((*std::prev(getAxialLine(axis)->end() - 1))->getIdx()).getValue()["dx"];
+                values["dy"] = points->at((*std::prev(getAxialLine(axis)->end() - 1))->getIdx()).getValue()["dy"];
+                return;
+            }
+        }
+    }
+}

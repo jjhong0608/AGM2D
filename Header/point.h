@@ -156,6 +156,8 @@ namespace AGM {
 
         void approximatePhiAtAppend();
 
+        void approximateDiff(std::vector<point> *points);
+
         void updateRightHandSide(const std::function<double(int)> &f, const std::function<double(int)> &g);
 
         void updateRightHandSideCross(const std::function<double(int)> &f, const std::function<double(int)> &g);

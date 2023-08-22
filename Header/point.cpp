@@ -712,7 +712,7 @@ void AGM::point::calculateRepresentationFormulaCross() {
 
 void AGM::point::calculateRepresentationFormulaDirichlet() {
     solMatrixRow[0][getIdx()] = UNITVALUE;
-    if (getCondition() == 'D') approximatePhiAtBoundary2();
+    if (getCondition() == 'D') approximatePhiAtBoundary1(0);
     else if (getCondition() == 'd') approximatePhiAtAppend();
 }
 
@@ -735,7 +735,7 @@ void AGM::point::calculateRepresentationFormulaNeumann() {
             solMatrixRow[0] += row[i] * normal[i];
         }
     }
-    if (getCondition() == 'N') approximatePhiAtBoundary2();
+    if (getCondition() == 'N') approximatePhiAtBoundary1(0);
     else if (getCondition() == 'n') approximatePhiAtAppend();
 }
 
@@ -1202,7 +1202,8 @@ void AGM::point::approximatePhiAtBoundary1(int order) {
                                                              : order == 0 ? zeroOrderExtrapolation()
                                                                           : printError(
                                                     "void AGM::point::approximatePhiAtBoundary",
-                                                    "order (which is %d) is wrong", order);
+                                                    "order (which is %d) is wrong", order
+                                            );
 }
 
 void AGM::point::approximatePhiAtBoundary2() {
@@ -1210,66 +1211,77 @@ void AGM::point::approximatePhiAtBoundary2() {
         printError("AGM::point::approximatePhiAtBoundary2", "nullptr");
         return ZEROVALUE;
     };
-    auto axis{'x'};
-    if (getAxialLine('x')) {
-        axis = 'x';
-    } else if (getAxialLine('y')) {
-        axis = 'y';
-    } else {
-        printError("AGM::point::approximatePhiAtAppend", "There is no axial line");
-    }
-    point *ptc = getAxialLine(axis)->front()->getIdx() == getIdx() ? getAxialLine(axis)->at(1) :
-                 getAxialLine(axis)->back()->getIdx() == getIdx() ? *std::prev(getAxialLine(axis)->end() - 1) : nullptr;
-    point *ptl = getAxialLine(axis)->front()->getIdx() == getIdx() ? this :
-                 getAxialLine(axis)->back()->getIdx() == getIdx() ? *std::prev(getAxialLine(axis)->end() - 2) : nullptr;
-    point *ptr = getAxialLine(axis)->front()->getIdx() == getIdx() ? getAxialLine(axis)->at(2) :
-                 getAxialLine(axis)->back()->getIdx() == getIdx() ? this : nullptr;
-    auto pt0 = getAxialLine(axis)->front()->getIdx() == getIdx() ? ptr : ptl;
-    auto pt1{ptc};
-    point *pt2{nullptr};
-    point *pt3{nullptr};
-    if (!getAxialLine('x')) {
-        if (element[EN] && element[ES]) {
-            pt2 = element[EN];
-            pt3 = element[ES];
-        } else if (element[WN] && element[WS]) {
-            pt2 = element[WN];
-            pt3 = element[WS];
-        } else if (element[E] && element[W]) {
-            if (element[E]->getIdx() != getIdx()) {
-                pt2 = element[E];
+    auto pt_vec{std::vector<point *>()};
+    auto idx{0};
+    point *pt{nullptr};
+    auto append_pt = [&](char axis) -> void {
+        if (getAxialLine(axis)) {
+            point *ptc = getAxialLine(axis)->front()->getIdx() == getIdx() ? getAxialLine(axis)->at(1) :
+                         getAxialLine(axis)->back()->getIdx() == getIdx() ? *std::prev(getAxialLine(axis)->end() - 1)
+                                                                          : nullptr;
+            point *ptl = getAxialLine(axis)->front()->getIdx() == getIdx() ? this :
+                         getAxialLine(axis)->back()->getIdx() == getIdx() ? *std::prev(getAxialLine(axis)->end() - 2)
+                                                                          : nullptr;
+            point *ptr = getAxialLine(axis)->front()->getIdx() == getIdx() ? getAxialLine(axis)->at(2) :
+                         getAxialLine(axis)->back()->getIdx() == getIdx() ? this : nullptr;
+            auto pt0 = getAxialLine(axis)->front()->getIdx() == getIdx() ? ptr : ptl;
+            auto pt1{ptc};
+            if (!pt) {
+                pt = pt0;
+            } else {
+                if ((*this - *pt0) > (*this - *pt)) {
+                    pt_vec.emplace_back(pt);
+                    pt = pt0;
+                } else {
+                    pt_vec.emplace_back(pt0);
+                }
             }
-            if (element[W]->getIdx() != getIdx()) {
-                pt3 = element[W];
+            pt_vec.emplace_back(pt1);
+        } else {
+            if (axis == 'x') {
+                if (element[EN] && element[ES]) {
+                    pt_vec.emplace_back(element[EN]);
+                    pt_vec.emplace_back(element[ES]);
+                } else if (element[E]) {
+                    if (element[E]->getIdx() != getIdx()) {
+                        pt_vec.emplace_back(element[E]);
+                    }
+                }
+                if (element[WN] && element[WS]) {
+                    pt_vec.emplace_back(element[WN]);
+                    pt_vec.emplace_back(element[WS]);
+                } else if (element[W]) {
+                    if (element[W]->getIdx() != getIdx()) {
+                        pt_vec.emplace_back(element[W]);
+                    }
+                }
+            } else if (axis == 'y') {
+                if (element[NE] && element[NW]) {
+                    pt_vec.emplace_back(element[NE]);
+                    pt_vec.emplace_back(element[NW]);
+                } else if (element[N]) {
+                    if (element[N]->getIdx() != getIdx()) {
+                        pt_vec.emplace_back(element[N]);
+                    }
+                }
+                if (element[SE] && element[SW]) {
+                    pt_vec.emplace_back(element[SE]);
+                    pt_vec.emplace_back(element[SW]);
+                } else if (element[S]) {
+                    if (element[S]->getIdx() != getIdx()) {
+                        pt_vec.emplace_back(element[S]);
+                    }
+                }
             }
         }
-    } else if (!getAxialLine('y')) {
-        if (element[NE] && element[NW]) {
-            pt2 = element[NE];
-            pt3 = element[NW];
-        } else if (element[SE] && element[SW]) {
-            pt2 = element[SE];
-            pt3 = element[SW];
-        } else if (element[N] && element[S]) {
-            if (element[N]->getIdx() != getIdx()) {
-                pt2 = element[N];
-            }
-            if (element[S]->getIdx() != getIdx()) {
-                pt3 = element[S];
-            }
-        }
-    }
+    };
+    append_pt('x');
+    append_pt('y');
     solMatrixRow[1][getIdx() + getNPts()] = -1.;
-    solMatrixRow[1][pt0->getIdx() + getNPts()] = 1.;
-    solMatrixRow[1][pt1->getIdx() + getNPts()] = (*this - *pt0) / (*pt1 - *pt0);
-    solMatrixRow[1][pt0->getIdx() + getNPts()] -= solMatrixRow[1][pt1->getIdx() + getNPts()];
-    if (pt2) {
-        solMatrixRow[1][pt2->getIdx() + getNPts()] = (*this - *pt0) / (*pt2 - *pt0);
-        solMatrixRow[1][pt0->getIdx() + getNPts()] -= solMatrixRow[1][pt2->getIdx() + getNPts()];
-    }
-    if (pt3) {
-        solMatrixRow[1][pt3->getIdx() + getNPts()] = (*this - *pt0) / (*pt3 - *pt0);
-        solMatrixRow[1][pt0->getIdx() + getNPts()] -= solMatrixRow[1][pt3->getIdx() + getNPts()];
+    solMatrixRow[1][pt->getIdx() + getNPts()] = 1.;
+    for (int i = 0; i < pt_vec.size(); ++i) {
+        solMatrixRow[1][pt_vec.at(i)->getIdx() + getNPts()] = (*this - *pt) / (*pt_vec.at(i) - *pt);
+        solMatrixRow[1][pt->getIdx() + getNPts()] -= solMatrixRow[1][pt_vec.at(i)->getIdx() + getNPts()];
     }
 }
 
@@ -1283,6 +1295,22 @@ void AGM::point::approximatePhiAtAppend() {
             std::cout << "near point = " << getElement()[item]->getIdx() << "\n\n";
 
             return;
+        }
+    }
+}
+
+void AGM::point::approximateDiff(std::vector<point> *points) {
+    for (auto &axis: {'x', 'y'}) {
+        if (getAxialLine(axis)) {
+            if (getAxialLine(axis)->front()->getIdx() == getIdx()) {
+                values["dx"] = points->at(getAxialLine(axis)->at(1)->getIdx()).getValue()["dx"];
+                values["dy"] = points->at(getAxialLine(axis)->at(1)->getIdx()).getValue()["dy"];
+                return;
+            } else if (getAxialLine(axis)->back()->getIdx() == getIdx()) {
+                values["dx"] = points->at((*std::prev(getAxialLine(axis)->end() - 1))->getIdx()).getValue()["dx"];
+                values["dy"] = points->at((*std::prev(getAxialLine(axis)->end() - 1))->getIdx()).getValue()["dy"];
+                return;
+            }
         }
     }
 }

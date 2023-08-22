@@ -143,8 +143,9 @@ auto AGM::NavierStokesFunction::terminalTime() -> double {
 }
 
 auto AGM::NavierStokesFunction::deltaTime() -> double {
-    return 5e-6;
-    return (M_PI / 40.) * (M_PI / 40.) * 2.;
+//    return 5e-3;
+    return 5e-5;
+//    return (M_PI / 40.) * (M_PI / 40.) * 2.;
 }
 
 auto AGM::NavierStokesFunction::writeTime() -> double {
@@ -154,7 +155,6 @@ auto AGM::NavierStokesFunction::writeTime() -> double {
 auto AGM::NavierStokesFunction::u(double t, const AGM::point &pt) -> double {
     auto x{pt[0]}, y{pt[1]};
     // Tesla valve
-//    auto ymin{-1.915503}, ymax{-1.845503};
     auto ymin{-1.917302}, ymax{-1.849869};
     if (isclose(x, 5.1220367000000003e-01)) {
         return 6. * (y - ymin) * (ymax - y)  / std::pow(ymax - ymin, 3.);
@@ -162,15 +162,22 @@ auto AGM::NavierStokesFunction::u(double t, const AGM::point &pt) -> double {
         return ZEROVALUE;
     }
 
+//    auto ymin{-1.9157432600000002e+00}, ymax{-1.8446585400000002e+00};
+//    if (isclose(x, 2.4891414400000000e+00)) {
+//        return -6. * (y - ymin) * (ymax - y)  / std::pow(ymax - ymin, 3.);
+//    } else {
+//        return ZEROVALUE;
+//    }
+
     // two-square cylinders
-    if (isclose(x, -7.5) | isclose(y, -7.5) | isclose(y, 7.5)) {
-        return UNITVALUE;
-    } else {
-        return ZEROVALUE;
-    }
+//    if (isclose(x, -7.5) | isclose(y, -7.5) | isclose(y, 7.5)) {
+//        return UNITVALUE;
+//    } else {
+//        return ZEROVALUE;
+//    }
 
     // Kin and Moin
-    return -std::cos(x) * std::sin(y) * std::exp(-2. * t);
+//    return -std::cos(x) * std::sin(y) * std::exp(-2. * t);
 
     // FSI
 //    return isclose(y, UNITVALUE) ? UNITVALUE

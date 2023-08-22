@@ -28,7 +28,7 @@ auto main() -> int {
     AGM::point::setBdLine(&bdline);
 
     for (auto &item: pts) {
-        item.setMp(UNITVALUE / 500.);
+        item.setMp(UNITVALUE / 50.);
     }
 
     std::cout << "-----< information >-----" << "\n";
@@ -52,9 +52,6 @@ auto main() -> int {
         AGM::point::setPts(&pts);
         item.findStencil();
     }
-//    for (auto &item: pts) {
-//        item.setMp(UNITVALUE / 1e3);
-//    }
     for (auto &item: pts) {
         if (item.getCondition() == 'd' || item.getCondition() == 'n') {
             item.findStencil();
@@ -77,8 +74,8 @@ auto main() -> int {
     auto solver{AGM::solver(&pts)};
 //    solver.streamSolver();
 //    solver.FluidStructureInteraction();
-    solver.NavierStokesSolver();
-//    solver.TwoStepNS();
+//    solver.NavierStokesSolver();
+    solver.TwoStepNS();
 
     return 0;
 }

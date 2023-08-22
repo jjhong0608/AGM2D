@@ -40,6 +40,8 @@ namespace AGM {
 
         void approximateNaNDerivatives(std::vector<pointHeat> *points);
 
+        void approximateDiff(std::vector<pointHeat> *points);
+
         void makeDerivativesInterface() override;
     };
 
