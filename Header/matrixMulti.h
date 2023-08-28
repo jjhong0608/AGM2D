@@ -17,10 +17,9 @@ namespace AGM {
 
         virtual ~matrixMulti();
 
-        void calculateMatrix() override;
-
         void factorizeMatrix() override;
 
+        void calculateMatrix() override;
 
     private:
         std::vector<pt> *pts0{};

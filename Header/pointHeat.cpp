@@ -112,16 +112,16 @@ auto AGM::pointHeat::calculateRepresentationFormulaNeumannOnAxial(char axis, int
         return ZEROVALUE;
     };
     point *ptc = getAxialLine(axis)->front()->getIdx() == getIdx() ? getAxialLine(axis)->at(1) :
-            getAxialLine(axis)->back()->getIdx() == getIdx() ? *std::prev(getAxialLine(axis)->end() - 1) :
-            nullptr;
+                 getAxialLine(axis)->back()->getIdx() == getIdx() ? *std::prev(getAxialLine(axis)->end() - 1) :
+                 nullptr;
     point *ptl = getAxialLine(axis)->front()->getIdx() == getIdx() ? this :
-            getAxialLine(axis)->back()->getIdx() == getIdx() ? *std::prev(getAxialLine(axis)->end() - 2) :
-            nullptr;
+                 getAxialLine(axis)->back()->getIdx() == getIdx() ? *std::prev(getAxialLine(axis)->end() - 2) :
+                 nullptr;
     point *ptr = getAxialLine(axis)->front()->getIdx() == getIdx() ? getAxialLine(axis)->at(2) :
-            getAxialLine(axis)->back()->getIdx() == getIdx() ? this :
-            nullptr;
+                 getAxialLine(axis)->back()->getIdx() == getIdx() ? this :
+                 nullptr;
     std::string string = getAxialLine(axis)->front()->getIdx() == getIdx() ? "ND" :
-            getAxialLine(axis)->back()->getIdx() == getIdx() ? "DN" : "";
+                         getAxialLine(axis)->back()->getIdx() == getIdx() ? "DN" : "";
     double tm = ptl ? ptl->getXy()[axisInt] : Error();
     double tb = ptc ? ptc->getXy()[axisInt] : Error();
     double tp = ptr ? ptr->getXy()[axisInt] : Error();
@@ -379,6 +379,114 @@ void AGM::pointHeat::calculateRepresentationFormulaInterface() {
         solMatrixRow[1] = row[0] - row[1];
     }
 }
+
+void AGM::pointHeat::makePhiCoefficient(std::vector<pointHeat> *vector) {
+    for (auto item: solMatrixRow[1]) {
+        if (item.idx < getNPts()) {
+            rb[1] -= item.value * vector->at(item.idx).getValue()["sol"];
+        }
+    }
+}
+
+void
+AGM::pointHeat::updateRightHandSidePhiPressure(
+        const std::function<double(int)> &f,
+        const std::function<double(int)> &g,
+        std::vector<pointHeat> *points
+) {
+    switch (condition) {
+        case 'C':
+            updateRightHandSidePhiPressureCross(f, g, points);
+            break;
+        case 'D':
+        case 'd':
+        case 'N':
+        case 'n':
+            updateRightHandSidePhiPressureDirichlet(f, g, points);
+        case 'I':
+            updateRightHandSidePhiPressureInterface(f, g, points);
+    }
+}
+
+void AGM::pointHeat::updateRightHandSidePhiPressureCross(
+        const std::function<double(int)> &f,
+        const std::function<double(int)> &g,
+        std::vector<pointHeat> *points
+) {
+    rb[0] = rb[1] = ZEROVALUE;
+    for (const auto &item: solMatrixRow[0]) {
+        if (item.idx < getNPts()) {
+            rb[0] -= item.value * points->at(item.idx)["sol"];
+            rb[1] -= item.value * points->at(item.idx)["sol"];
+        }
+    }
+    for (const auto &item: solMatrixRow[1]) {
+        if (item.idx < getNPts()) {
+            rb[0] -= item.value * points->at(item.idx)["sol"];
+            rb[1] += item.value * points->at(item.idx)["sol"];
+        }
+    }
+    for (const auto &item: partMatrixRow[0]) {
+        rb[0] -= item.value * f(item.idx);
+        rb[1] -= item.value * f(item.idx);
+    }
+    for (const auto &item: partMatrixRow[1]) {
+        rb[0] -= item.value * g(item.idx - getNPts());
+        rb[1] += item.value * g(item.idx - getNPts());
+    }
+}
+
+void AGM::pointHeat::updateRightHandSidePhiPressureDirichlet(
+        const std::function<double(int)> &f,
+        const std::function<double(int)> &g,
+        std::vector<pointHeat> *points
+) {
+
+}
+
+void AGM::pointHeat::updateRightHandSidePhiPressureInterface(
+        const std::function<double(int)> &f,
+        const std::function<double(int)> &g,
+        std::vector<pointHeat> *points
+) {
+    bool isinterface{solMatrixRow[1].size() == 1};
+    rb[0] = rb[1] = ZEROVALUE;
+    for (const auto &item: solMatrixRow[0]) {
+        if (item.idx < getNPts()) {
+            rb[0] -= item.value * points->at(item.idx)["sol"];
+            rb[1] -= item.value * points->at(item.idx)["sol"];
+        }
+    }
+    for (const auto &item: solMatrixRow[1]) {
+        if (item.idx < getNPts()) {
+            rb[0] -= item.value * points->at(item.idx)["sol"];
+            rb[1] += item.value * points->at(item.idx)["sol"];
+        }
+    }
+    for (const auto &item: partMatrixRow[0]) {
+        if (item.idx < getNPts()) {
+            rb[0] -= item.value * f(item.idx);
+            if (!isinterface) rb[1] -= item.value * f(item.idx);
+        } else if (item.idx < 2 * getNPts()) {
+            rb[0] -= item.value * g(item.idx - getNPts());
+            if (!isinterface) rb[1] -= item.value * g(item.idx - getNPts());
+        } else {
+            printError("AGM::point::updateRightHandSidePhiPressureInterface");
+        }
+    }
+    for (const auto &item: partMatrixRow[1]) {
+        if (item.idx < getNPts()) {
+            rb[0] -= item.value * f(item.idx);
+            if (!isinterface) rb[1] += item.value * f(item.idx);
+        } else if (item.idx < 2 * getNPts()) {
+            rb[0] -= item.value * g(item.idx - getNPts());
+            if (!isinterface) rb[1] += item.value * g(item.idx - getNPts());
+        } else {
+            printError("AGM::point::updateRightHandSidePhiPressureInterface");
+        }
+    }
+}
+
 
 void AGM::pointHeat::makeDerivativesCross() {
     double xm = element[W]->getXy()[0];

@@ -94,12 +94,27 @@ namespace AGM {
 
         auto f2(double t, const point &pt) -> double;
 
-        void assignPreviousValue(AGM::value &pu, AGM::value &pv, AGM::value &pp, point &uvel, point &vvel, point &pres);
+        void assignPreviousValue(
+                AGM::value &pu,
+                AGM::value &pv,
+                AGM::value &pp,
+                point &uvel,
+                point &vvel,
+                point &pres
+        );
 
-        void assignBoundaryValue(point &uvel, point &vvel);
+        void assignBoundaryValue(
+                AGM::point &uvel,
+                AGM::point &vvel,
+                int presentIter
+        );
 
-        void loadPreviousValue(const std::string &filename, std::vector<value> *pu, std::vector<value> *pv,
-                               std::vector<value> *pp);
+        void loadPreviousValue(
+                const std::string &filename,
+                std::vector<value> *pu,
+                std::vector<value> *pv,
+                std::vector<value> *pp
+        );
     };
 }
 

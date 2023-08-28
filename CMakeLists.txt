@@ -57,7 +57,12 @@ add_executable(
         Header/GreenfunctionAxisymmetric.h
         Header/pointAxisymmetric.cpp
         Header/pointAxisymmetric.h
-        Header/unboundedCondition.cpp Header/unboundedCondition.h Header/structure.cpp Header/structure.h
+        Header/unboundedCondition.cpp
+        Header/unboundedCondition.h
+        Header/structure.cpp
+        Header/structure.h
+        Header/matrixPhi.cpp
+        Header/matrixPhi.h
 )
 
 find_library(

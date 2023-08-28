@@ -11,11 +11,11 @@ auto main() -> int {
     kmp_set_warnings_off();
     mkl_set_dynamic(0);
 //    mkl_set_num_threads(4);
-    mkl_set_num_threads(mkl_get_max_threads() / 2);
+    mkl_set_num_threads(mkl_get_max_threads());
 
     omp_set_dynamic(0);
 //    omp_set_num_threads(4);
-    omp_set_num_threads(omp_get_max_threads() / 2);
+    omp_set_num_threads(omp_get_max_threads());
 
     auto pts{std::vector<AGM::point>{}};
     auto xline{std::vector<AGM::axialLine>{}};
@@ -27,9 +27,9 @@ auto main() -> int {
     AGM::point::setAxialLines(&yline, 'y');
     AGM::point::setBdLine(&bdline);
 
-    for (auto &item: pts) {
-        item.setMp(UNITVALUE / 50.);
-    }
+//    for (auto &item: pts) {
+//        item.setMp(UNITVALUE / 100.);
+//    }
 
     std::cout << "-----< information >-----" << "\n";
     std::cout << "# of the points = " << pts.size() << "\n";
@@ -74,8 +74,8 @@ auto main() -> int {
     auto solver{AGM::solver(&pts)};
 //    solver.streamSolver();
 //    solver.FluidStructureInteraction();
-//    solver.NavierStokesSolver();
-    solver.TwoStepNS();
+    solver.NavierStokesSolver();
+//    solver.TwoStepNS();
 
     return 0;
 }

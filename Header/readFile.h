@@ -5,7 +5,7 @@
 #ifndef AGM_READFILE_H
 #define AGM_READFILE_H
 
-#include "matrixNormal.h"
+#include "matrixPhi.h"
 
 namespace AGM {
     class readFile {

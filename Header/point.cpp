@@ -95,6 +95,14 @@ void AGM::point::setDeriMatrixRow(const std::array<AGM::matrixRow, 2> &row) {
     point::deriMatrixRow = row;
 }
 
+auto AGM::point::getPhiPressureMatrixRow() const -> const std::array<AGM::matrixRow, 2> & {
+    return phiPressureMatrixRow;
+}
+
+void AGM::point::setPhiPressureMatrixRow(const std::array<matrixRow, 2> &row) {
+    point::phiPressureMatrixRow = row;
+}
+
 auto AGM::point::getRb() const -> const std::array<double, 2> & {
     return rb;
 }
@@ -243,18 +251,17 @@ void AGM::point::findStencilBoundary() {
                 vec.emplace_back(&item);
             }
         }
-        auto pline = std::find_if(vec.begin(), vec.end(), [this, &lineChar](axialLine *&aln) -> bool {
-            return *std::next(&aln) == getAxialLine(lineChar);
+        std::sort(vec.begin(), vec.end(), [](axialLine *&a, axialLine *&b) -> bool {
+            return isnegative(*a - *b);
         });
         auto vec0 = std::vector<axialLine *>{};
-        for (auto &item: *getAxialLines(lineChar)) {
-            if (ispositive(*getAxialLine(lineChar) - item)) {
-                vec0.emplace_back(&item);
+        for (auto &item: vec) {
+            if (isnegative((*item)[(2 * lineIdx + 2) % 4] - xy[(lineIdx + 1) % 2])) {
+                vec0.emplace_back(item);
             }
         }
-        auto pline0 = vec0.empty() ? vec0.end() : std::prev(vec0.end());
-        if (pline == vec.end() || pline0 == vec0.end() || !iszero(**pline - **pline0)) return nullptr;
-        return *pline;
+        if (vec0.empty()) return nullptr;
+        return vec0.back();
     };
     auto findRightLine = [this, &isContainLine](char lineChar, int lineIdx, double pt) -> axialLine * {
         auto vec = std::vector<axialLine *>{};
@@ -263,18 +270,17 @@ void AGM::point::findStencilBoundary() {
                 vec.emplace_back(&item);
             }
         }
-        auto pline = std::find_if(vec.begin(), vec.end(), [this, &lineChar](axialLine *&aln) -> bool {
-            return *std::prev(&aln) == getAxialLine(lineChar);
+        std::sort(vec.begin(), vec.end(), [](axialLine *&a, axialLine *&b) -> bool {
+            return isnegative(*a - *b);
         });
         auto vec0 = std::vector<axialLine *>{};
-        for (auto &item: *getAxialLines(lineChar)) {
-            if (isnegative(*getAxialLine(lineChar) - item)) {
-                vec0.emplace_back(&item);
+        for (auto &item: vec) {
+            if (ispositive((*item)[(2 * lineIdx + 2) % 4] - xy[(lineIdx + 1) % 2])) {
+                vec0.emplace_back(item);
             }
         }
-        auto pline0 = vec0.empty() ? vec0.end() : vec0.begin();
-        if (pline == vec.end() || pline0 == vec0.end() || !iszero(**pline - **pline0)) return nullptr;
-        return *pline;
+        if (vec0.empty()) return nullptr;
+        return vec0.front();
     };
     auto findLeftPt = [this](axialLine *aln, int ptIdx) -> point * {
         auto vec = std::vector<point *>{};
@@ -292,7 +298,9 @@ void AGM::point::findStencilBoundary() {
     };
     auto assignStencil = [&](EWNS ewns, EWNS ewns0, EWNS ewns1, auto func, char lineChar, int lineIdx, double pt,
                              double sign, double &n) -> void {
-        if (element[ewns] == this && ispositive(sign * n)) return;
+        if (element[ewns]) {
+            if (element[ewns]->getIdx() == getIdx() && ispositive(sign * n)) return;
+        }
         auto alin = func(lineChar, lineIdx, pt);
         if (alin) {
             auto leftPt = findLeftPt(alin, lineIdx);
@@ -317,6 +325,17 @@ void AGM::point::findStencilBoundary() {
             }
         } else {
             if (isnegative(sign * n)) {
+                if (ewns == E) {
+                    printf("E: %d", getIdx());
+                } else if (ewns == W) {
+                    printf("W: %d", getIdx());
+                } else if (ewns == N) {
+                    printf("N: %d", getIdx());
+                } else if (ewns == S) {
+                    printf("S: %d", getIdx());
+                }
+
+                printInformation();
                 n = ZEROVALUE;
                 double norm{std::sqrt(std::pow(normal[0], 2) + std::pow(normal[1], 2))};
                 for (int i = 0; i < 2; ++i) {
@@ -380,7 +399,9 @@ void AGM::point::findStencilAppendBoundary() {
     };
     auto assignStencil = [&](EWNS ewns, EWNS ewns0, EWNS ewns1, auto func, char lineChar, int lineIdx, double pt,
                              double sign, double &n) -> void {
-        if (element[ewns] == this && ispositive(sign * n)) return;
+        if (element[ewns]) {
+            if (element[ewns]->getIdx() == getIdx() && ispositive(sign * n)) return;
+        }
         auto alin = func(lineChar, lineIdx, pt);
         if (alin) {
             auto leftPt = findLeftPt(alin, lineIdx);
@@ -404,10 +425,12 @@ void AGM::point::findStencilAppendBoundary() {
                 printError("assignStencil in findStencil", "rightPt & leftPt do not exist");
             }
         } else {
-            n = ZEROVALUE;
-            double norm{std::sqrt(std::pow(normal[0], 2) + std::pow(normal[1], 2))};
-            for (int i = 0; i < 2; ++i) {
-                normal[i] /= norm;
+            if (isnegative(sign * n)) {
+                n = ZEROVALUE;
+                double norm{std::sqrt(std::pow(normal[0], 2) + std::pow(normal[1], 2))};
+                for (int i = 0; i < 2; ++i) {
+                    normal[i] /= norm;
+                }
             }
             element[ewns] = this;
         }
@@ -607,13 +630,19 @@ void AGM::point::findStencilInterface() {
 }
 
 void AGM::point::findStencil(std::vector<AGM::point> *src, std::vector<AGM::point> *tgt) {
-    int index{};
+    auto n{0};
     auto elt = axialElement{};
-    for (int i = 0; i < 13; ++i) {
-        if (src->at(getIdx()).getElement()[i]) {
-            element[i] = &(tgt->at(src->at(getIdx()).getElement()[i]->getIdx()));
+    for (auto item: src->at(getIdx()).getElement()) {
+        if (item) {
+            element.at(n) = &(tgt->at(item->getIdx()));
         }
+        ++n;
     }
+//    for (int i = 0; i < 13; ++i) {
+//        if (src->at(getIdx()).getElement()[i]) {
+//            element[i] = &(tgt->at(src->at(getIdx()).getElement()[i]->getIdx()));
+//        }
+//    }
 }
 
 void AGM::point::calculateRepresentationFormula() {
@@ -712,7 +741,7 @@ void AGM::point::calculateRepresentationFormulaCross() {
 
 void AGM::point::calculateRepresentationFormulaDirichlet() {
     solMatrixRow[0][getIdx()] = UNITVALUE;
-    if (getCondition() == 'D') approximatePhiAtBoundary1(0);
+    if (getCondition() == 'D') approximatePhiAtBoundary1(1);
     else if (getCondition() == 'd') approximatePhiAtAppend();
 }
 
@@ -735,7 +764,7 @@ void AGM::point::calculateRepresentationFormulaNeumann() {
             solMatrixRow[0] += row[i] * normal[i];
         }
     }
-    if (getCondition() == 'N') approximatePhiAtBoundary1(0);
+    if (getCondition() == 'N') approximatePhiAtBoundary1(1);
     else if (getCondition() == 'n') approximatePhiAtAppend();
 }
 
@@ -883,6 +912,127 @@ auto AGM::point::calculateRepresentationFormulaNeumannOffAxial(char axis, int ax
         assignMatrix(element[S], element[SE], element[SW], mp, &gFunc, tm, 0, 1, 'l');
     }
     return row;
+}
+
+void AGM::point::calculateRepresentationFormulaPhiPressure(char comp) {
+    switch (condition) {
+        case 'C':
+            calculateRepresentationFormulaPhiPressureCross(comp);
+            break;
+        case 'D':
+        case 'd':
+        case 'N':
+        case 'n':
+            calculateRepresentationFormulaPhiPressureDirichlet();
+        case 'I':
+            calculateRepresentationFormulaPhiPressureInterface(0);
+    }
+}
+
+void AGM::point::calculateRepresentationFormulaPhiPressureCross(char comp) {
+    double xm = element[W]->getXy()[0];
+    double xb = getXy()[0];
+    double xp = element[E]->getXy()[0];
+    double ym = element[S]->getXy()[1];
+    double yb = getXy()[1];
+    double yp = element[N]->getXy()[1];
+    auto gfuncX{Greenfunction(xm, xb, xp, mp, mp)};
+    auto gfuncY{Greenfunction(ym, yb, yp, mp, mp)};
+    std::array<matrixRow, 2> row{};
+    auto eraseInterface = [this, &row](point *pt, int i) -> void {
+        auto checkInterface = [](point *pt) -> bool {
+            auto getEachMp = [](point *pt, point *ptr, point *ptl) -> double {
+                auto Error = []() -> double {
+                    printError("AGM::point::calculateRepresentationFormulaCross", "getEachMp");
+                    return ZEROVALUE;
+                };
+                double rtv = pt ? pt->getMp() : ptr->getCondition() == 'C' ? ptr->getMp() : ptl->getCondition() == 'C'
+                                                                                            ? ptl->getMp() : Error();
+                return rtv;
+            };
+            double mpe{getEachMp(pt->getElement()[E], pt->getElement()[EN], pt->getElement()[ES])};
+            double mpw{getEachMp(pt->getElement()[W], pt->getElement()[WN], pt->getElement()[WS])};
+            double mpn{getEachMp(pt->getElement()[N], pt->getElement()[NE], pt->getElement()[NW])};
+            double mps{getEachMp(pt->getElement()[S], pt->getElement()[SE], pt->getElement()[SW])};
+            return pt->getCondition() == 'I' && !(isclose(mpe, mpw) && isclose(mpn, mps) && isclose(mpe, mps));
+        };
+        if (checkInterface(pt)) {
+            row[i][getIdx()] += row[i][pt->getIdx()];
+            row[i].remove(pt->getIdx());
+        }
+    };
+
+    row[0][element[W]->getIdx()] = gfuncX.green_integral('l');
+    row[0][getIdx()] = gfuncX.green_integral('c');
+    row[0][element[E]->getIdx()] = gfuncX.green_integral('r');
+
+    if (comp == 'u') {
+        row[0][element[W]->getIdx() + getNPts()] = gfuncX.green_integral_t('l');
+        row[0][getIdx() + getNPts()] = gfuncX.green_integral_t('c');
+        row[0][element[E]->getIdx() + getNPts()] = gfuncX.green_integral_t('r');
+    }
+
+    row[1][element[S]->getIdx()] = -gfuncY.green_integral('l');
+    row[1][getIdx()] = -gfuncY.green_integral('c');
+    row[1][element[N]->getIdx()] = -gfuncY.green_integral('r');
+
+    if (comp == 'v') {
+        row[1][element[S]->getIdx() + getNPts()] = gfuncY.green_integral_t('l');
+        row[1][getIdx() + getNPts()] = gfuncY.green_integral_t('c');
+        row[1][element[N]->getIdx() + getNPts()] = gfuncY.green_integral_t('r');
+    }
+
+    eraseInterface(element[E], 0);
+    eraseInterface(element[W], 0);
+    eraseInterface(element[N], 1);
+    eraseInterface(element[S], 1);
+
+    phiPressureMatrixRow[0] = row[0] + row[1];
+    phiPressureMatrixRow[1] = row[0] - row[1];
+}
+
+void AGM::point::calculateRepresentationFormulaPhiPressureDirichlet() {
+    auto row{matrixRow()};
+    for (auto &item: solMatrixRow[1]) {
+        row[item.idx - getNPts()] = item.value;
+    }
+    phiPressureMatrixRow[0] = row;
+    phiPressureMatrixRow[1] = solMatrixRow[1];
+}
+
+void AGM::point::calculateRepresentationFormulaPhiPressureInterface(char comp) {
+    auto row0{matrixRow()}, row1{matrixRow()};
+    for (auto &item: solMatrixRow[0]) {
+        if (item.idx >= getNPts()) {
+            row0[item.idx] = item.value;
+        }
+    }
+    for (auto &item: solMatrixRow[1]) {
+        if (item.idx >= getNPts()) {
+            row1[item.idx] = item.value;
+        }
+    }
+
+    if (comp == 'u') {
+        for (auto &item: partMatrixRow[0]) {
+            if (item.idx < getNPts()) {
+                row0[item.idx + getNPts()] = item.value;
+                row1[item.idx + getNPts()] = item.value;
+            }
+        }
+    } else if (comp == 'v') {
+        for (auto &item: partMatrixRow[1]) {
+            if (item.idx >= getNPts()) {
+                if (item.idx >= 2 * getNPts()) {
+                    printError("this");
+                }
+                row0[item.idx] = item.value;
+                row1[item.idx] = -item.value;
+            }
+        }
+    }
+    phiPressureMatrixRow[0] = row0;
+    phiPressureMatrixRow[1] = row1;
 }
 
 void AGM::point::calculateRepresentationFormulaInterface() {
@@ -1476,6 +1626,105 @@ AGM::point::updateRightHandSideInterfacePart(const std::function<double(int)> &f
     }
 }
 
+void
+AGM::point::updateRightHandSidePhiPressure(
+        const std::function<double(int)> &f,
+        const std::function<double(int)> &g,
+        std::vector<point> *points
+) {
+    switch (condition) {
+        case 'C':
+            updateRightHandSidePhiPressureCross(f, g, points);
+            break;
+        case 'D':
+        case 'd':
+        case 'N':
+        case 'n':
+            updateRightHandSidePhiPressureDirichlet(f, g, points);
+        case 'I':
+            updateRightHandSidePhiPressureInterface(f, g, points);
+    }
+}
+
+void AGM::point::updateRightHandSidePhiPressureCross(
+        const std::function<double(int)> &f,
+        const std::function<double(int)> &g,
+        std::vector<point> *points
+) {
+    rb[0] = rb[1] = ZEROVALUE;
+    for (const auto &item: solMatrixRow[0]) {
+        if (item.idx < getNPts()) {
+            rb[0] -= item.value * points->at(item.idx)["sol"];
+            rb[1] -= item.value * points->at(item.idx)["sol"];
+        }
+    }
+    for (const auto &item: solMatrixRow[1]) {
+        if (item.idx < getNPts()) {
+            rb[0] -= item.value * points->at(item.idx)["sol"];
+            rb[1] += item.value * points->at(item.idx)["sol"];
+        }
+    }
+    for (const auto &item: partMatrixRow[0]) {
+        rb[0] -= item.value * f(item.idx);
+        rb[1] -= item.value * f(item.idx);
+    }
+    for (const auto &item: partMatrixRow[1]) {
+        rb[0] -= item.value * g(item.idx - getNPts());
+        rb[1] += item.value * g(item.idx - getNPts());
+    }
+}
+
+void AGM::point::updateRightHandSidePhiPressureDirichlet(
+        const std::function<double(int)> &f,
+        const std::function<double(int)> &g,
+        std::vector<point> *points
+) {
+
+}
+
+void AGM::point::updateRightHandSidePhiPressureInterface(
+        const std::function<double(int)> &f,
+        const std::function<double(int)> &g,
+        std::vector<point> *points
+) {
+    bool isinterface{solMatrixRow[1].size() == 1};
+    rb[0] = rb[1] = ZEROVALUE;
+    for (const auto &item: solMatrixRow[0]) {
+        if (item.idx < getNPts()) {
+            rb[0] -= item.value * points->at(item.idx)["sol"];
+            rb[1] -= item.value * points->at(item.idx)["sol"];
+        }
+    }
+    for (const auto &item: solMatrixRow[1]) {
+        if (item.idx < getNPts()) {
+            rb[0] -= item.value * points->at(item.idx)["sol"];
+            rb[1] += item.value * points->at(item.idx)["sol"];
+        }
+    }
+    for (const auto &item: partMatrixRow[0]) {
+        if (item.idx < getNPts()) {
+            rb[0] -= item.value * f(item.idx);
+            if (!isinterface) rb[1] -= item.value * f(item.idx);
+        } else if (item.idx < 2 * getNPts()) {
+            rb[0] -= item.value * g(item.idx - getNPts());
+            if (!isinterface) rb[1] -= item.value * g(item.idx - getNPts());
+        } else {
+            printError("AGM::pointHeat::updateRightHandSidePhiPressureInterface");
+        }
+    }
+    for (const auto &item: partMatrixRow[1]) {
+        if (item.idx < getNPts()) {
+            rb[0] -= item.value * f(item.idx);
+            if (!isinterface) rb[1] += item.value * f(item.idx);
+        } else if (item.idx < 2 * getNPts()) {
+            rb[0] -= item.value * g(item.idx - getNPts());
+            if (!isinterface) rb[1] += item.value * g(item.idx - getNPts());
+        } else {
+            printError("AGM::pointHeat::updateRightHandSidePhiPressureInterface");
+        }
+    }
+}
+
 void AGM::point::makeDerivatives() {
     switch (condition) {
         case 'C':
@@ -1644,6 +1893,14 @@ void AGM::point::makeDerivativesInterface() {
     assignMatrix(getElement()[S], getElement()[SE], getElement()[SW], mps, &gFuncY, ym, 0, 1, 'l', 'L');
 }
 
+void AGM::point::makePhiCoefficient(std::vector<point> *vector) {
+    for (auto item: solMatrixRow[1]) {
+        if (getNPts() < item.idx) {
+            rb[1] -= item.value * vector->at(item.idx).getValue()["sol"];
+        }
+    }
+}
+
 void AGM::point::calculateDerivatives(const std::vector<point> *points, const std::function<double(int)> &f,
                                       const std::function<double(int)> &g, const std::function<double(int)> &fp,
                                       const std::function<double(int)> &gp) {
@@ -1704,17 +1961,102 @@ void AGM::point::calculateDerivativesTwice(const std::function<double(int)> &f, 
 }
 
 void AGM::point::printInformation() {
-    char c0[256]{""}, c1[256]{""}, c2[256]{""}, c3[256]{""};
-    sprintf(c0, "(%f, %f), with boundary condition %c", getXy()[0], getXy()[1], getCondition());
-    if (getCondition() == 'D' || getCondition() == 'N') {
-        sprintf(c1, ", boundary value = %f", getValue()["bdv"]);
-        sprintf(c2, ", norval vector = (%f, %f)", getNormal()[0], getNormal()[1]);
-//        if (getCondition() == 'N') {
-//            sprintf(c2, ", norval vector = (%f, %f)", getNormal()[0], getNormal()[1]);
-//        }
+    auto id{getIdx()};
+    printf(
+            "idx = %d, "
+            "(x, y) = (%f, %f), "
+            "(nx, ny) = (%23.16e, %23.16e), "
+            "Condition = %c\n",
+            pts->at(id).getIdx(),
+            pts->at(id).getXy()[0], pts->at(id).getXy()[1],
+            pts->at(id).getNormal()[0], pts->at(id).getNormal()[1],
+            pts->at(id).getCondition()
+    );
+    if (pts->at(id)[E]) {
+        printf(
+                "E: %d, (%f, %f)\n",
+                pts->at(id)[E]->getIdx(),
+                pts->at(id)[E]->getXy()[0], pts->at(id)[E]->getXy()[1]
+        );
     }
-    sprintf(c3, "\n");
-    printf("%s%s%s%s", c0, c1, c2, c3);
+    if (pts->at(id)[W]) {
+        printf(
+                "W: %d, (%f, %f)\n",
+                pts->at(id)[W]->getIdx(),
+                pts->at(id)[W]->getXy()[0], pts->at(id)[W]->getXy()[1]
+        );
+    }
+    if (pts->at(id)[N]) {
+        printf(
+                "N: %d, (%f, %f)\n",
+                pts->at(id)[N]->getIdx(),
+                pts->at(id)[N]->getXy()[0], pts->at(id)[N]->getXy()[1]
+        );
+    }
+    if (pts->at(id)[S]) {
+        printf(
+                "S: %d, (%f, %f)\n",
+                pts->at(id)[S]->getIdx(),
+                pts->at(id)[S]->getXy()[0], pts->at(id)[S]->getXy()[1]
+        );
+    }
+    if (pts->at(id)[EN]) {
+        printf(
+                "EN: %d, (%f, %f)\n",
+                pts->at(id)[EN]->getIdx(),
+                pts->at(id)[EN]->getXy()[0], pts->at(id)[EN]->getXy()[1]
+        );
+    }
+    if (pts->at(id)[ES]) {
+        printf(
+                "ES: %d, (%f, %f)\n",
+                pts->at(id)[ES]->getIdx(),
+                pts->at(id)[ES]->getXy()[0], pts->at(id)[ES]->getXy()[1]
+        );
+    }
+    if (pts->at(id)[WN]) {
+        printf(
+                "WN: %d, (%f, %f)\n",
+                pts->at(id)[WN]->getIdx(),
+                pts->at(id)[WN]->getXy()[0], pts->at(id)[WN]->getXy()[1]
+        );
+    }
+    if (pts->at(id)[WS]) {
+        printf(
+                "WS: %d, (%f, %f)\n",
+                pts->at(id)[WS]->getIdx(),
+                pts->at(id)[WS]->getXy()[0], pts->at(id)[WS]->getXy()[1]
+        );
+    }
+    if (pts->at(id)[NE]) {
+        printf(
+                "NE: %d, (%f, %f)\n",
+                pts->at(id)[NE]->getIdx(),
+                pts->at(id)[NE]->getXy()[0], pts->at(id)[NE]->getXy()[1]
+        );
+    }
+    if (pts->at(id)[NW]) {
+        printf(
+                "NW: %d, (%f, %f)\n",
+                pts->at(id)[NW]->getIdx(),
+                pts->at(id)[NW]->getXy()[0], pts->at(id)[NW]->getXy()[1]
+        );
+    }
+    if (pts->at(id)[SE]) {
+        printf(
+                "SE: %d, (%f, %f)\n",
+                pts->at(id)[SE]->getIdx(),
+                pts->at(id)[SE]->getXy()[0], pts->at(id)[SE]->getXy()[1]
+        );
+    }
+    if (pts->at(id)[SW]) {
+        printf(
+                "SW: %d, (%f, %f)\n",
+                pts->at(id)[SW]->getIdx(),
+                pts->at(id)[SW]->getXy()[0], pts->at(id)[SW]->getXy()[1]
+        );
+    }
 }
+
 
 AGM::point::~point() = default;

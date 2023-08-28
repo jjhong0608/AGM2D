@@ -9,7 +9,7 @@ auto AGM::isclose(double x, double y, double eps) -> bool {
 }
 
 void AGM::printError(const std::string &function_name) {
-    std::cout << std::endl << function_name << std::endl;
+    std::cout << '\n' << function_name << '\n';
     exit(1);
 }
 

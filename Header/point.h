@@ -22,6 +22,7 @@ namespace AGM {
         axialElement element{};
         value values{};
         std::array<matrixRow, 2> solMatrixRow{}, deriMatrixRow{}, rhsMatrixRow{}, partMatrixRow{};
+        std::array<matrixRow, 2> phiPressureMatrixRow{};
         std::array<double, 2> rb{}, dv{};
         std::array<axialLine *, 2> aline{};
         static int nPts;
@@ -79,6 +80,10 @@ namespace AGM {
         [[nodiscard]] auto getDeriMatrixRow() const -> const std::array<matrixRow, 2> &;
 
         void setDeriMatrixRow(const std::array<matrixRow, 2> &row);
+
+        [[nodiscard]] auto getPhiPressureMatrixRow() const -> const std::array<matrixRow, 2> &;
+
+        void setPhiPressureMatrixRow(const std::array<matrixRow, 2> &row);
 
         [[nodiscard]] auto getRb() const -> const std::array<double, 2> &;
 
@@ -148,6 +153,14 @@ namespace AGM {
 
         virtual void calculateRepresentationFormulaInterface();
 
+        void calculateRepresentationFormulaPhiPressure(char comp);
+
+        void calculateRepresentationFormulaPhiPressureCross(char comp);
+
+        void calculateRepresentationFormulaPhiPressureDirichlet();
+
+        void calculateRepresentationFormulaPhiPressureInterface(char comp);
+
         void approximatePhiAtBoundary(int order);
 
         void approximatePhiAtBoundary1(int order);
@@ -178,6 +191,30 @@ namespace AGM {
 
         void updateRightHandSideInterfacePart(const std::function<double(int)> &f, const std::function<double(int)> &g);
 
+        void updateRightHandSidePhiPressure(
+                const std::function<double(int)> &f,
+                const std::function<double(int)> &g,
+                std::vector<point> *points
+        );
+
+        void updateRightHandSidePhiPressureCross(
+                const std::function<double(int)> &f,
+                const std::function<double(int)> &g,
+                std::vector<point> *points
+        );
+
+        void updateRightHandSidePhiPressureDirichlet(
+                const std::function<double(int)> &f,
+                const std::function<double(int)> &g,
+                std::vector<point> *points
+        );
+
+        void updateRightHandSidePhiPressureInterface(
+                const std::function<double(int)> &f,
+                const std::function<double(int)> &g,
+                std::vector<point> *points
+        );
+
         void makeDerivatives();
 
         virtual void makeDerivativesCross();
@@ -185,6 +222,8 @@ namespace AGM {
         void makeDerivativesBoundary();
 
         virtual void makeDerivativesInterface();
+
+        void makePhiCoefficient(std::vector<point> *vector);
 
         virtual void calculateDerivatives(const std::vector<point> *points, const std::function<double(int)> &f,
                                           const std::function<double(int)> &g, const std::function<double(int)> &fp,

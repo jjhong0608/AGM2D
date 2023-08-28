@@ -143,8 +143,8 @@ auto AGM::NavierStokesFunction::terminalTime() -> double {
 }
 
 auto AGM::NavierStokesFunction::deltaTime() -> double {
-//    return 5e-3;
-    return 5e-5;
+    return 1e-3;
+//    return 5e-5;
 //    return (M_PI / 40.) * (M_PI / 40.) * 2.;
 }
 
@@ -156,11 +156,11 @@ auto AGM::NavierStokesFunction::u(double t, const AGM::point &pt) -> double {
     auto x{pt[0]}, y{pt[1]};
     // Tesla valve
     auto ymin{-1.917302}, ymax{-1.849869};
-    if (isclose(x, 5.1220367000000003e-01)) {
-        return 6. * (y - ymin) * (ymax - y)  / std::pow(ymax - ymin, 3.);
-    } else {
-        return ZEROVALUE;
-    }
+//    if (isclose(x, 5.1220367000000003e-01)) {
+//        return 6. * (y - ymin) * (ymax - y)  / std::pow(ymax - ymin, 3.);
+//    } else {
+//        return ZEROVALUE;
+//    }
 
 //    auto ymin{-1.9157432600000002e+00}, ymax{-1.8446585400000002e+00};
 //    if (isclose(x, 2.4891414400000000e+00)) {
@@ -312,8 +312,14 @@ auto AGM::NavierStokesFunction::f2(double t, const AGM::point &pt) -> double {
 }
 
 void
-AGM::NavierStokesFunction::assignPreviousValue(AGM::value &pu, AGM::value &pv, AGM::value &pp, point &uvel, point &vvel,
-                                               point &pres) {
+AGM::NavierStokesFunction::assignPreviousValue(
+        AGM::value &pu,
+        AGM::value &pv,
+        AGM::value &pp,
+        point &uvel,
+        point &vvel,
+        point &pres
+) {
     pu["sol"] = u(pointHeat::getTime(), uvel);
     pv["sol"] = v(pointHeat::getTime(), vvel);
     pp["sol"] = p(pointHeat::getTime(), pres);
@@ -329,8 +335,12 @@ AGM::NavierStokesFunction::assignPreviousValue(AGM::value &pu, AGM::value &pv, A
     pp["dy"] = py(pointHeat::getTime(), pres);
 }
 
-void AGM::NavierStokesFunction::assignBoundaryValue(AGM::point &uvel, AGM::point &vvel) {
-    if (iszero(pointHeat::getTime())) {
+void AGM::NavierStokesFunction::assignBoundaryValue(
+        AGM::point &uvel,
+        AGM::point &vvel,
+        int presentIter
+) {
+    if (presentIter == 0) {
         if (uvel.getCondition() == 'D') {
             uvel["bdv"] = u(pointHeat::getTime() + pointHeat::getDelta(), uvel);
         } else if (uvel.getCondition() == 'N') {
@@ -365,25 +375,14 @@ void AGM::NavierStokesFunction::assignBoundaryValue(AGM::point &uvel, AGM::point
         }
 //        vvel["rhs"] = f2(pointHeat::getTime() + pointHeat::getDelta(), vvel);
     }
-
-//    if (uvel.getCondition() == 'D') {
-//        uvel["bdv"] = 2 * u(pointHeat::getTime() + pointHeat::getDelta(), uvel);
-//    } else if (uvel.getCondition() == 'N') {
-//        uvel["bdv"] = 2 * ux(pointHeat::getTime() + pointHeat::getDelta(), uvel) * uvel.getNormal()[0] +
-//                      2 * uy(pointHeat::getTime() + pointHeat::getDelta(), uvel) * uvel.getNormal()[1];
-//    }
-//    uvel["rhs"] = f1(pointHeat::getTime() + pointHeat::getDelta(), uvel);
-//    if (vvel.getCondition() == 'D') {
-//        vvel["bdv"] = 2 * v(pointHeat::getTime() + pointHeat::getDelta(), vvel);
-//    } else if (vvel.getCondition() == 'N') {
-//        vvel["bdv"] = 2 * vx(pointHeat::getTime() + pointHeat::getDelta(), vvel) * vvel.getNormal()[0] +
-//                      2 * vy(pointHeat::getTime() + pointHeat::getDelta(), vvel) * vvel.getNormal()[1];
-//    }
-//    vvel["rhs"] = f2(pointHeat::getTime() + pointHeat::getDelta(), vvel);
 }
 
-void AGM::NavierStokesFunction::loadPreviousValue(const std::string &filename, std::vector <AGM::value> *pu,
-                                                  std::vector <AGM::value> *pv, std::vector <AGM::value> *pp) {
+void AGM::NavierStokesFunction::loadPreviousValue(
+        const std::string &filename,
+        std::vector<AGM::value> *pu,
+        std::vector<AGM::value> *pv,
+        std::vector<AGM::value> *pp
+) {
     int idx{}, bc{};
     double x{}, y{};
     std::ifstream f(filename);

@@ -32,6 +32,32 @@ namespace AGM {
 
         void calculateRepresentationFormulaInterface() override;
 
+        void makePhiCoefficient(std::vector<pointHeat> *vector);
+
+        void updateRightHandSidePhiPressure(
+                const std::function<double(int)> &f,
+                const std::function<double(int)> &g,
+                std::vector<pointHeat> *points
+        );
+
+        void updateRightHandSidePhiPressureCross(
+                const std::function<double(int)> &f,
+                const std::function<double(int)> &g,
+                std::vector<pointHeat> *points
+        );
+
+        void updateRightHandSidePhiPressureDirichlet(
+                const std::function<double(int)> &f,
+                const std::function<double(int)> &g,
+                std::vector<pointHeat> *points
+        );
+
+        void updateRightHandSidePhiPressureInterface(
+                const std::function<double(int)> &f,
+                const std::function<double(int)> &g,
+                std::vector<pointHeat> *points
+        );
+
         void makeDerivativesCross() override;
 
         void calculateDerivatives(const std::vector<pointHeat> *points, const std::function<double(int)> &f,
