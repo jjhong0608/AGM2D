@@ -15,7 +15,7 @@ namespace AGM {
 
     class point {
     protected:
-        int idx{};
+        int idx{}, ord{2};
         coordinate xy{}, normal{};
         double mp{};
         char condition{};
@@ -29,6 +29,7 @@ namespace AGM {
         static std::vector<axialLine> *xline, *yline;
         static std::vector<boundaryLine2D> *bdLine;
         static std::vector<point> *pts;
+        static double alin_max_gap;
 
     public:
         point();
@@ -48,6 +49,10 @@ namespace AGM {
         [[nodiscard]] auto getIdx() const -> int;
 
         void setIdx(int i);
+
+        [[nodiscard]] auto getOrd() const -> int;
+
+        void setOrd(int i);
 
         [[nodiscard]] auto getXy() const -> const coordinate &;
 
@@ -113,6 +118,10 @@ namespace AGM {
 
         static void setPts(std::vector<point> *vector);
 
+        static double getAlinMaxGap();
+
+        static void setAlinMaxGap(double alinMaxGap);
+
         auto operator[](int i) -> double &;
 
         auto operator[](int i) const -> const double &;
@@ -139,19 +148,27 @@ namespace AGM {
 
         void findStencil(std::vector<AGM::point> *src, std::vector<AGM::point> *tgt);
 
-        void calculateRepresentationFormula();
+        void calculateRepresentationFormula(int order);
 
         virtual void calculateRepresentationFormulaCross();
 
-        void calculateRepresentationFormulaDirichlet();
+        void calculateRepresentationFormulaDirichlet(int order);
 
-        void calculateRepresentationFormulaNeumann();
+        void calculateRepresentationFormulaNeumann(int order);
 
         virtual auto calculateRepresentationFormulaNeumannOnAxial(char axis, int axisInt) -> matrixRow;
 
         virtual auto calculateRepresentationFormulaNeumannOffAxial(char axis, int axisInt) -> matrixRow;
 
         virtual void calculateRepresentationFormulaInterface();
+
+        void calculateRepresentationFormulaInterfaceNeumann();
+
+        virtual auto calculateRepresentationFormulaInterfaceNeumannOnAxial(
+                char axis,
+                int axisInt,
+                AGM::EWNS ewns
+        ) -> AGM::matrixRow;
 
         void calculateRepresentationFormulaPhiPressure(char comp);
 

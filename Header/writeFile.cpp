@@ -41,13 +41,13 @@ auto AGM::writeFile<T>::calculateErrorAtPoint(const std::string &string) {
     double xp = (*pt)[E] ? (*pt)[E]->getXy()[0] : (*pt)[EN] ? (*pt)[EN]->getXy()[0] : printErrorToDouble("xp");
     double ym = (*pt)[S] ? (*pt)[S]->getXy()[1] : (*pt)[SE] ? (*pt)[SE]->getXy()[1] : printErrorToDouble("ym");
     double yp = (*pt)[N] ? (*pt)[N]->getXy()[1] : (*pt)[NE] ? (*pt)[NE]->getXy()[1] : printErrorToDouble("yp");
-    auto g{AGM::NavierStokesFunction()};
-//    auto g{AGM::ellipticFunction()};
+//    auto g{AGM::NavierStokesFunction()};
+    auto g{AGM::ellipticFunction()};
     pointHeat temp{};
     auto f = [&](const point &point) -> double {
         temp.point::operator=(point);
-        return g.u(pointHeat::getTime(), temp);
-//        return g.u(point);
+//        return g.u(pointHeat::getTime(), temp);
+        return g.u(point);
     };
     double value = string == "grad" ? std::sqrt(std::pow((*pt)["dx"], 2) + std::pow((*pt)["dy"], 2)) : (*pt)[string];
     double numerator{std::pow(value - f(*pt), 2) * (xp - xm) * (yp - ym) * 2.5E-1};

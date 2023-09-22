@@ -199,39 +199,59 @@ auto AGM::Greenfunction::integrate_const_ttau(char pos) const -> double {
     }
 }
 
-auto AGM::Greenfunction::green_integral(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
+auto AGM::Greenfunction::green_integral(char pos, int order) const -> double {
+    if (order == 1) {
         return green_integral_linear(pos);
+    } else if (order == 2) {
+        if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
+            return green_integral_linear(pos);
+        } else {
+            return green_integral_square(pos);
+        }
     } else {
-//        return green_integral_linear(pos);
-        return green_integral_square(pos);
+        printError("AGM::Greenfunction::green_integral", "order (which is %d) error", order);
     }
 }
 
-auto AGM::Greenfunction::green_integral_t(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
+auto AGM::Greenfunction::green_integral_t(char pos, int order) const -> double {
+    if (order == 1) {
         return green_integral_t_linear(pos);
+    } else if (order == 2) {
+        if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
+            return green_integral_t_linear(pos);
+        } else {
+            return green_integral_t_square(pos);
+        }
     } else {
-//        return green_integral_t_linear(pos);
-        return green_integral_t_square(pos);
+        printError("AGM::Greenfunction::green_integral_t", "order (which is %d) error", order);
     }
 }
 
-auto AGM::Greenfunction::green_integral_tau(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
+auto AGM::Greenfunction::green_integral_tau(char pos, int order) const -> double {
+    if (order == 1) {
         return green_integral_tau_linear(pos);
+    } else if (order == 2) {
+        if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
+            return green_integral_tau_linear(pos);
+        } else {
+            return green_integral_tau_square(pos);
+        }
     } else {
-//        return green_integral_tau_linear(pos);
-        return green_integral_tau_square(pos);
+        printError("AGM::Greenfunction::green_integral_tau", "order (which is %d) error", order);
     }
 }
 
-auto AGM::Greenfunction::green_integral_ttau(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
+auto AGM::Greenfunction::green_integral_ttau(char pos, int order) const -> double {
+    if (order == 1) {
         return green_integral_ttau_linear(pos);
+    } else if (order == 2) {
+        if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
+            return green_integral_ttau_linear(pos);
+        } else {
+            return green_integral_ttau_square(pos);
+        }
     } else {
-//        return green_integral_ttau_linear(pos);
-        return green_integral_ttau_square(pos);
+        printError("AGM::Greenfunction::green_integral_ttau", "order (which is %d) error", order);
     }
 }
 
@@ -584,39 +604,59 @@ auto AGM::Greenfunction::green_function_ttau_ND(double t) const -> double {
     return ZEROVALUE;
 }
 
-auto AGM::Greenfunction::green_integral_ND(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
+auto AGM::Greenfunction::green_integral_ND(char pos, int order) const -> double {
+    if (order == 1) {
         return green_integral_linear_ND(pos);
+    } else if (order == 2) {
+        if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
+            return green_integral_linear_ND(pos);
+        } else {
+            return green_integral_square_ND(pos);
+        }
     } else {
-//        return green_integral_linear_ND(pos);
-        return green_integral_square_ND(pos);
+        printError("AGM::Greenfunction::green_integral_ND", "order (which is %d) error", order);
     }
 }
 
-auto AGM::Greenfunction::green_integral_t_ND(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
+auto AGM::Greenfunction::green_integral_t_ND(char pos, int order) const -> double {
+    if (order == 1) {
         return green_integral_t_linear_ND(pos);
+    } else if (order == 2) {
+        if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
+            return green_integral_t_linear_ND(pos);
+        } else {
+            return green_integral_t_square_ND(pos);
+        }
     } else {
-//        return green_integral_t_linear_ND(pos);
-        return green_integral_t_square_ND(pos);
+        printError("AGM::Greenfunction::green_integral_t_ND", "order (which is %d) error", order);
     }
 }
 
-auto AGM::Greenfunction::green_integral_tau_ND(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
+auto AGM::Greenfunction::green_integral_tau_ND(char pos, int order) const -> double {
+    if (order == 1) {
         return green_integral_tau_linear_ND(pos);
+    } else if (order == 2) {
+        if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
+            return green_integral_tau_linear_ND(pos);
+        } else {
+            return green_integral_tau_square_ND(pos);
+        }
     } else {
-//        return green_integral_tau_linear_ND(pos);
-        return green_integral_tau_square_ND(pos);
+        printError("AGM::Greenfunction::green_integral_tau_ND", "order (which is %d) error", order);
     }
 }
 
-auto AGM::Greenfunction::green_integral_ttau_ND(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
+auto AGM::Greenfunction::green_integral_ttau_ND(char pos, int order) const -> double {
+    if (order == 1) {
         return green_integral_ttau_linear_ND(pos);
+    } else if (order == 2) {
+        if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
+            return green_integral_ttau_linear_ND(pos);
+        } else {
+            return green_integral_ttau_square_ND(pos);
+        }
     } else {
-//        return green_integral_ttau_linear_ND(pos);
-        return green_integral_ttau_square_ND(pos);
+        printError("AGM::Greenfunction::green_integral_ttau_ND", "order (which is %d) error", order);
     }
 }
 
@@ -1086,39 +1126,59 @@ auto AGM::Greenfunction::green_function_ttau_DN(double t) const -> double {
     return ZEROVALUE;
 }
 
-auto AGM::Greenfunction::green_integral_DN(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
+auto AGM::Greenfunction::green_integral_DN(char pos, int order) const -> double {
+    if (order == 1) {
         return green_integral_linear_DN(pos);
+    } else if (order == 2) {
+        if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
+            return green_integral_linear_DN(pos);
+        } else {
+            return green_integral_square_DN(pos);
+        }
     } else {
-//        return green_integral_linear_DN(pos);
-        return green_integral_square_DN(pos);
+        printError("AGM::Greenfunction::green_integral_DN", "order (which is %d) error", order);
     }
 }
 
-auto AGM::Greenfunction::green_integral_t_DN(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
+auto AGM::Greenfunction::green_integral_t_DN(char pos, int order) const -> double {
+    if (order == 1) {
         return green_integral_t_linear_DN(pos);
+    } else if (order == 2) {
+        if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
+            return green_integral_t_linear_DN(pos);
+        } else {
+            return green_integral_t_square_DN(pos);
+        }
     } else {
-//        return green_integral_t_linear_DN(pos);
-        return green_integral_t_square_DN(pos);
+        printError("AGM::Greenfunction::green_integral_t_DN", "order (which is %d) error", order);
     }
 }
 
-auto AGM::Greenfunction::green_integral_tau_DN(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
+auto AGM::Greenfunction::green_integral_tau_DN(char pos, int order) const -> double {
+    if (order == 1) {
         return green_integral_tau_linear_DN(pos);
+    } else if (order == 2) {
+        if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
+            return green_integral_tau_linear_DN(pos);
+        } else {
+            return green_integral_tau_square_DN(pos);
+        }
     } else {
-//        return green_integral_tau_linear_DN(pos);
-        return green_integral_tau_square_DN(pos);
+        printError("AGM::Greenfunction::green_integral_tau_DN", "order (which is %d) error", order);
     }
 }
 
-auto AGM::Greenfunction::green_integral_ttau_DN(char pos) const -> double {
-    if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
+auto AGM::Greenfunction::green_integral_ttau_DN(char pos, int order) const -> double {
+    if (order == 1) {
         return green_integral_ttau_linear_DN(pos);
+    } else if (order == 2) {
+        if (min(tau - tm, tp - tau) / max(tau - tm, tp - tau) < 0.1) {
+            return green_integral_ttau_linear_DN(pos);
+        } else {
+            return green_integral_ttau_square_DN(pos);
+        }
     } else {
-//        return green_integral_ttau_linear_DN(pos);
-        return green_integral_ttau_square_DN(pos);
+        printError("AGM::Greenfunction::green_integral_ttau_DN", "order (which is %d) error", order);
     }
 }
 

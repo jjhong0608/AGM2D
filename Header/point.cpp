@@ -10,6 +10,7 @@ std::vector<AGM::axialLine> *AGM::point::xline;
 std::vector<AGM::axialLine> *AGM::point::yline;
 std::vector<AGM::boundaryLine2D> *AGM::point::bdLine;
 std::vector<AGM::point> *AGM::point::pts;
+double AGM::point::alin_max_gap;
 
 AGM::point::point() = default;
 
@@ -29,6 +30,14 @@ auto AGM::point::getIdx() const -> int {
 
 void AGM::point::setIdx(int i) {
     point::idx = i;
+}
+
+auto AGM::point::getOrd() const -> int {
+    return ord;
+}
+
+void AGM::point::setOrd(int i) {
+    point::ord = i;
 }
 
 auto AGM::point::getXy() const -> const AGM::coordinate & {
@@ -169,6 +178,14 @@ void AGM::point::setPts(std::vector<AGM::point> *vector) {
     point::pts = vector;
 }
 
+double AGM::point::getAlinMaxGap() {
+    return alin_max_gap;
+}
+
+void AGM::point::setAlinMaxGap(double alinMaxGap) {
+    alin_max_gap = alinMaxGap;
+}
+
 auto AGM::point::operator[](int i) -> double & {
     return xy[i];
 }
@@ -302,6 +319,12 @@ void AGM::point::findStencilBoundary() {
             if (element[ewns]->getIdx() == getIdx() && ispositive(sign * n)) return;
         }
         auto alin = func(lineChar, lineIdx, pt);
+        if (alin && std::fabs(*this - *alin) > 1.2 * alin_max_gap) {
+            alin = nullptr;
+            printf("\nalin = nullptr\n");
+            printInformation();
+            printf("-------------\n\n");
+        }
         if (alin) {
             auto leftPt = findLeftPt(alin, lineIdx);
             auto rightPt = findRightPt(alin, lineIdx);
@@ -335,13 +358,16 @@ void AGM::point::findStencilBoundary() {
                     printf("S: %d", getIdx());
                 }
 
+                printf("\n\nmodify normal vector:");
                 printInformation();
                 n = ZEROVALUE;
                 double norm{std::sqrt(std::pow(normal[0], 2) + std::pow(normal[1], 2))};
                 for (int i = 0; i < 2; ++i) {
                     normal[i] /= norm;
                 }
+                printf("----------------\n");
                 printInformation();
+                printf("normal vector modified\n\n");
             }
             element[ewns] = this;
         }
@@ -444,16 +470,17 @@ void AGM::point::findStencilAppendBoundary() {
 
 void AGM::point::findStencilInterface() {
     auto assignDist = [this]() -> double {
-        double vv{};
+        auto vv{ZEROVALUE};
         for (const auto &item: {E, W, N, S}) {
             if (getElement()[item]) {
-                if (5e0 * (*getElement()[item] - *this) > vv) {
-                    vv = 5e0 * (*getElement()[item] - *this);
+                if (2.5 * (*getElement()[item] - *this) > vv) {
+                    vv = 2.5 * (*getElement()[item] - *this);
                 }
             }
         }
         if (!iszero(vv)) {
-            return vv;
+            return .00135;
+//            return vv;
         }
         printError("AGM::point::findStencilInterface, assignDist");
         return ZEROVALUE;
@@ -599,11 +626,24 @@ void AGM::point::findStencilInterface() {
 //                           crossLine.size());
             } else if (crossLine.empty()) {
                 std::cout << "(x, y) = (" << getXy()[0] << ", " << getXy()[1] << ")\n";
+                printInformation();
                 printError("AGM::point::findStencilInterface",
                            "The size of crossLine is empty");
             }
             getPts()->emplace_back(crossLine[0]);
             getPts()->back().setIdx(int(getPts()->size()) - 1);
+            if (ewns == E && isnegative(getPts()->back().getNormal()[0])) {
+                getPts()->back().setNormal(getPts()->back().getNormal() * -1.);
+            }
+            if (ewns == W && ispositive(getPts()->back().getNormal()[0])) {
+                getPts()->back().setNormal(getPts()->back().getNormal() * -1.);
+            }
+            if (ewns == N && isnegative(getPts()->back().getNormal()[1])) {
+                getPts()->back().setNormal(getPts()->back().getNormal() * -1.);
+            }
+            if (ewns == S && ispositive(getPts()->back().getNormal()[1])) {
+                getPts()->back().setNormal(getPts()->back().getNormal() * -1.);
+            }
             assignAppendElement(getPts()->back(), ewns, getPts()->back().getNormal());
             element[ewns] = &(getPts()->back());
 
@@ -645,18 +685,20 @@ void AGM::point::findStencil(std::vector<AGM::point> *src, std::vector<AGM::poin
 //    }
 }
 
-void AGM::point::calculateRepresentationFormula() {
+void AGM::point::calculateRepresentationFormula(int order) {
     switch (condition) {
         case 'C':
             calculateRepresentationFormulaCross();
             break;
         case 'D':
         case 'd':
-            calculateRepresentationFormulaDirichlet();
+            calculateRepresentationFormulaDirichlet(order);
             break;
         case 'N':
+            calculateRepresentationFormulaNeumann(order);
+            break;
         case 'n':
-            calculateRepresentationFormulaNeumann();
+            calculateRepresentationFormulaInterfaceNeumann();
             break;
         case 'I':
             calculateRepresentationFormulaInterface();
@@ -702,33 +744,33 @@ void AGM::point::calculateRepresentationFormulaCross() {
     row[0][element[W]->getIdx()] = mp * gfuncX.green_function_t(xm);
     row[0][element[E]->getIdx()] = -mp * gfuncX.green_function_t(xp);
 
-    row[0][element[W]->getIdx() + getNPts()] = gfuncX.green_integral('l');
-    row[0][getIdx() + getNPts()] = gfuncX.green_integral('c');
-    row[0][element[E]->getIdx() + getNPts()] = gfuncX.green_integral('r');
+    row[0][element[W]->getIdx() + getNPts()] = gfuncX.green_integral('l', ord);
+    row[0][getIdx() + getNPts()] = gfuncX.green_integral('c', ord);
+    row[0][element[E]->getIdx() + getNPts()] = gfuncX.green_integral('r', ord);
 
-    rhsMatrixRow[0][element[W]->getIdx()] = gfuncX.green_integral('l');
-    rhsMatrixRow[0][getIdx()] = gfuncX.green_integral('c');
-    rhsMatrixRow[0][element[E]->getIdx()] = gfuncX.green_integral('r');
+    rhsMatrixRow[0][element[W]->getIdx()] = gfuncX.green_integral('l', ord);
+    rhsMatrixRow[0][getIdx()] = gfuncX.green_integral('c', ord);
+    rhsMatrixRow[0][element[E]->getIdx()] = gfuncX.green_integral('r', ord);
 
-    partMatrixRow[0][element[W]->getIdx()] = gfuncX.green_integral_t('l');
-    partMatrixRow[0][getIdx()] = gfuncX.green_integral_t('c');
-    partMatrixRow[0][element[E]->getIdx()] = gfuncX.green_integral_t('r');
+    partMatrixRow[0][element[W]->getIdx()] = gfuncX.green_integral_t('l', ord);
+    partMatrixRow[0][getIdx()] = gfuncX.green_integral_t('c', ord);
+    partMatrixRow[0][element[E]->getIdx()] = gfuncX.green_integral_t('r', ord);
 
     row[1][getIdx()] = -UNITVALUE;
     row[1][element[S]->getIdx()] = mp * gfuncY.green_function_t(ym);
     row[1][element[N]->getIdx()] = -mp * gfuncY.green_function_t(yp);
 
-    row[1][element[S]->getIdx() + getNPts()] = -gfuncY.green_integral('l');
-    row[1][getIdx() + getNPts()] = -gfuncY.green_integral('c');
-    row[1][element[N]->getIdx() + getNPts()] = -gfuncY.green_integral('r');
+    row[1][element[S]->getIdx() + getNPts()] = -gfuncY.green_integral('l', ord);
+    row[1][getIdx() + getNPts()] = -gfuncY.green_integral('c', ord);
+    row[1][element[N]->getIdx() + getNPts()] = -gfuncY.green_integral('r', ord);
 
-    rhsMatrixRow[1][element[S]->getIdx() + getNPts()] = gfuncY.green_integral('l');
-    rhsMatrixRow[1][getIdx() + getNPts()] = gfuncY.green_integral('c');
-    rhsMatrixRow[1][element[N]->getIdx() + getNPts()] = gfuncY.green_integral('r');
+    rhsMatrixRow[1][element[S]->getIdx() + getNPts()] = gfuncY.green_integral('l', ord);
+    rhsMatrixRow[1][getIdx() + getNPts()] = gfuncY.green_integral('c', ord);
+    rhsMatrixRow[1][element[N]->getIdx() + getNPts()] = gfuncY.green_integral('r', ord);
 
-    partMatrixRow[1][element[S]->getIdx() + getNPts()] = gfuncY.green_integral_t('l');
-    partMatrixRow[1][getIdx() + getNPts()] = gfuncY.green_integral_t('c');
-    partMatrixRow[1][element[N]->getIdx() + getNPts()] = gfuncY.green_integral_t('r');
+    partMatrixRow[1][element[S]->getIdx() + getNPts()] = gfuncY.green_integral_t('l', ord);
+    partMatrixRow[1][getIdx() + getNPts()] = gfuncY.green_integral_t('c', ord);
+    partMatrixRow[1][element[N]->getIdx() + getNPts()] = gfuncY.green_integral_t('r', ord);
 
     eraseInterface(element[E], 0);
     eraseInterface(element[W], 0);
@@ -739,13 +781,13 @@ void AGM::point::calculateRepresentationFormulaCross() {
     solMatrixRow[1] = row[0] - row[1];
 }
 
-void AGM::point::calculateRepresentationFormulaDirichlet() {
+void AGM::point::calculateRepresentationFormulaDirichlet(int order) {
     solMatrixRow[0][getIdx()] = UNITVALUE;
-    if (getCondition() == 'D') approximatePhiAtBoundary1(1);
+    if (getCondition() == 'D') approximatePhiAtBoundary1(order);
     else if (getCondition() == 'd') approximatePhiAtAppend();
 }
 
-void AGM::point::calculateRepresentationFormulaNeumann() {
+void AGM::point::calculateRepresentationFormulaNeumann(int order) {
     std::array<matrixRow, 2> row{};
     row[0] = getAxialLine('x') ? calculateRepresentationFormulaNeumannOnAxial('x', 0)
                                : calculateRepresentationFormulaNeumannOffAxial('x', 0);
@@ -764,8 +806,7 @@ void AGM::point::calculateRepresentationFormulaNeumann() {
             solMatrixRow[0] += row[i] * normal[i];
         }
     }
-    if (getCondition() == 'N') approximatePhiAtBoundary1(1);
-    else if (getCondition() == 'n') approximatePhiAtAppend();
+    approximatePhiAtBoundary1(order);
 }
 
 auto AGM::point::calculateRepresentationFormulaNeumannOnAxial(char axis, int axisInt) -> AGM::matrixRow {
@@ -803,33 +844,35 @@ auto AGM::point::calculateRepresentationFormulaNeumannOnAxial(char axis, int axi
         row[ptc->getIdx()] = -UNITVALUE;
         row[ptr->getIdx()] = UNITVALUE;
 
-        row[ptl->getIdx() + getNPts()] = signPhi0 * gFunc.green_integral_ND('l');
-        row[ptc->getIdx() + getNPts()] = signPhi0 * gFunc.green_integral_ND('c');
-        row[ptr->getIdx() + getNPts()] = signPhi0 * gFunc.green_integral_ND('r');
+        row[ptl->getIdx() + getNPts()] = signPhi0 * gFunc.green_integral_ND('l', ord);
+        row[ptc->getIdx() + getNPts()] = signPhi0 * gFunc.green_integral_ND('c', ord);
+        row[ptr->getIdx() + getNPts()] = signPhi0 * gFunc.green_integral_ND('r', ord);
 
-        row[ptl->getIdx() + (axisInt + 2) * getNPts()] = gFunc.green_integral_ND('l');
-        row[ptc->getIdx() + (axisInt + 2) * getNPts()] = gFunc.green_integral_ND('c');
-        row[ptr->getIdx() + (axisInt + 2) * getNPts()] = gFunc.green_integral_ND('r');
+        row[ptl->getIdx() + (axisInt + 2) * getNPts()] = gFunc.green_integral_ND('l', ord);
+        row[ptc->getIdx() + (axisInt + 2) * getNPts()] = gFunc.green_integral_ND('c', ord);
+        row[ptr->getIdx() + (axisInt + 2) * getNPts()] = gFunc.green_integral_ND('r', ord);
 
-        row[ptl->getIdx() + (axisInt + 4) * getNPts()] = gFunc.green_integral_t_ND('l') + gFunc.green_function_ND(tm);
-        row[ptc->getIdx() + (axisInt + 4) * getNPts()] = gFunc.green_integral_t_ND('c');
-        row[ptr->getIdx() + (axisInt + 4) * getNPts()] = gFunc.green_integral_t_ND('r');
+        row[ptl->getIdx() + (axisInt + 4) * getNPts()] =
+                gFunc.green_integral_t_ND('l', ord) + gFunc.green_function_ND(tm);
+        row[ptc->getIdx() + (axisInt + 4) * getNPts()] = gFunc.green_integral_t_ND('c', ord);
+        row[ptr->getIdx() + (axisInt + 4) * getNPts()] = gFunc.green_integral_t_ND('r', ord);
     } else if (string == "DN") {
         row[ptl->getIdx()] = UNITVALUE;
         row[ptc->getIdx()] = -UNITVALUE;
         row[ptr->getIdx()] = mp * gFunc.green_function_DN(tp);
 
-        row[ptl->getIdx() + getNPts()] = signPhi0 * gFunc.green_integral_DN('l');
-        row[ptc->getIdx() + getNPts()] = signPhi0 * gFunc.green_integral_DN('c');
-        row[ptr->getIdx() + getNPts()] = signPhi0 * gFunc.green_integral_DN('r');
+        row[ptl->getIdx() + getNPts()] = signPhi0 * gFunc.green_integral_DN('l', ord);
+        row[ptc->getIdx() + getNPts()] = signPhi0 * gFunc.green_integral_DN('c', ord);
+        row[ptr->getIdx() + getNPts()] = signPhi0 * gFunc.green_integral_DN('r', ord);
 
-        row[ptl->getIdx() + (axisInt + 2) * getNPts()] = gFunc.green_integral_DN('l');
-        row[ptc->getIdx() + (axisInt + 2) * getNPts()] = gFunc.green_integral_DN('c');
-        row[ptr->getIdx() + (axisInt + 2) * getNPts()] = gFunc.green_integral_DN('r');
+        row[ptl->getIdx() + (axisInt + 2) * getNPts()] = gFunc.green_integral_DN('l', ord);
+        row[ptc->getIdx() + (axisInt + 2) * getNPts()] = gFunc.green_integral_DN('c', ord);
+        row[ptr->getIdx() + (axisInt + 2) * getNPts()] = gFunc.green_integral_DN('r', ord);
 
-        row[ptl->getIdx() + (axisInt + 4) * getNPts()] = gFunc.green_integral_t_DN('l');
-        row[ptc->getIdx() + (axisInt + 4) * getNPts()] = gFunc.green_integral_t_DN('c');
-        row[ptr->getIdx() + (axisInt + 4) * getNPts()] = gFunc.green_integral_t_DN('r') - gFunc.green_function_DN(tp);
+        row[ptl->getIdx() + (axisInt + 4) * getNPts()] = gFunc.green_integral_t_DN('l', ord);
+        row[ptc->getIdx() + (axisInt + 4) * getNPts()] = gFunc.green_integral_t_DN('c', ord);
+        row[ptr->getIdx() + (axisInt + 4) * getNPts()] =
+                gFunc.green_integral_t_DN('r', ord) - gFunc.green_function_DN(tp);
     }
     auto c = -row[getIdx()];
     for (auto &item: row) {
@@ -865,14 +908,14 @@ auto AGM::point::calculateRepresentationFormulaNeumannOffAxial(char axis, int ax
         mRow[ptl->getIdx()] = d * func.green_function_t(m);
         mRow[ptr->getIdx()] = -d * func.green_function_t(p);
 
-        mRow[ptl->getIdx() + getNPts()] = sign * func.green_integral('L');
-        mRow[ptr->getIdx() + getNPts()] = sign * func.green_integral('R');
+        mRow[ptl->getIdx() + getNPts()] = sign * func.green_integral('L', ord);
+        mRow[ptr->getIdx() + getNPts()] = sign * func.green_integral('R', ord);
 
-        mRow[ptl->getIdx() + (i + 2) * getNPts()] = func.green_integral('L');
-        mRow[ptr->getIdx() + (i + 2) * getNPts()] = func.green_integral('R');
+        mRow[ptl->getIdx() + (i + 2) * getNPts()] = func.green_integral('L', ord);
+        mRow[ptr->getIdx() + (i + 2) * getNPts()] = func.green_integral('R', ord);
 
-        mRow[ptl->getIdx() + (i + 4) * getNPts()] = func.green_integral_t('L');
-        mRow[ptr->getIdx() + (i + 4) * getNPts()] = func.green_integral_t('R');
+        mRow[ptl->getIdx() + (i + 4) * getNPts()] = func.green_integral_t('L', ord);
+        mRow[ptr->getIdx() + (i + 4) * getNPts()] = func.green_integral_t('R', ord);
 
         return mRow * coefficient;
     };
@@ -885,24 +928,24 @@ auto AGM::point::calculateRepresentationFormulaNeumannOffAxial(char axis, int ax
         return mRow * coefficient;
     };
     matrixRow row{};
-    auto assignMatrix = [&row, &approximateSol, &linearApproximation, &sign](point *pt, point *ptr, point *ptl,
-                                                                             double mp0, Greenfunction *func, double d,
-                                                                             int i, int i0, char c) -> void {
+    auto assignMatrix = [&](point *pt, point *ptr, point *ptl,
+                            double mp0, Greenfunction *func, double d,
+                            int i, int i0, char c) -> void {
         if (pt) {
             row[pt->getIdx()] += mp0 * func->green_function_ttau(d);
-            row[pt->getIdx() + getNPts()] += sign * func->green_integral_tau(c);
-            row[pt->getIdx() + (i0 + 2) * getNPts()] += func->green_integral_tau(c);
-            row[pt->getIdx() + (i0 + 4) * getNPts()] += func->green_integral_ttau(c);
+            row[pt->getIdx() + getNPts()] += sign * func->green_integral_tau(c, ord);
+            row[pt->getIdx() + (i0 + 2) * getNPts()] += func->green_integral_tau(c, ord);
+            row[pt->getIdx() + (i0 + 4) * getNPts()] += func->green_integral_ttau(c, ord);
         } else {
             row += approximateSol(ptr, ptl, mp0 * func->green_function_ttau(d), i, std::abs(mp0));
-            row += linearApproximation(ptr, ptl, sign * func->green_integral_tau(c), i, 1);
-            row += linearApproximation(ptr, ptl, func->green_integral_tau(c), i, i0 + 2);
-            row += linearApproximation(ptr, ptl, func->green_integral_ttau(c), i, i0 + 4);
+            row += linearApproximation(ptr, ptl, sign * func->green_integral_tau(c, ord), i, 1);
+            row += linearApproximation(ptr, ptl, func->green_integral_tau(c, ord), i, i0 + 2);
+            row += linearApproximation(ptr, ptl, func->green_integral_ttau(c, ord), i, i0 + 4);
         }
     };
-    row[getIdx() + getNPts()] += sign * gFunc.green_integral_tau('c');
-    row[getIdx() + (axisInt + 2) * getNPts()] += gFunc.green_integral_tau('c');
-    row[getIdx() + (axisInt + 4) * getNPts()] += gFunc.green_integral_ttau('c') + UNITVALUE / mp;
+    row[getIdx() + getNPts()] += sign * gFunc.green_integral_tau('c', ord);
+    row[getIdx() + (axisInt + 2) * getNPts()] += gFunc.green_integral_tau('c', ord);
+    row[getIdx() + (axisInt + 4) * getNPts()] += gFunc.green_integral_ttau('c', ord) + UNITVALUE / mp;
 
     if (axis == 'x') {
         assignMatrix(element[E], element[EN], element[ES], -mp, &gFunc, tp, 1, 0, 'r');
@@ -962,24 +1005,24 @@ void AGM::point::calculateRepresentationFormulaPhiPressureCross(char comp) {
         }
     };
 
-    row[0][element[W]->getIdx()] = gfuncX.green_integral('l');
-    row[0][getIdx()] = gfuncX.green_integral('c');
-    row[0][element[E]->getIdx()] = gfuncX.green_integral('r');
+    row[0][element[W]->getIdx()] = gfuncX.green_integral('l', ord);
+    row[0][getIdx()] = gfuncX.green_integral('c', ord);
+    row[0][element[E]->getIdx()] = gfuncX.green_integral('r', ord);
 
     if (comp == 'u') {
-        row[0][element[W]->getIdx() + getNPts()] = gfuncX.green_integral_t('l');
-        row[0][getIdx() + getNPts()] = gfuncX.green_integral_t('c');
-        row[0][element[E]->getIdx() + getNPts()] = gfuncX.green_integral_t('r');
+        row[0][element[W]->getIdx() + getNPts()] = gfuncX.green_integral_t('l', ord);
+        row[0][getIdx() + getNPts()] = gfuncX.green_integral_t('c', ord);
+        row[0][element[E]->getIdx() + getNPts()] = gfuncX.green_integral_t('r', ord);
     }
 
-    row[1][element[S]->getIdx()] = -gfuncY.green_integral('l');
-    row[1][getIdx()] = -gfuncY.green_integral('c');
-    row[1][element[N]->getIdx()] = -gfuncY.green_integral('r');
+    row[1][element[S]->getIdx()] = -gfuncY.green_integral('l', ord);
+    row[1][getIdx()] = -gfuncY.green_integral('c', ord);
+    row[1][element[N]->getIdx()] = -gfuncY.green_integral('r', ord);
 
     if (comp == 'v') {
-        row[1][element[S]->getIdx() + getNPts()] = gfuncY.green_integral_t('l');
-        row[1][getIdx() + getNPts()] = gfuncY.green_integral_t('c');
-        row[1][element[N]->getIdx() + getNPts()] = gfuncY.green_integral_t('r');
+        row[1][element[S]->getIdx() + getNPts()] = gfuncY.green_integral_t('l', ord);
+        row[1][getIdx() + getNPts()] = gfuncY.green_integral_t('c', ord);
+        row[1][element[N]->getIdx() + getNPts()] = gfuncY.green_integral_t('r', ord);
     }
 
     eraseInterface(element[E], 0);
@@ -1084,16 +1127,16 @@ void AGM::point::calculateRepresentationFormulaInterface() {
         mRow[ptl->getIdx()] = d * func.green_function_t(m);
         mRow[ptr->getIdx()] = -d * func.green_function_t(p);
 
-        mRow[ptl->getIdx() + getNPts()] = sign * func.green_integral('L');
-        mRow[ptr->getIdx() + getNPts()] = sign * func.green_integral('R');
+        mRow[ptl->getIdx() + getNPts()] = sign * func.green_integral('L', ord);
+        mRow[ptr->getIdx() + getNPts()] = sign * func.green_integral('R', ord);
 
         checkMatrixRow(&mRow, ptr, ptl);
 
-        mRow[ptl->getIdx() + (i + 2) * getNPts()] = func.green_integral('L');
-        mRow[ptr->getIdx() + (i + 2) * getNPts()] = func.green_integral('R');
+        mRow[ptl->getIdx() + (i + 2) * getNPts()] = func.green_integral('L', ord);
+        mRow[ptr->getIdx() + (i + 2) * getNPts()] = func.green_integral('R', ord);
 
-        mRow[ptl->getIdx() + (i + 4) * getNPts()] = func.green_integral_t('L');
-        mRow[ptr->getIdx() + (i + 4) * getNPts()] = func.green_integral_t('R');
+        mRow[ptl->getIdx() + (i + 4) * getNPts()] = func.green_integral_t('L', ord);
+        mRow[ptr->getIdx() + (i + 4) * getNPts()] = func.green_integral_t('R', ord);
 
         return mRow * coefficient;
     };
@@ -1106,36 +1149,36 @@ void AGM::point::calculateRepresentationFormulaInterface() {
         return mRow * coefficient;
     };
     std::array<matrixRow, 2> row{};
-    auto assignMatrix = [&row, &approximateSol, &linearApproximation, &isInterface](point *pt, point *ptr, point *ptl,
-                                                                                    double mp0, Greenfunction *func,
-                                                                                    double d, int i, int i0, char c,
-                                                                                    char C) -> void {
+    auto assignMatrix = [&](point *pt, point *ptr, point *ptl,
+                            double mp0, Greenfunction *func,
+                            double d, int i, int i0, char c,
+                            char C) -> void {
         double sign = i0 ? -UNITVALUE : UNITVALUE;
         if (pt) {
             row[i0][pt->getIdx()] += mp0 * func->green_function_t(d);
-            row[i0][pt->getIdx() + getNPts()] += isInterface ? sign * func->green_integral(C)
-                                                             : sign * func->green_integral(c);
-            row[i0][pt->getIdx() + (i0 + 2) * getNPts()] += func->green_integral(c);
-            row[i0][pt->getIdx() + (i0 + 4) * getNPts()] += func->green_integral_t(c);
+            row[i0][pt->getIdx() + getNPts()] += isInterface ? sign * func->green_integral(C, ord)
+                                                             : sign * func->green_integral(c, ord);
+            row[i0][pt->getIdx() + (i0 + 2) * getNPts()] += func->green_integral(c, ord);
+            row[i0][pt->getIdx() + (i0 + 4) * getNPts()] += func->green_integral_t(c, ord);
         } else {
             row[i0] += approximateSol(ptr, ptl, mp0 * func->green_function_t(d), i, std::abs(mp0));
-            row[i0] += isInterface ? linearApproximation(ptr, ptl, sign * func->green_integral(C), i, 1)
-                                   : linearApproximation(ptr, ptl, sign * func->green_integral(c), i, 1);
-            row[i0] += linearApproximation(ptr, ptl, func->green_integral(c), i, i0 + 2);
-            row[i0] += linearApproximation(ptr, ptl, func->green_integral_t(c), i, i0 + 4);
+            row[i0] += isInterface ? linearApproximation(ptr, ptl, sign * func->green_integral(C, ord), i, 1)
+                                   : linearApproximation(ptr, ptl, sign * func->green_integral(c, ord), i, 1);
+            row[i0] += linearApproximation(ptr, ptl, func->green_integral(c, ord), i, i0 + 2);
+            row[i0] += linearApproximation(ptr, ptl, func->green_integral_t(c, ord), i, i0 + 4);
         }
     };
     row[0][getIdx()] = -UNITVALUE;
-    if (!isInterface) row[0][getIdx() + getNPts()] = gFuncX.green_integral('c');
-    row[0][getIdx() + 2 * getNPts()] = gFuncX.green_integral('c');
-    row[0][getIdx() + 4 * getNPts()] = gFuncX.green_integral_t('c');
+    if (!isInterface) row[0][getIdx() + getNPts()] = gFuncX.green_integral('c', ord);
+    row[0][getIdx() + 2 * getNPts()] = gFuncX.green_integral('c', ord);
+    row[0][getIdx() + 4 * getNPts()] = gFuncX.green_integral_t('c', ord);
     assignMatrix(getElement()[E], getElement()[EN], getElement()[ES], -mpe, &gFuncX, xp, 1, 0, 'r', 'R');
     assignMatrix(getElement()[W], getElement()[WN], getElement()[WS], mpw, &gFuncX, xm, 1, 0, 'l', 'L');
 
     row[1][getIdx()] = -UNITVALUE;
-    if (!isInterface) row[1][getIdx() + getNPts()] = -gFuncY.green_integral('c');
-    row[1][getIdx() + 3 * getNPts()] = gFuncY.green_integral('c');
-    row[1][getIdx() + 5 * getNPts()] = gFuncY.green_integral_t('c');
+    if (!isInterface) row[1][getIdx() + getNPts()] = -gFuncY.green_integral('c', ord);
+    row[1][getIdx() + 3 * getNPts()] = gFuncY.green_integral('c', ord);
+    row[1][getIdx() + 5 * getNPts()] = gFuncY.green_integral_t('c', ord);
     assignMatrix(getElement()[N], getElement()[NE], getElement()[NW], -mpn, &gFuncY, yp, 0, 1, 'r', 'R');
     assignMatrix(getElement()[S], getElement()[SE], getElement()[SW], mps, &gFuncY, ym, 0, 1, 'l', 'L');
 
@@ -1157,6 +1200,125 @@ void AGM::point::calculateRepresentationFormulaInterface() {
     } else {
         solMatrixRow[1] = row[0] - row[1];
     }
+}
+
+void AGM::point::calculateRepresentationFormulaInterfaceNeumann() {
+    std::array<matrixRow, 2> row{};
+    if (getElement()[E] && getElement()[E]->getElement()[E] && getIdx() != getElement()[E]->getIdx()) {
+        row[0] = calculateRepresentationFormulaInterfaceNeumannOnAxial('x', 0, E);
+    } else if (getElement()[W] && getElement()[W]->getElement()[W] && getIdx() != getElement()[W]->getIdx()) {
+        row[0] = calculateRepresentationFormulaInterfaceNeumannOnAxial('x', 0, W);
+    } else {
+        row[0] = calculateRepresentationFormulaNeumannOffAxial('x', 0);
+    }
+    if (getElement()[N] && getElement()[N]->getElement()[N] && getIdx() != getElement()[N]->getIdx()) {
+        row[1] = calculateRepresentationFormulaInterfaceNeumannOnAxial('y', 1, N);
+    } else if (getElement()[S] && getElement()[S]->getElement()[S] && getIdx() != getElement()[S]->getIdx()) {
+        row[1] = calculateRepresentationFormulaInterfaceNeumannOnAxial('y', 1, S);
+    } else {
+        row[1] = calculateRepresentationFormulaNeumannOffAxial('y', 1);
+    }
+    for (int i = 0; i < 2; ++i) {
+        if (!row[i].empty() && !iszero(normal[i])) {
+            while (row[i].back().idx >= 4 * getNPts()) {
+                partMatrixRow[i][row[i].back().idx - 4 * getNPts()] = row[i].back().value * normal[i];
+                row[i].pop_back();
+            }
+            while (row[i].back().idx >= 2 * getNPts()) {
+                rhsMatrixRow[i][row[i].back().idx - 2 * getNPts()] = row[i].back().value * normal[i];
+                row[i].pop_back();
+            }
+            solMatrixRow[0] += row[i] * normal[i];
+        }
+    }
+    approximatePhiAtAppend();
+}
+
+auto AGM::point::calculateRepresentationFormulaInterfaceNeumannOnAxial(
+        char axis,
+        int axisInt,
+        AGM::EWNS ewns
+) -> AGM::matrixRow {
+    std::string string = ewns == E || ewns == N ? "ND" :
+                         ewns == W || ewns == S ? "DN" : "";
+    point *ptl{nullptr}, *ptc{nullptr}, *ptr{nullptr};
+    if (ewns == E) {
+        ptl = this;
+        ptc = getElement()[E];
+        ptr = ptc->getElement()[E];
+    } else if (ewns == W) {
+        ptr = this;
+        ptc = getElement()[W];
+        ptl = ptc->getElement()[W];
+    } else if (ewns == N) {
+        ptl = this;
+        ptc = getElement()[N];
+        ptr = ptc->getElement()[N];
+    } else if (ewns == S) {
+        ptr = this;
+        ptc = getElement()[S];
+        ptl = ptc->getElement()[S];
+    } else {
+        printError("AGM::point::calculateRepresentationFormulaInterfaceNeumannOnAxial");
+    }
+    auto tm{ptl->getXy()[axisInt]}, tb{ptc->getXy()[axisInt]}, tp{ptr->getXy()[axisInt]};
+    double signPhi0 = axis == 'x' ? UNITVALUE : -UNITVALUE;
+    auto gFunc{Greenfunction(tm, tb, tp, mp, mp)};
+
+    if (string == "ND") {
+        if (iszero(gFunc.green_function_ND(tm))) {
+            return calculateRepresentationFormulaNeumannOffAxial(axis, axisInt);
+        }
+    } else if (string == "DN") {
+        if (iszero(gFunc.green_function_DN(tp))) {
+            return calculateRepresentationFormulaNeumannOffAxial(axis, axisInt);
+        }
+    } else {
+        printError("AGM::point::calculateRepresentationFormulaInterfaceNeumannOnAxial");
+    }
+
+    matrixRow row{};
+    if (string == "ND") {
+        row[ptl->getIdx()] = -mp * gFunc.green_function_ND(tm);
+        row[ptc->getIdx()] = -UNITVALUE;
+        row[ptr->getIdx()] = UNITVALUE;
+
+        row[ptl->getIdx() + getNPts()] = signPhi0 * gFunc.green_integral_ND('l', ord);
+        row[ptc->getIdx() + getNPts()] = signPhi0 * gFunc.green_integral_ND('c', ord);
+        row[ptr->getIdx() + getNPts()] = signPhi0 * gFunc.green_integral_ND('r', ord);
+
+        row[ptl->getIdx() + (axisInt + 2) * getNPts()] = gFunc.green_integral_ND('l', ord);
+        row[ptc->getIdx() + (axisInt + 2) * getNPts()] = gFunc.green_integral_ND('c', ord);
+        row[ptr->getIdx() + (axisInt + 2) * getNPts()] = gFunc.green_integral_ND('r', ord);
+
+        row[ptl->getIdx() + (axisInt + 4) * getNPts()] =
+                gFunc.green_integral_t_ND('l', ord) + gFunc.green_function_ND(tm);
+        row[ptc->getIdx() + (axisInt + 4) * getNPts()] = gFunc.green_integral_t_ND('c', ord);
+        row[ptr->getIdx() + (axisInt + 4) * getNPts()] = gFunc.green_integral_t_ND('r', ord);
+    } else if (string == "DN") {
+        row[ptl->getIdx()] = UNITVALUE;
+        row[ptc->getIdx()] = -UNITVALUE;
+        row[ptr->getIdx()] = mp * gFunc.green_function_DN(tp);
+
+        row[ptl->getIdx() + getNPts()] = signPhi0 * gFunc.green_integral_DN('l', ord);
+        row[ptc->getIdx() + getNPts()] = signPhi0 * gFunc.green_integral_DN('c', ord);
+        row[ptr->getIdx() + getNPts()] = signPhi0 * gFunc.green_integral_DN('r', ord);
+
+        row[ptl->getIdx() + (axisInt + 2) * getNPts()] = gFunc.green_integral_DN('l', ord);
+        row[ptc->getIdx() + (axisInt + 2) * getNPts()] = gFunc.green_integral_DN('c', ord);
+        row[ptr->getIdx() + (axisInt + 2) * getNPts()] = gFunc.green_integral_DN('r', ord);
+
+        row[ptl->getIdx() + (axisInt + 4) * getNPts()] = gFunc.green_integral_t_DN('l', ord);
+        row[ptc->getIdx() + (axisInt + 4) * getNPts()] = gFunc.green_integral_t_DN('c', ord);
+        row[ptr->getIdx() + (axisInt + 4) * getNPts()] =
+                gFunc.green_integral_t_DN('r', ord) - gFunc.green_function_DN(tp);
+    }
+    auto c = -row[getIdx()];
+    for (auto &item: row) {
+        item.value /= c;
+    }
+    row.remove(getIdx());
+    return row;
 }
 
 void AGM::point::approximatePhiAtBoundary(int order) {
@@ -1463,6 +1625,13 @@ void AGM::point::approximateDiff(std::vector<point> *points) {
             }
         }
     }
+    for (const auto &item: {E, W, N, S}) {
+        if (getElement()[item] && getIdx() != getElement()[item]->getIdx()) {
+            values["dx"] = points->at(getElement()[item]->getIdx())["dx"];
+            values["dy"] = points->at(getElement()[item]->getIdx())["dy"];
+            return;
+        }
+    }
 }
 
 void AGM::point::updateRightHandSide(const std::function<double(int)> &f, const std::function<double(int)> &g) {
@@ -1756,32 +1925,32 @@ void AGM::point::makeDerivativesCross() {
     deriMatrixRow[0][element[W]->getIdx()] = mp * gfuncX.green_function_ttau(xm);
     deriMatrixRow[0][element[E]->getIdx()] = -mp * gfuncX.green_function_ttau(xp);
 
-    deriMatrixRow[0][element[W]->getIdx() + getNPts()] = gfuncX.green_integral_tau('l');
-    deriMatrixRow[0][getIdx() + getNPts()] = gfuncX.green_integral_tau('c');
-    deriMatrixRow[0][element[E]->getIdx() + getNPts()] = gfuncX.green_integral_tau('r');
+    deriMatrixRow[0][element[W]->getIdx() + getNPts()] = gfuncX.green_integral_tau('l', ord);
+    deriMatrixRow[0][getIdx() + getNPts()] = gfuncX.green_integral_tau('c', ord);
+    deriMatrixRow[0][element[E]->getIdx() + getNPts()] = gfuncX.green_integral_tau('r', ord);
 
-    deriMatrixRow[0][element[W]->getIdx() + 2 * getNPts()] = gfuncX.green_integral_tau('l');
-    deriMatrixRow[0][getIdx() + 2 * getNPts()] = gfuncX.green_integral_tau('c');
-    deriMatrixRow[0][element[E]->getIdx() + 2 * getNPts()] = gfuncX.green_integral_tau('r');
+    deriMatrixRow[0][element[W]->getIdx() + 2 * getNPts()] = gfuncX.green_integral_tau('l', ord);
+    deriMatrixRow[0][getIdx() + 2 * getNPts()] = gfuncX.green_integral_tau('c', ord);
+    deriMatrixRow[0][element[E]->getIdx() + 2 * getNPts()] = gfuncX.green_integral_tau('r', ord);
 
-    deriMatrixRow[0][element[W]->getIdx() + 4 * getNPts()] = gfuncX.green_integral_ttau('l');
-    deriMatrixRow[0][getIdx() + 4 * getNPts()] = gfuncX.green_integral_ttau('c') + UNITVALUE / mp;
-    deriMatrixRow[0][element[E]->getIdx() + 4 * getNPts()] = gfuncX.green_integral_ttau('r');
+    deriMatrixRow[0][element[W]->getIdx() + 4 * getNPts()] = gfuncX.green_integral_ttau('l', ord);
+    deriMatrixRow[0][getIdx() + 4 * getNPts()] = gfuncX.green_integral_ttau('c', ord) + UNITVALUE / mp;
+    deriMatrixRow[0][element[E]->getIdx() + 4 * getNPts()] = gfuncX.green_integral_ttau('r', ord);
 
     deriMatrixRow[1][element[S]->getIdx()] = mp * gfuncY.green_function_ttau(ym);
     deriMatrixRow[1][element[N]->getIdx()] = -mp * gfuncY.green_function_ttau(yp);
 
-    deriMatrixRow[1][element[S]->getIdx() + getNPts()] = -gfuncY.green_integral_tau('l');
-    deriMatrixRow[1][getIdx() + getNPts()] = -gfuncY.green_integral_tau('c');
-    deriMatrixRow[1][element[N]->getIdx() + getNPts()] = -gfuncY.green_integral_tau('r');
+    deriMatrixRow[1][element[S]->getIdx() + getNPts()] = -gfuncY.green_integral_tau('l', ord);
+    deriMatrixRow[1][getIdx() + getNPts()] = -gfuncY.green_integral_tau('c', ord);
+    deriMatrixRow[1][element[N]->getIdx() + getNPts()] = -gfuncY.green_integral_tau('r', ord);
 
-    deriMatrixRow[1][element[S]->getIdx() + 3 * getNPts()] = gfuncY.green_integral_tau('l');
-    deriMatrixRow[1][getIdx() + 3 * getNPts()] = gfuncY.green_integral_tau('c');
-    deriMatrixRow[1][element[N]->getIdx() + 3 * getNPts()] = gfuncY.green_integral_tau('r');
+    deriMatrixRow[1][element[S]->getIdx() + 3 * getNPts()] = gfuncY.green_integral_tau('l', ord);
+    deriMatrixRow[1][getIdx() + 3 * getNPts()] = gfuncY.green_integral_tau('c', ord);
+    deriMatrixRow[1][element[N]->getIdx() + 3 * getNPts()] = gfuncY.green_integral_tau('r', ord);
 
-    deriMatrixRow[1][element[S]->getIdx() + 5 * getNPts()] = gfuncY.green_integral_ttau('l');
-    deriMatrixRow[1][getIdx() + 5 * getNPts()] = gfuncY.green_integral_ttau('c') + UNITVALUE / mp;
-    deriMatrixRow[1][element[N]->getIdx() + 5 * getNPts()] = gfuncY.green_integral_ttau('r');
+    deriMatrixRow[1][element[S]->getIdx() + 5 * getNPts()] = gfuncY.green_integral_ttau('l', ord);
+    deriMatrixRow[1][getIdx() + 5 * getNPts()] = gfuncY.green_integral_ttau('c', ord) + UNITVALUE / mp;
+    deriMatrixRow[1][element[N]->getIdx() + 5 * getNPts()] = gfuncY.green_integral_ttau('r', ord);
 }
 
 void AGM::point::makeDerivativesBoundary() {
@@ -1840,16 +2009,16 @@ void AGM::point::makeDerivativesInterface() {
         mRow[ptl->getIdx()] = d * func.green_function_t(m);
         mRow[ptr->getIdx()] = -d * func.green_function_t(p);
 
-        mRow[ptl->getIdx() + getNPts()] = sign * func.green_integral('L');
-        mRow[ptr->getIdx() + getNPts()] = sign * func.green_integral('R');
+        mRow[ptl->getIdx() + getNPts()] = sign * func.green_integral('L', ord);
+        mRow[ptr->getIdx() + getNPts()] = sign * func.green_integral('R', ord);
 
         checkMatrixRow(&mRow, ptr, ptl);
 
-        mRow[ptl->getIdx() + (i + 2) * getNPts()] = func.green_integral('L');
-        mRow[ptr->getIdx() + (i + 2) * getNPts()] = func.green_integral('R');
+        mRow[ptl->getIdx() + (i + 2) * getNPts()] = func.green_integral('L', ord);
+        mRow[ptr->getIdx() + (i + 2) * getNPts()] = func.green_integral('R', ord);
 
-        mRow[ptl->getIdx() + (i + 4) * getNPts()] = func.green_integral_t('L');
-        mRow[ptr->getIdx() + (i + 4) * getNPts()] = func.green_integral_t('R');
+        mRow[ptl->getIdx() + (i + 4) * getNPts()] = func.green_integral_t('L', ord);
+        mRow[ptr->getIdx() + (i + 4) * getNPts()] = func.green_integral_t('R', ord);
 
         return mRow * coefficient;
     };
@@ -1868,27 +2037,29 @@ void AGM::point::makeDerivativesInterface() {
         double sign = i0 ? -UNITVALUE : UNITVALUE;
         if (pt) {
             deriMatrixRow[i0][pt->getIdx()] += mp0 * func->green_function_ttau(d);
-            deriMatrixRow[i0][pt->getIdx() + getNPts()] += isInterface ? sign * func->green_integral_tau(C)
-                                                                       : sign * func->green_integral_tau(c);
-            deriMatrixRow[i0][pt->getIdx() + (i0 + 2) * getNPts()] += func->green_integral_tau(c);
-            deriMatrixRow[i0][pt->getIdx() + (i0 + 4) * getNPts()] += func->green_integral_ttau(c);
+            deriMatrixRow[i0][pt->getIdx() + getNPts()] += isInterface ? sign * func->green_integral_tau(C, ord)
+                                                                       : sign * func->green_integral_tau(c, ord);
+            deriMatrixRow[i0][pt->getIdx() + (i0 + 2) * getNPts()] += func->green_integral_tau(c, ord);
+            deriMatrixRow[i0][pt->getIdx() + (i0 + 4) * getNPts()] += func->green_integral_ttau(c, ord);
         } else {
             deriMatrixRow[i0] += approximateSol(ptr, ptl, mp0 * func->green_function_ttau(d), i, std::abs(mp0));
-            deriMatrixRow[i0] += isInterface ? linearApproximation(ptr, ptl, sign * func->green_integral_tau(C), i, 1)
-                                             : linearApproximation(ptr, ptl, sign * func->green_integral_tau(c), i, 1);
-            deriMatrixRow[i0] += linearApproximation(ptr, ptl, func->green_integral_tau(c), i, i0 + 2);
-            deriMatrixRow[i0] += linearApproximation(ptr, ptl, func->green_integral_ttau(c), i, i0 + 4);
+            deriMatrixRow[i0] += isInterface ? linearApproximation(ptr, ptl, sign * func->green_integral_tau(C, ord), i,
+                                                                   1)
+                                             : linearApproximation(ptr, ptl, sign * func->green_integral_tau(c, ord), i,
+                                                                   1);
+            deriMatrixRow[i0] += linearApproximation(ptr, ptl, func->green_integral_tau(c, ord), i, i0 + 2);
+            deriMatrixRow[i0] += linearApproximation(ptr, ptl, func->green_integral_ttau(c, ord), i, i0 + 4);
         }
     };
-    if (!isInterface) deriMatrixRow[0][getIdx() + getNPts()] += gFuncX.green_integral_tau('c');
-    deriMatrixRow[0][getIdx() + 2 * getNPts()] += gFuncX.green_integral_tau('c');
-    deriMatrixRow[0][getIdx() + 4 * getNPts()] += gFuncX.green_integral_ttau('c') + UNITVALUE / mp;
+    if (!isInterface) deriMatrixRow[0][getIdx() + getNPts()] += gFuncX.green_integral_tau('c', ord);
+    deriMatrixRow[0][getIdx() + 2 * getNPts()] += gFuncX.green_integral_tau('c', ord);
+    deriMatrixRow[0][getIdx() + 4 * getNPts()] += gFuncX.green_integral_ttau('c', ord) + UNITVALUE / mp;
     assignMatrix(getElement()[E], getElement()[EN], getElement()[ES], -mpe, &gFuncX, xp, 1, 0, 'r', 'R');
     assignMatrix(getElement()[W], getElement()[WN], getElement()[WS], mpw, &gFuncX, xm, 1, 0, 'l', 'L');
 
-    if (!isInterface) deriMatrixRow[1][getIdx() + getNPts()] += -gFuncY.green_integral_tau('c');
-    deriMatrixRow[1][getIdx() + 3 * getNPts()] += gFuncY.green_integral_tau('c');
-    deriMatrixRow[1][getIdx() + 5 * getNPts()] += gFuncY.green_integral_ttau('c') + UNITVALUE / mp;
+    if (!isInterface) deriMatrixRow[1][getIdx() + getNPts()] += -gFuncY.green_integral_tau('c', ord);
+    deriMatrixRow[1][getIdx() + 3 * getNPts()] += gFuncY.green_integral_tau('c', ord);
+    deriMatrixRow[1][getIdx() + 5 * getNPts()] += gFuncY.green_integral_ttau('c', ord) + UNITVALUE / mp;
     assignMatrix(getElement()[N], getElement()[NE], getElement()[NW], -mpn, &gFuncY, yp, 0, 1, 'r', 'R');
     assignMatrix(getElement()[S], getElement()[SE], getElement()[SW], mps, &gFuncY, ym, 0, 1, 'l', 'L');
 }

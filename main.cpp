@@ -10,12 +10,12 @@ auto main() -> int {
 
     kmp_set_warnings_off();
     mkl_set_dynamic(0);
-//    mkl_set_num_threads(4);
-    mkl_set_num_threads(mkl_get_max_threads());
+    mkl_set_num_threads(11);
+//    mkl_set_num_threads(mkl_get_max_threads());
 
     omp_set_dynamic(0);
-//    omp_set_num_threads(4);
-    omp_set_num_threads(omp_get_max_threads());
+    omp_set_num_threads(11);
+//    omp_set_num_threads(omp_get_max_threads());
 
     auto pts{std::vector<AGM::point>{}};
     auto xline{std::vector<AGM::axialLine>{}};
@@ -27,10 +27,25 @@ auto main() -> int {
     AGM::point::setAxialLines(&yline, 'y');
     AGM::point::setBdLine(&bdline);
 
-//    for (auto &item: pts) {
-//        item.setMp(UNITVALUE / 100.);
-//    }
+    for (auto &item: pts) {
+        item.setMp(UNITVALUE / 400.);
+//        item.setMp(UNITVALUE / 1000.);
+    }
 
+    for (auto &item: pts) {
+        if (item.getCondition() == 'C') {
+            auto gap{std::vector<double>{
+                    item - *(item[AGM::E]),
+                    item - *(item[AGM::W]),
+                    item - *(item[AGM::N]),
+                    item - *(item[AGM::S])
+            }};
+            std::sort(gap.begin(), gap.end());
+            if (gap.back() > AGM::point::getAlinMaxGap()) {
+                AGM::point::setAlinMaxGap(gap.back());
+            }
+        }
+    }
     std::cout << "-----< information >-----" << "\n";
     std::cout << "# of the points = " << pts.size() << "\n";
     std::cout << "# of the x-axial lines = " << xline.size() << "\n";
@@ -57,21 +72,9 @@ auto main() -> int {
             item.findStencil();
             std::cout << "condition = " << item.getCondition() << "\n";
         }
-
-//        if (AGM::isclose(5e-1, item.getXy()[0]) && AGM::iszero(item.getXy()[1])) {
-//            item.setAxialLine(nullptr, 'y');
-//        }
-//        if (AGM::isclose(5e-1, item.getXy()[1]) && AGM::iszero(item.getXy()[0])) {
-//            item.setAxialLine(nullptr, 'x');
-//        }
-//        if (AGM::isclose(-5e-1, item.getXy()[0]) && AGM::iszero(item.getXy()[1])) {
-//            item.setAxialLine(nullptr, 'y');
-//        }
-//        if (AGM::isclose(-5e-1, item.getXy()[1]) && AGM::iszero(item.getXy()[0])) {
-//            item.setAxialLine(nullptr, 'x');
-//        }
     }
     auto solver{AGM::solver(&pts)};
+//    solver.ellipticSolver();
 //    solver.streamSolver();
 //    solver.FluidStructureInteraction();
     solver.NavierStokesSolver();

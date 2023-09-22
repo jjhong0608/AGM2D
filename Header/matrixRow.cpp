@@ -68,14 +68,14 @@ auto AGM::matrixRow::operator*(double d) const -> AGM::matrixRow {
 
 auto AGM::matrixRow::operator+=(const AGM::matrixRow &src) -> AGM::matrixRow {
     for (const auto &i: src) {
-        (*this)[i.idx] += i.value;
+        operator[](i.idx) += i.value;
     }
     return *this;
 }
 
 auto AGM::matrixRow::operator-=(const AGM::matrixRow &src) -> AGM::matrixRow {
     for (const auto &i: src) {
-        (*this)[i.idx] -= i.value;
+        operator[](i.idx) -= i.value;
     }
     return *this;
 }

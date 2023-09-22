@@ -9,6 +9,9 @@ AGM::ellipticFunction::ellipticFunction() = default;
 auto AGM::ellipticFunction::u(const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
 
+    // test problem
+    return std::pow(x, 3.) - 2. * std::pow(x, 2.) - std::pow(y, 2.) + 3. * y + 2.;
+
     // for Lid-driven cavity flow
     return ZEROVALUE;
 
@@ -31,39 +34,45 @@ auto AGM::ellipticFunction::phi(const AGM::point &pt) -> double {
 
 auto AGM::ellipticFunction::f(const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
+    // test problem
+    return -6. * x + 6.;
     return ZEROVALUE;
 }
 
 auto AGM::ellipticFunction::ux(const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
+    // test problem
+    return 3. * std::pow(x, 2.) - 4. * x;
     return ZEROVALUE;
 }
 
 auto AGM::ellipticFunction::uy(const AGM::point &pt) -> double {
     double x{pt[0]}, y{pt[1]};
+    // test problem
+    return -2. * y + 3.;
     return ZEROVALUE;
 }
 
 void AGM::ellipticFunction::assignBoundaryValue(AGM::point &pt) {
 //    return;
     double x{pt[0]}, y{pt[1]};
-    if (iszero(x)) {
-        pt.setCondition('N');
-    } else if (isclose(y, 130.0)) {
-        pt.setCondition('N');
-        if (isclose(x, 31.5)) {
-            pt.setCondition('n');
-        } else if (isclose(x, 42.0)) {
-            pt.setCondition('n');
-        }
-    } else if (isclose(y, -194.738)) {
-        pt.setCondition('N');
-    } else if (x < 1e1 && y < 1e-6) {
-        pt["bdv"] = 1e2;
-    }
+//    if (iszero(x)) {
+//        pt.setCondition('N');
+//    } else if (isclose(y, 130.0)) {
+//        pt.setCondition('N');
+//        if (isclose(x, 31.5)) {
+//            pt.setCondition('n');
+//        } else if (isclose(x, 42.0)) {
+//            pt.setCondition('n');
+//        }
+//    } else if (isclose(y, -194.738)) {
+//        pt.setCondition('N');
+//    } else if (x < 1e1 && y < 1e-6) {
+//        pt["bdv"] = 1e2;
+//    }
 
     if (pt.getCondition() == 'D') {
-//        pt["bdv"] = u(pt);
+        pt["bdv"] = u(pt);
     } else if (pt.getCondition() == 'N') {
         pt["bdv"] = ux(pt) * pt.getNormal()[0] + uy(pt) * pt.getNormal()[1];
     }
@@ -139,12 +148,13 @@ auto AGM::NavierStokesFunction::initialTime() -> double {
 }
 
 auto AGM::NavierStokesFunction::terminalTime() -> double {
-    return 2.5e2;
+//    return 50.;
+    return 0.1;
 }
 
 auto AGM::NavierStokesFunction::deltaTime() -> double {
-    return 1e-3;
-//    return 5e-5;
+    return 1e-2;
+//    return 1e-5;
 //    return (M_PI / 40.) * (M_PI / 40.) * 2.;
 }
 
@@ -155,19 +165,19 @@ auto AGM::NavierStokesFunction::writeTime() -> double {
 auto AGM::NavierStokesFunction::u(double t, const AGM::point &pt) -> double {
     auto x{pt[0]}, y{pt[1]};
     // Tesla valve
-    auto ymin{-1.917302}, ymax{-1.849869};
-//    if (isclose(x, 5.1220367000000003e-01)) {
-//        return 6. * (y - ymin) * (ymax - y)  / std::pow(ymax - ymin, 3.);
+//    auto ymin{-1.9173022499999999e+00}, ymax{-1.8522147499999999e+00};
+//    if (isclose(x, 1.2203700000000040e-02)) {
+//        return 3. * (y - ymin) * (ymax - y) / std::pow(ymax - ymin, 3.) * HALFVALUE;
 //    } else {
 //        return ZEROVALUE;
 //    }
 
-//    auto ymin{-1.9157432600000002e+00}, ymax{-1.8446585400000002e+00};
-//    if (isclose(x, 2.4891414400000000e+00)) {
-//        return -6. * (y - ymin) * (ymax - y)  / std::pow(ymax - ymin, 3.);
-//    } else {
-//        return ZEROVALUE;
-//    }
+    auto ymin{-1.9157432600000002e+00}, ymax{-1.8470397900000002e+00};
+    if (isclose(x, 2.9891414400000000e+00)) {
+        return -3. * (y - ymin) * (ymax - y) / std::pow(ymax - ymin, 3.);
+    } else {
+        return ZEROVALUE;
+    }
 
     // two-square cylinders
 //    if (isclose(x, -7.5) | isclose(y, -7.5) | isclose(y, 7.5)) {
@@ -184,7 +194,7 @@ auto AGM::NavierStokesFunction::u(double t, const AGM::point &pt) -> double {
 //                                 : isclose(y, -UNITVALUE) ? -UNITVALUE
 //                                                          : ZEROVALUE;
 
-//    auto Re{1e3};
+    auto Re{50.};
     // Taylor-Green vortex
 //    return -std::cos(2 * M_PI * x) * std::sin(2 * M_PI * y) * std::exp(-8 * std::pow(M_PI, 2) * t / Re);
 
@@ -226,12 +236,12 @@ auto AGM::NavierStokesFunction::u(double t, const AGM::point &pt) -> double {
 
 auto AGM::NavierStokesFunction::v(double t, const AGM::point &pt) -> double {
     auto x{pt[0]}, y{pt[1]};
-    auto Re{1e3};
+    auto Re{50.};
     // two-square cylinders
     return ZEROVALUE;
 
     // Kim and Moin
-    return std::sin(x) * std::cos(y) * std::exp(-2. * t);
+//    return std::sin(x) * std::cos(y) * std::exp(-2. * t);
 
     // Taylor-Green vortex
 //    return std::sin(2 * M_PI * x) * std::cos(2 * M_PI * y) * std::exp(-8 * std::pow(M_PI, 2) * t / Re);
@@ -247,12 +257,12 @@ auto AGM::NavierStokesFunction::v(double t, const AGM::point &pt) -> double {
 
 auto AGM::NavierStokesFunction::p(double t, const AGM::point &pt) -> double {
     auto x{pt[0]}, y{pt[1]};
-    auto Re{1e3};
+    auto Re{50.};
     // two-sqaure cylinders
     return ZEROVALUE;
 
     // Kim and Moin
-    return -(std::cos(2. * x) + std::cos(2. * y)) * std::exp(-4. * t) / 4.;
+//    return -(std::cos(2. * x) + std::cos(2. * y)) * std::exp(-4. * t) / 4.;
 
     // Taylor-Green vortex
 //    return -(std::cos(4 * M_PI * x) + std::cos(4 * M_PI * y)) / 4 * std::exp(-16 * std::pow(M_PI, 2) * t / Re);
@@ -396,15 +406,18 @@ void AGM::NavierStokesFunction::loadPreviousValue(
             printError("AGM::NavierStokesFunction::loadPreviousValue",
                        "idx (which is %d) is greater(or equal) then size of the point (which is %d)", idx, pu->size());
         }
-        f >> pu->at(idx)["sol"];
-        f >> pv->at(idx)["sol"];
-        f >> pp->at(idx)["sol"];
-        f >> pu->at(idx)["dx"];
-        f >> pu->at(idx)["dy"];
-        f >> pv->at(idx)["dx"];
-        f >> pv->at(idx)["dy"];
-        f >> pu->at(idx)["phi"];
-        f >> pv->at(idx)["phi"];
+        f >> pu->at(idx)["sol"]; // u
+        f >> pv->at(idx)["sol"]; // v
+        f >> pp->at(idx)["sol"]; // p
+        f >> pu->at(idx)["dx"]; // ux
+        f >> pu->at(idx)["dy"]; // uy
+        f >> pv->at(idx)["dx"]; // vx
+        f >> pv->at(idx)["dy"]; // vy
+        f >> pp->at(idx)["dx"]; // px
+        f >> pp->at(idx)["dy"]; // py
+        f >> pu->at(idx)["phi"]; // phi
+        f >> pv->at(idx)["phi"]; // psi
+        f >> pp->at(idx)["phi"]; // phi of p
         f >> bc;
     }
     f.close();

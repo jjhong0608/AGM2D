@@ -50,13 +50,13 @@ namespace AGM {
 
         [[nodiscard]] virtual auto green_function_ttau(double t) const -> double;
 
-        [[nodiscard]] virtual auto green_integral(char pos) const -> double;
+        [[nodiscard]] auto green_integral(char pos, int order = 2) const -> double;
 
-        [[nodiscard]] virtual auto green_integral_t(char pos) const -> double;
+        [[nodiscard]] auto green_integral_t(char pos, int order = 2) const -> double;
 
-        [[nodiscard]] virtual auto green_integral_tau(char pos) const -> double;
+        [[nodiscard]] auto green_integral_tau(char pos, int order = 2) const -> double;
 
-        [[nodiscard]] virtual auto green_integral_ttau(char pos) const -> double;
+        [[nodiscard]] auto green_integral_ttau(char pos, int order = 2) const -> double;
 
         [[nodiscard]] auto green_integral_square(char pos) const -> double;
 
@@ -106,13 +106,13 @@ namespace AGM {
 
         [[nodiscard]] virtual auto green_function_ttau_ND(double t) const -> double;
 
-        [[nodiscard]] virtual auto green_integral_ND(char pos) const -> double;
+        [[nodiscard]] auto green_integral_ND(char pos, int order = 2) const -> double;
 
-        [[nodiscard]] virtual auto green_integral_t_ND(char pos) const -> double;
+        [[nodiscard]] auto green_integral_t_ND(char pos, int order = 2) const -> double;
 
-        [[nodiscard]] virtual auto green_integral_tau_ND(char pos) const -> double;
+        [[nodiscard]] auto green_integral_tau_ND(char pos, int order = 2) const -> double;
 
-        [[nodiscard]] virtual auto green_integral_ttau_ND(char pos) const -> double;
+        [[nodiscard]] auto green_integral_ttau_ND(char pos, int order = 2) const -> double;
 
         [[nodiscard]] virtual auto green_integral_square_ND(char pos) const -> double;
 
@@ -162,13 +162,13 @@ namespace AGM {
 
         [[nodiscard]] virtual auto green_function_ttau_DN(double t) const -> double;
 
-        [[nodiscard]] virtual auto green_integral_DN(char pos) const -> double;
+        [[nodiscard]] auto green_integral_DN(char pos, int order = 2) const -> double;
 
-        [[nodiscard]] virtual auto green_integral_t_DN(char pos) const -> double;
+        [[nodiscard]] auto green_integral_t_DN(char pos, int order = 2) const -> double;
 
-        [[nodiscard]] virtual auto green_integral_tau_DN(char pos) const -> double;
+        [[nodiscard]] auto green_integral_tau_DN(char pos, int order = 2) const -> double;
 
-        [[nodiscard]] virtual auto green_integral_ttau_DN(char pos) const -> double;
+        [[nodiscard]] auto green_integral_ttau_DN(char pos, int order = 2) const -> double;
 
         [[nodiscard]] virtual auto green_integral_square_DN(char pos) const -> double;
 
