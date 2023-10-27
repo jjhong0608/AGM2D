@@ -26,6 +26,7 @@
 #include <omp.h>
 #include <cctype>
 #include <type_traits>
+#include <cstdio>
 
 constexpr auto UNITVALUE{1.0000000000000000E0};
 constexpr auto HALFVALUE{5.0000000000000000E-1};

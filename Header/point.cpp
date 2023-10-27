@@ -479,13 +479,12 @@ void AGM::point::findStencilInterface() {
             }
         }
         if (!iszero(vv)) {
-            return .00135;
-//            return vv;
+            return 1.2 * point::getAlinMaxGap();
         }
         printError("AGM::point::findStencilInterface, assignDist");
         return ZEROVALUE;
     };
-    double dist{assignDist()};
+    auto dist{1.2 * point::getAlinMaxGap()};
     auto isContainLine = [](axialLine *aln, int lineIdx, double pt) -> bool {
         return isnegativezero((*aln)[lineIdx] - pt) && ispositivezero((*aln)[lineIdx + 1] - pt);
     };
@@ -621,6 +620,7 @@ void AGM::point::findStencilInterface() {
                 for (const auto &item: crossLine) {
                     std::cout << "(x, y) = " << item[0] << ", " << item[1] << "\n";
                 }
+                crossLine.erase(crossLine.begin());
 //                printError("AGM::point::findStencilInterface",
 //                           "The size of crossLine (which is %d) more than 1, should be corrected later. (using sort algorithm)",
 //                           crossLine.size());
@@ -1446,6 +1446,13 @@ void AGM::point::approximatePhiAtBoundary1(int order) {
         printError("AGM::point::approximatePhiAtBoundary", "findInnerPointOfBoundary");
         return {};
     };
+    auto checkOrder = [&]() -> int {
+        if (getAxialLine()[axisInt]->size() < order + 3) {
+            return int(getAxialLine()[axisInt]->size()) - 3;
+        } else {
+            return order;
+        }
+    };
     auto pt1{*findInnerPointOfBoundary(1)};
     auto pt2 = order > 0 ? *findInnerPointOfBoundary(2) : point();
     auto pt3 = order > 1 ? *findInnerPointOfBoundary(3) : point();
@@ -1507,6 +1514,7 @@ void AGM::point::approximatePhiAtBoundary1(int order) {
         solMatrixRow[1][pt1.getIdx() + getNPts()] = fourthOrder(t0, t1, t2, t3, t4, t5);
         solMatrixRow[1][getIdx() + getNPts()] = -UNITVALUE;
     };
+    order = checkOrder();
     return order == 4 ? fourthOrderExtrapolation()
                       : order == 3 ? thirdOrderExtrapolation()
                                    : order == 2 ? secondOrderExtrapolation()

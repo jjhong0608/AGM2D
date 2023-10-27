@@ -10,12 +10,12 @@ auto main() -> int {
 
     kmp_set_warnings_off();
     mkl_set_dynamic(0);
-    mkl_set_num_threads(11);
-//    mkl_set_num_threads(mkl_get_max_threads());
+//    mkl_set_num_threads(4);
+    mkl_set_num_threads(mkl_get_max_threads());
 
     omp_set_dynamic(0);
-    omp_set_num_threads(11);
-//    omp_set_num_threads(omp_get_max_threads());
+//    omp_set_num_threads(4);
+    omp_set_num_threads(omp_get_max_threads());
 
     auto pts{std::vector<AGM::point>{}};
     auto xline{std::vector<AGM::axialLine>{}};
@@ -28,7 +28,8 @@ auto main() -> int {
     AGM::point::setBdLine(&bdline);
 
     for (auto &item: pts) {
-        item.setMp(UNITVALUE / 400.);
+        item.setMp(UNITVALUE / 1000.);
+//        item.setMp(UNITVALUE / 150.);
 //        item.setMp(UNITVALUE / 1000.);
     }
 
@@ -53,6 +54,11 @@ auto main() -> int {
     std::cout << "epsilon (Reynolds number) = " << pts.at(0).getMp() << "\n";
     std::cout << "Reynolds number = " << UNITVALUE / pts.at(0).getMp() << "\n";
     std::cout << "-------------------------" << "\n";
+//    exit(1);
+    /* Tesla valve */
+//    pts.at(65779).setCondition('I');
+//    pts.at(66981).setCondition('I');
+    /* Tesla valve */
 
     /* export axial lines */ /*
     auto wf{AGM::writeFile<AGM::point>(&pts)};
@@ -73,6 +79,16 @@ auto main() -> int {
             std::cout << "condition = " << item.getCondition() << "\n";
         }
     }
+
+    /* Tesla valve */
+    // forward
+//    pts.at(65779).setCondition('N');
+//    pts.at(66981).setCondition('N');
+    // reverse
+//    pts.at(65779).setCondition('D');
+//    pts.at(66981).setCondition('D');
+    /* Tesla valve */
+
     auto solver{AGM::solver(&pts)};
 //    solver.ellipticSolver();
 //    solver.streamSolver();

@@ -149,68 +149,114 @@ auto AGM::NavierStokesFunction::initialTime() -> double {
 
 auto AGM::NavierStokesFunction::terminalTime() -> double {
 //    return 50.;
-    return 0.1;
+//    return 2.;
+    return 1000.;
 }
 
 auto AGM::NavierStokesFunction::deltaTime() -> double {
-    return 1e-2;
+    return 1e-3;
 //    return 1e-5;
 //    return (M_PI / 40.) * (M_PI / 40.) * 2.;
 }
 
 auto AGM::NavierStokesFunction::writeTime() -> double {
-    return deltaTime();
+    return 1e-1;
+    return 1e-2;
 }
 
 auto AGM::NavierStokesFunction::u(double t, const AGM::point &pt) -> double {
     auto x{pt[0]}, y{pt[1]};
-    // Tesla valve
+    // Tesla valve (T45_R, N4, Forward)
+//    auto ymin{0.725044}, ymax{0.825044};
+//    return -6. * (y - ymin) * (ymax - y) / std::pow(ymax - ymin, 3.);
+
+    // Tesla valve (T45_R, N4, Reverse)
+//    auto ymin{-0.398711}, ymax{-0.298711};
+//    return 6. * (y - ymin) * (ymax - y) / std::pow(ymax - ymin, 3.);
+
+
+    // Tesla valve (T45_R, N2, Forward)
+//    auto ymin{0.163044}, ymax{0.263044};
+//    return -6. * (y - ymin) * (ymax - y) / std::pow(ymax - ymin, 3.);
+
+    // Tesla valve (T45_R, N2, Reverse)
+//    auto ymin{-0.398711}, ymax{-0.298711};
+//    return 6. * (y - ymin) * (ymax - y) / std::pow(ymax - ymin, 3.);
+
+    // Tesla valve (T45_R, Forward)
+//    auto ymin{ZEROVALUE}, ymax{0.1};
+//    return -6. * (y - ymin) * (ymax - y) / std::pow(ymax - ymin, 3.);
+
+    // Tesla valve (T45_R, Reverse)
+//    auto xmin{-1.3413800000000002e+00}, xmax{-1.2706700000000002e+00};
+//    auto ymin{-8.4823000000000004e-01}, ymax{-7.7751999999999999e-01};
+//    auto d0{std::sqrt((x - xmin) * (x - xmin) + (y - ymax) * (y - ymax))};
+//    auto d1{std::sqrt((x - xmax) * (x - xmax) + (y - ymin) * (y - ymin))};
+//    auto dm{std::sqrt((xmax - xmin) * (xmax - xmin) + (ymax - ymin) * (ymax - ymin))};
+//    return 6. * d0 * d1 / std::pow(dm, 3.) / std::sqrt(2);
+
+    // Tesla valve (left to right)
 //    auto ymin{-1.9173022499999999e+00}, ymax{-1.8522147499999999e+00};
 //    if (isclose(x, 1.2203700000000040e-02)) {
-//        return 3. * (y - ymin) * (ymax - y) / std::pow(ymax - ymin, 3.) * HALFVALUE;
+//        return 3. * (y - ymin) * (ymax - y) / std::pow(ymax - ymin, 3.);
 //    } else {
 //        return ZEROVALUE;
 //    }
 
-    auto ymin{-1.9157432600000002e+00}, ymax{-1.8470397900000002e+00};
-    if (isclose(x, 2.9891414400000000e+00)) {
-        return -3. * (y - ymin) * (ymax - y) / std::pow(ymax - ymin, 3.);
-    } else {
-        return ZEROVALUE;
-    }
+    // Tesla valve (right to left)
+//    auto ymin{-1.9157432600000002e+00}, ymax{-1.8470397900000002e+00};
+//    if (isclose(x, 2.9891414400000000e+00)) {
+//        return -3. * (y - ymin) * (ymax - y) / std::pow(ymax - ymin, 3.);
+//    } else {
+//        return ZEROVALUE;
+//    }
 
-    // two-square cylinders
+    // Tesla valve cylinder
+//    auto ymin{-1.9173022499999999e+00}, ymax{-1.8522147499999999e+00};
+//    auto cx{0.5}, cy{HALFVALUE * (ymax + ymin)}, r{HALFVALUE * HALFVALUE * (ymax - ymin) + 1e-3};
+//    auto xmin{0.49 - NEARZERO}, ymin{-1.89 - NEARZERO};
+//    auto xmax{0.51 + NEARZERO}, ymax{-1.88 + NEARZERO};
+//    if ((x - cx) * (x - cx) + (y - cy) * (y - cy) < r * r) {
+//    if ((xmin < x) && (x < xmax) && (ymin < y) && (y < ymax)) {
+//        return 10. * std::sin(1e4 * t * M_PI);
+//    } else if ((xmin < x - 2.) && (x - 2. < xmax) && (ymin < y) && (y < ymax)) {
+//        return 10. * std::sin(1e4 * t * M_PI);
+//    } else {
+//        return ZEROVALUE;
+//    }
+
+// two-square cylinders
 //    if (isclose(x, -7.5) | isclose(y, -7.5) | isclose(y, 7.5)) {
 //        return UNITVALUE;
 //    } else {
 //        return ZEROVALUE;
 //    }
 
-    // Kin and Moin
+// Kin and Moin
 //    return -std::cos(x) * std::sin(y) * std::exp(-2. * t);
 
-    // FSI
+// FSI
 //    return isclose(y, UNITVALUE) ? UNITVALUE
 //                                 : isclose(y, -UNITVALUE) ? -UNITVALUE
 //                                                          : ZEROVALUE;
 
-    auto Re{50.};
-    // Taylor-Green vortex
+auto Re{50.};
+// Taylor-Green vortex
 //    return -std::cos(2 * M_PI * x) * std::sin(2 * M_PI * y) * std::exp(-8 * std::pow(M_PI, 2) * t / Re);
 
-    // Lid-driven cavity
-    if (isclose(y, UNITVALUE)) {
-        return UNITVALUE;
-    }
-    return ZEROVALUE;
-
-    // BFS flow
-//    if (isclose(x, -1e1) && y > HALFVALUE) {
-//        return 2.4e1 * (y - HALFVALUE) * (UNITVALUE - y);
+// Lid-driven cavity
+//    if (isclose(y, UNITVALUE)) {
+//        return UNITVALUE;
 //    }
 //    return ZEROVALUE;
 
-    // Air Foil
+// BFS flow
+    if (isclose(x, -1e1) && y > HALFVALUE) {
+        return 2.4e1 * (y - HALFVALUE) * (UNITVALUE - y);
+    }
+    return ZEROVALUE;
+
+// Air Foil
 //    if (isclose(x, -7)) {
 //        return UNITVALUE;
 //    } else if (isclose(y, -7)) {
@@ -220,18 +266,18 @@ auto AGM::NavierStokesFunction::u(double t, const AGM::point &pt) -> double {
 //    }
 //    return ZEROVALUE;
 
-    // Saccular aneurysm
+// Saccular aneurysm
 //    double c{-3. / 32};
 //    if (isclose(x, -12.)) {
 //        return c * y * (y - 4.);
 //    }
 //    return ZEROVALUE;
-    // Kalman vortex
-    double a{HALFVALUE};
-    if (pow(x, 2) + pow(y, 2) < pow(0.51, 2)) {
-        return ZEROVALUE;
-    }
-    return UNITVALUE - pow(a, 2) / (pow(x, 2) + pow(y, 2)) + 2 * pow(a * y, 2) / pow(pow(x, 2) + pow(y, 2), 2);
+// Kalman vortex
+double a{HALFVALUE};
+if (pow(x, 2) + pow(y, 2) < pow(0.51, 2)) {
+    return ZEROVALUE;
+}
+return UNITVALUE - pow(a, 2) / (pow(x, 2) + pow(y, 2)) + 2 * pow(a * y, 2) / pow(pow(x, 2) + pow(y, 2), 2);
 }
 
 auto AGM::NavierStokesFunction::v(double t, const AGM::point &pt) -> double {
@@ -239,6 +285,14 @@ auto AGM::NavierStokesFunction::v(double t, const AGM::point &pt) -> double {
     auto Re{50.};
     // two-square cylinders
     return ZEROVALUE;
+
+    // Tesla valve (T45_R, Reverse)
+//    auto xmin{-1.3413800000000002e+00}, xmax{-1.2706700000000002e+00};
+//    auto ymin{-8.4823000000000004e-01}, ymax{-7.7751999999999999e-01};
+//    auto d0{std::sqrt((x - xmin) * (x - xmin) + (y - ymax) * (y - ymax))};
+//    auto d1{std::sqrt((x - xmax) * (x - xmax) + (y - ymin) * (y - ymin))};
+//    auto dm{std::sqrt((xmax - xmin) * (xmax - xmin) + (ymax - ymin) * (ymax - ymin))};
+//    return 6. * d0 * d1 / std::pow(dm, 3.) / std::sqrt(2);
 
     // Kim and Moin
 //    return std::sin(x) * std::cos(y) * std::exp(-2. * t);
@@ -413,11 +467,11 @@ void AGM::NavierStokesFunction::loadPreviousValue(
         f >> pu->at(idx)["dy"]; // uy
         f >> pv->at(idx)["dx"]; // vx
         f >> pv->at(idx)["dy"]; // vy
-        f >> pp->at(idx)["dx"]; // px
-        f >> pp->at(idx)["dy"]; // py
+//        f >> pp->at(idx)["dx"]; // px
+//        f >> pp->at(idx)["dy"]; // py
         f >> pu->at(idx)["phi"]; // phi
         f >> pv->at(idx)["phi"]; // psi
-        f >> pp->at(idx)["phi"]; // phi of p
+//        f >> pp->at(idx)["phi"]; // phi of p
         f >> bc;
     }
     f.close();
