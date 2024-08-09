@@ -499,10 +499,10 @@ auto AGM::NavierStokesFunction::isNormalEq() -> bool {
 }
 
 auto AGM::NavierStokesFunction::findFixedPointIndex(std::vector<AGM::point> *pts) -> int {
+  auto x_value{0.5}, y_value{0.5};
   if (isNormalEq()) {
     for (const auto &item : *pts) {
       auto x{item[0]}, y{item[1]}
-      auto x_value{0.5}, y_value{0.5};
       if (isclose(x, x_value) && isclose(y, y_value)) {
         printf("Find Fixed Point at (%f, %f)\n", item[0], item[1]);
         return item.getIdx();
