@@ -8,115 +8,122 @@
 #include "structure.h"
 
 namespace AGM {
-    class ellipticFunction {
-    public:
-        ellipticFunction();
+class ellipticFunction {
+ public:
+  ellipticFunction();
 
-        virtual ~ellipticFunction();
+  virtual ~ellipticFunction();
 
-        auto u(const point &pt) -> double;
+  auto u(const point &pt) -> double;
 
-        auto phi(const point &pt) -> double;
+  auto phi(const point &pt) -> double;
 
-        auto f(const point &pt) -> double;
+  auto f(const point &pt) -> double;
 
-        auto ux(const point &pt) -> double;
+  auto ux(const point &pt) -> double;
 
-        auto uy(const point &pt) -> double;
+  auto uy(const point &pt) -> double;
 
-        void assignBoundaryValue(point &pt);
-    };
+  auto isAssignBoundaryValue() -> bool;
 
-    class heatFunction {
-    public:
-        heatFunction();
+  void assignBoundaryValue(point &pt);
 
-        virtual ~heatFunction();
+  auto resultPath() -> std::string;
 
-        static auto initialTime() -> double;
+  auto FlowDataPath() -> std::string;
+};
 
-        static auto terminalTime() -> double;
+class heatFunction {
+ public:
+  heatFunction();
 
-        static auto deltaTime() -> double;
+  virtual ~heatFunction();
 
-        auto u(double t, const point &pt) -> double;
+  static auto initialTime() -> double;
 
-        auto phi(double t, const point &pt) -> double;
+  static auto terminalTime() -> double;
 
-        auto f(double t, const point &pt) -> double;
+  static auto deltaTime() -> double;
 
-        auto ux(double t, const point &pt) -> double;
+  auto u(double t, const point &pt) -> double;
 
-        auto uy(double t, const point &pt) -> double;
+  auto phi(double t, const point &pt) -> double;
 
-        void assignPreviousValue(AGM::value &value, point &pt);
+  auto f(double t, const point &pt) -> double;
 
-        void assignBoundaryValue(point &pt);
-    };
+  auto ux(double t, const point &pt) -> double;
 
-    class NavierStokesFunction {
-    public:
-        NavierStokesFunction();
+  auto uy(double t, const point &pt) -> double;
 
-        virtual ~NavierStokesFunction();
+  auto isLoadPreviousValue() -> bool;
 
-        static auto initialTime() -> double;
+  auto isAssignBoundaryValue() -> bool;
 
-        static auto terminalTime() -> double;
+  void assignPreviousValue(AGM::value &value, point &pt);
 
-        static auto deltaTime() -> double;
+  void assignBoundaryValue(point &pt);
 
-        static auto writeTime() -> double;
+  auto resultPath() -> std::string;
+};
 
-        auto u(double t, const point &pt) -> double;
+class NavierStokesFunction {
+ public:
+  NavierStokesFunction();
 
-        auto v(double t, const point &pt) -> double;
+  virtual ~NavierStokesFunction();
 
-        auto p(double t, const point &pt) -> double;
+  static auto initialTime() -> double;
 
-        auto phi(double t, const point &pt) -> double;
+  static auto terminalTime() -> double;
 
-        auto psi(double t, const point &pt) -> double;
+  static auto deltaTime() -> double;
 
-        auto ux(double t, const point &pt) -> double;
+  static auto writeTime() -> double;
 
-        auto uy(double t, const point &pt) -> double;
+  auto u(double t, const point &pt) -> double;
 
-        auto vx(double t, const point &pt) -> double;
+  auto v(double t, const point &pt) -> double;
 
-        auto vy(double t, const point &pt) -> double;
+  auto p(double t, const point &pt) -> double;
 
-        auto px(double t, const point &pt) -> double;
+  auto phi(double t, const point &pt) -> double;
 
-        auto py(double t, const point &pt) -> double;
+  auto psi(double t, const point &pt) -> double;
 
-        auto f1(double t, const point &pt) -> double;
+  auto ux(double t, const point &pt) -> double;
 
-        auto f2(double t, const point &pt) -> double;
+  auto uy(double t, const point &pt) -> double;
 
-        void assignPreviousValue(
-                AGM::value &pu,
-                AGM::value &pv,
-                AGM::value &pp,
-                point &uvel,
-                point &vvel,
-                point &pres
-        );
+  auto vx(double t, const point &pt) -> double;
 
-        void assignBoundaryValue(
-                AGM::point &uvel,
-                AGM::point &vvel,
-                int presentIter
-        );
+  auto vy(double t, const point &pt) -> double;
 
-        void loadPreviousValue(
-                const std::string &filename,
-                std::vector<value> *pu,
-                std::vector<value> *pv,
-                std::vector<value> *pp
-        );
-    };
-}
+  auto px(double t, const point &pt) -> double;
 
+  auto py(double t, const point &pt) -> double;
 
-#endif //AGM_FUNCTION_H
+  auto f1(double t, const point &pt) -> double;
+
+  auto f2(double t, const point &pt) -> double;
+
+  void assignPreviousValue(AGM::value &pu, AGM::value &pv, AGM::value &pp, point &uvel, point &vvel, point &pres);
+
+  void assignBoundaryValue(AGM::point &uvel, AGM::point &vvel, int presentIter);
+
+  auto isLoadPreviousFile() -> bool;
+
+  auto isAssignBoundaryValue() -> bool;
+
+  void loadPreviousValue(std::vector<value> *pu, std::vector<value> *pv, std::vector<value> *pp);
+
+  auto isNormalEq() -> bool;
+
+  auto findFixedPointIndex(std::vector<AGM::point> *pts) -> int;
+
+  auto tolerance() -> double;
+
+  auto resultPath() -> std::string;
+};
+}// namespace AGM
+
+#endif//AGM_FUNCTION_H

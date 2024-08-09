@@ -5,18 +5,17 @@
 #ifndef AGM_READFILE_H
 #define AGM_READFILE_H
 
-#include "matrixPhi.h"
+#include "matrixStokesNormal.h"
 
 namespace AGM {
-    class readFile {
-    public:
-        static void loadData(const std::string &filename, std::vector<point> *pts, std::vector<axialLine> *alineX,
-                             std::vector<axialLine> *alineY);
+class readFile {
+ public:
+  static void loadData(const std::string &filename, std::vector<point> *pts, std::vector<axialLine> *alineX,
+                       std::vector<axialLine> *alineY);
 
-        static void loadBoundaryData(const std::string &filename, std::vector<boundaryLine2D> *bdLine);
-    };
+  static void loadBoundaryData(const std::string &filename, std::vector<boundaryLine2D> *bdLine);
+};
 
-}
+}// namespace AGM
 
-
-#endif //AGM_READFILE_H
+#endif//AGM_READFILE_H

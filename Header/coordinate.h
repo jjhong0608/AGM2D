@@ -8,26 +8,26 @@
 #include "matrixRow.h"
 
 namespace AGM {
-    class coordinate : public std::array<double, 2> {
-    public:
-        coordinate();
+class coordinate : public std::array<double, 2> {
+ public:
+  coordinate();
 
-        virtual ~coordinate();
+  virtual ~coordinate();
 
-        coordinate(double x, double y);
+  coordinate(double x, double y);
 
-        [[nodiscard]] auto norm() const -> double;
+  [[nodiscard]] auto norm() const -> double;
 
-        auto operator+(const coordinate &src) const -> coordinate;
+  auto operator+(const coordinate &src) const -> coordinate;
 
-        auto operator-(const coordinate &src) const -> coordinate;
+  auto operator-(const coordinate &src) const -> coordinate;
 
-        auto operator*(double d) const -> coordinate;
+  auto operator*(double d) const -> coordinate;
 
-        auto operator==(const coordinate &src) const -> bool;
+  auto operator==(const coordinate &src) const -> bool;
 
-        auto operator!=(const coordinate &rhs) const -> bool;
-    };
-}
+  auto operator!=(const coordinate &rhs) const -> bool;
+};
+}// namespace AGM
 
-#endif //AGM_COORDINATE_H
+#endif//AGM_COORDINATE_H

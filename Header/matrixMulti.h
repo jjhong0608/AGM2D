@@ -8,23 +8,23 @@
 #include "matrix.h"
 
 namespace AGM {
-    template<typename pt>
-    class matrixMulti : public matrix<pt> {
-    public:
-        matrixMulti();
+template<typename pt>
+class matrixMulti : public matrix<pt> {
+ public:
+  matrixMulti();
 
-        matrixMulti(std::vector<pt> *pts, std::vector<pt> *pts0);
+  matrixMulti(std::vector<pt> *pts, std::vector<pt> *pts0);
 
-        virtual ~matrixMulti();
+  virtual ~matrixMulti();
 
-        void factorizeMatrix() override;
+  void factorizeMatrix() override;
 
-        void calculateMatrix() override;
+  void calculateMatrix() override;
 
-    private:
-        std::vector<pt> *pts0{};
-    };
+ private:
+  std::vector<pt> *pts0{};
+};
 
-}
+}// namespace AGM
 
-#endif //AGM_MATRIXMULTI_H
+#endif//AGM_MATRIXMULTI_H

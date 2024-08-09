@@ -5,66 +5,69 @@
 #include "util.h"
 
 auto AGM::isclose(double x, double y, double eps) -> bool {
-    return std::fabs(x - y) < eps;
+  return std::fabs(x - y) < eps;
 }
 
 void AGM::printError(const std::string &function_name) {
-    std::cout << '\n' << function_name << '\n';
-    exit(1);
+  std::cout << '\n'
+            << function_name << '\n';
+  exit(1);
 }
 
 void AGM::printError(const char *function_name, const char *fmt, ...) {
-    char buf[256] = {0,};
-    va_list ap;
+  char buf[256] = {
+      0,
+  };
+  va_list ap;
 
-    printf("\n");
-    printf("Fatal error has occur in %s\n", function_name);
-    sprintf(buf, "Massage: ");
+  printf("\n");
+  printf("Fatal error has occur in %s\n", function_name);
+  sprintf(buf, "Massage: ");
 
-    va_start(ap, fmt);
-    vsprintf(buf + strlen(buf), fmt, ap);
-    va_end(ap);
+  va_start(ap, fmt);
+  vsprintf(buf + strlen(buf), fmt, ap);
+  va_end(ap);
 
-    puts(buf);
-    exit(1);
+  puts(buf);
+  exit(1);
 }
 
 auto AGM::iszero(double x, double eps) -> bool {
-    return std::fabs(x) < eps;
+  return std::fabs(x) < eps;
 }
 
 auto AGM::sgn(double d) -> double {
-    return (d > ZEROVALUE) - (d < ZEROVALUE);
+  return (d > ZEROVALUE) - (d < ZEROVALUE);
 }
 
 auto AGM::ispositive(double d) -> bool {
-    return d > NEARZERO;
+  return d > NEARZERO;
 }
 
 auto AGM::isnegative(double d) -> bool {
-    return d < -NEARZERO;
+  return d < -NEARZERO;
 }
 
 auto AGM::ispositivezero(double d) -> bool {
-    return ispositive(d) || iszero(d);
+  return ispositive(d) || iszero(d);
 }
 
 auto AGM::isnegativezero(double d) -> bool {
-    return isnegative(d) || iszero(d);
+  return isnegative(d) || iszero(d);
 }
 
 auto AGM::min(double d0, double d1) -> double {
-    if (d0 < d1) {
-        return d0;
-    } else {
-        return d1;
-    }
+  if (d0 < d1) {
+    return d0;
+  } else {
+    return d1;
+  }
 }
 
 auto AGM::max(double d0, double d1) -> double {
-    if (d0 < d1) {
-        return d1;
-    } else {
-        return d0;
-    }
+  if (d0 < d1) {
+    return d1;
+  } else {
+    return d0;
+  }
 }

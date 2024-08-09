@@ -8,88 +8,89 @@
 #include "axialLine.h"
 
 namespace AGM {
-    class denseMatrix : public std::vector<std::vector<double>> {
-    private:
-        int row{}, col{};
-    public:
-        denseMatrix(int row, int col);
+class denseMatrix : public std::vector<std::vector<double>> {
+ private:
+  int row{}, col{};
 
-        virtual ~denseMatrix();
+ public:
+  denseMatrix(int row, int col);
 
-        auto operator+(const denseMatrix &src) -> denseMatrix;
+  virtual ~denseMatrix();
 
-        auto operator-(const denseMatrix &src) -> denseMatrix;
+  auto operator+(const denseMatrix &src) -> denseMatrix;
 
-        auto operator*(double d) -> denseMatrix;
+  auto operator-(const denseMatrix &src) -> denseMatrix;
 
-        auto operator*(const denseMatrix &src) -> denseMatrix;
+  auto operator*(double d) -> denseMatrix;
 
-        auto operator*(const AGM::vector &src) -> AGM::vector;
+  auto operator*(const denseMatrix &src) -> denseMatrix;
 
-        auto operator=(const denseMatrix &src) -> denseMatrix &;
-    };
+  auto operator*(const AGM::vector &src) -> AGM::vector;
 
-    class line2D {
-    private:
-        vector start{}, end{}, normal{}, tangent{};
-        double length{};
+  auto operator=(const denseMatrix &src) -> denseMatrix &;
+};
 
-    public:
-        line2D();
+class line2D {
+ private:
+  vector start{}, end{}, normal{}, tangent{};
+  double length{};
 
-        line2D(const vector& start, const vector &anEnd);
+ public:
+  line2D();
 
-        line2D(double s0, double s1, double e0, double e1);
+  line2D(const vector &start, const vector &anEnd);
 
-        void calcProperties();
+  line2D(double s0, double s1, double e0, double e1);
 
-        [[nodiscard]] auto getStart() -> vector &;
+  void calcProperties();
 
-        [[nodiscard]] auto getStart() const -> const vector &;
+  [[nodiscard]] auto getStart() -> vector &;
 
-        void setStart(const vector &vector);
+  [[nodiscard]] auto getStart() const -> const vector &;
 
-        [[nodiscard]] auto getAnEnd() -> vector &;
+  void setStart(const vector &vector);
 
-        [[nodiscard]] auto getAnEnd() const -> const vector &;
+  [[nodiscard]] auto getAnEnd() -> vector &;
 
-        void setAnEnd(const vector &vector);
+  [[nodiscard]] auto getAnEnd() const -> const vector &;
 
-        [[nodiscard]] auto getNormal() -> vector &;
+  void setAnEnd(const vector &vector);
 
-        [[nodiscard]] auto getNormal() const -> const vector &;
+  [[nodiscard]] auto getNormal() -> vector &;
 
-        [[nodiscard]] auto getTangent() -> vector &;
+  [[nodiscard]] auto getNormal() const -> const vector &;
 
-        [[nodiscard]] auto getTangent() const -> const vector &;
+  [[nodiscard]] auto getTangent() -> vector &;
 
-        [[nodiscard]] auto getLength() const -> double;
+  [[nodiscard]] auto getTangent() const -> const vector &;
 
-        auto iscross(const line2D &src, AGM::vector &vec) -> bool;
+  [[nodiscard]] auto getLength() const -> double;
 
-        virtual ~line2D();
-    };
+  auto iscross(const line2D &src, AGM::vector &vec) -> bool;
 
-    class boundaryLine2D : public line2D {
-    private:
-        char condition{};
-        double boundary_value{};
-    public:
-        boundaryLine2D();
+  virtual ~line2D();
+};
 
-        boundaryLine2D(const vector &start, const vector &anEnd, char condition, double boundaryValue);
+class boundaryLine2D : public line2D {
+ private:
+  char condition{};
+  double boundary_value{};
 
-        boundaryLine2D(double s0, double s1, double e0, double e1, char condition, double boundaryValue);
+ public:
+  boundaryLine2D();
 
-        [[nodiscard]] auto getCondition() const -> char;
+  boundaryLine2D(const vector &start, const vector &anEnd, char condition, double boundaryValue);
 
-        void setCondition(char i);
+  boundaryLine2D(double s0, double s1, double e0, double e1, char condition, double boundaryValue);
 
-        [[nodiscard]] auto getBoundaryValue() const -> double;
+  [[nodiscard]] auto getCondition() const -> char;
 
-        void setBoundaryValue(double boundaryValue);
-    };
-}
+  void setCondition(char i);
 
+  [[nodiscard]] auto getBoundaryValue() const -> double;
 
-#endif //AGM2D_BOUNDARYLINE_H
+  void setBoundaryValue(double boundaryValue);
+};
+}// namespace AGM
+
+#endif//AGM2D_BOUNDARYLINE_H

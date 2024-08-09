@@ -5,41 +5,39 @@
 #ifndef AGM_MATRIXNORMAL_H
 #define AGM_MATRIXNORMAL_H
 
-#include "matrixMulti.h"
-#include "StdVector"
 #include "Eigen/Sparse"
+#include "Eigen/StdVector"
+#include "matrixMulti.h"
 
 namespace AGM {
-    template<typename pt>
-    class matrixNormal : public matrix<pt> {
-    public:
-        matrixNormal();
+template<typename pt>
+class matrixNormal : public matrix<pt> {
+ public:
+  matrixNormal();
 
-        explicit matrixNormal(std::vector<pt> *pts);
+  explicit matrixNormal(std::vector<pt> *pts);
 
-        matrixNormal(std::vector<pt> *pts, int fixedPointIdx);
+  matrixNormal(std::vector<pt> *pts, int fixedPointIdx);
 
-        virtual ~matrixNormal();
+  virtual ~matrixNormal();
 
-        auto getFixedPointIdx() const -> int;
+  auto getFixedPointIdx() const -> int;
 
-        void setFixedPointIdx(int i);
+  void setFixedPointIdx(int i);
 
-        void makeMatrix() override;
+  void makeMatrix() override;
 
-        void calculateMatrix() override;
+  void calculateMatrix() override;
 
-        void factorizeMatrix() override;
+  void factorizeMatrix() override;
 
+ private:
+  Eigen::SparseMatrix<double, Eigen::RowMajor> A{};
+  int fixedPointIdx{};
+  int *iaT{}, *jaT{};
+  double *entT{};
+};
 
-    private:
-        Eigen::SparseMatrix<double, Eigen::RowMajor> A{};
-        int fixedPointIdx{};
-        int *iaT{}, *jaT{};
-        double *entT{};
-    };
+}// namespace AGM
 
-}
-
-
-#endif //AGM_MATRIXNORMAL_H
+#endif//AGM_MATRIXNORMAL_H

@@ -8,36 +8,34 @@
 #include "readFile.h"
 
 namespace AGM {
-    template<typename T>
-    class writeFile {
-    protected:
-        T *pt{};
-        std::vector<T> *pts{};
+template<typename T>
+class writeFile {
+ protected:
+  T *pt{};
+  std::vector<T> *pts{};
 
-    public:
-        writeFile();
+ public:
+  writeFile();
 
-        explicit writeFile(std::vector<T> *pts);
+  explicit writeFile(std::vector<T> *pts);
 
-        auto getPt() const -> T *;
+  auto getPt() const -> T *;
 
-        void setPt(T *t);
+  void setPt(T *t);
 
-        auto getPts() const -> std::vector<T> *;
+  auto getPts() const -> std::vector<T> *;
 
-        void setPts(std::vector<T> *vector);
+  void setPts(std::vector<T> *vector);
 
-        auto calculateErrorAtPoint(const std::string &string);
+  auto calculateErrorAtPoint(const std::string &string);
 
-        auto calculateError(const std::string &string) -> double;
+  auto calculateError(const std::string &string) -> double;
 
-        void writeResult(const std::string &string);
+  void writeResult(const std::string &string);
 
-        void writeAxialLines(const std::string &pname, const std::string &xname, const std::string &yname,
-                             std::vector<axialLine> *xline, std::vector<axialLine> *yline);
-    };
+  void writeAxialLines(const std::string &pname, const std::string &xname, const std::string &yname, std::vector<axialLine> *xline, std::vector<axialLine> *yline);
+};
 
-}
+}// namespace AGM
 
-
-#endif //AGM_WRITEFILE_H
+#endif//AGM_WRITEFILE_H

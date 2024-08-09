@@ -8,35 +8,44 @@
 #include "writeFileMultiple.h"
 
 namespace AGM {
-    class solver {
-    public:
-        explicit solver(std::vector<point> *pts);
+class solver {
+ public:
+  explicit solver(std::vector<point> *pts);
 
-        virtual ~solver();
+  virtual ~solver();
 
-        auto getPts() const -> std::vector<point> *;
+  auto getPts() const -> std::vector<point> *;
 
-        void setPts(std::vector<point> *vector);
+  void setPts(std::vector<point> *vector);
 
-        void ellipticSolver();
+  void ellipticSolver();
 
-        void streamSolver();
+  void streamSolver();
 
-        void axisymmetricEllipticSolver();
+  void axisymmetricEllipticSolver();
 
-        void heatSolver();
+  void heatSolver();
 
-        void NavierStokesSolver();
+  void StokesSolver();
 
-        void TwoStepNS();
+  void StokesSolverFull();
 
-        void FluidStructureInteraction();
+  void axisymmetricStokesSolver();
 
-    private:
-        std::vector<point> *pts{};
-    };
+  void axisymmetricStokesSolverFull();
 
-}
+  void NavierStokesSolver();
 
+  void ModifyNavierStokesSolver();
 
-#endif //AGM_SOLVER_H
+  void TwoStepNS();
+
+  void FluidStructureInteraction();
+
+ private:
+  std::vector<point> *pts{};
+};
+
+}// namespace AGM
+
+#endif//AGM_SOLVER_H

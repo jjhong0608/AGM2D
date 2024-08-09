@@ -8,17 +8,17 @@
 #include "coordinate.h"
 
 namespace AGM {
-    class value : public std::array<double, 8> {
+class value : public std::array<double, 8> {
 
-    public:
-        value();
+ public:
+  value();
 
-        virtual ~value();
+  virtual ~value();
 
-        auto operator[](const std::string &string) -> double &;
+  auto operator[](const std::string &string) -> double &;
 
-        auto operator[](const std::string &string) const -> const double &;
-    };
-}
+  auto operator[](const std::string &string) const -> const double &;
+};
+}// namespace AGM
 
-#endif //AGM_VALUE_H
+#endif//AGM_VALUE_H

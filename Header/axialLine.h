@@ -8,29 +8,28 @@
 #include "unboundedCondition.h"
 
 namespace AGM {
-    class point;
+class point;
 
-    class axialLine : public std::vector<point *> {
-    private:
-        char mark{};
-        std::array<double, 4> coordinate{};
+class axialLine : public std::vector<point *> {
+ private:
+  char mark{};
+  std::array<double, 4> coordinate{};
 
-    public:
-        axialLine();
+ public:
+  axialLine();
 
-        explicit axialLine(char mark);
+  explicit axialLine(char mark);
 
-        virtual ~axialLine();
+  virtual ~axialLine();
 
-        [[nodiscard]] auto getMark() const -> char;
+  [[nodiscard]] auto getMark() const -> char;
 
-        void setMark(char i);
+  void setMark(char i);
 
-        auto operator[](int i) -> double &;
+  auto operator[](int i) -> double &;
 
-        auto operator-(axialLine &line) -> double;
-    };
-}
+  auto operator-(axialLine &line) -> double;
+};
+}// namespace AGM
 
-
-#endif //AGM_AXIALLINE_H
+#endif//AGM_AXIALLINE_H

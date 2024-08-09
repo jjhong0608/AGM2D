@@ -6,62 +6,59 @@
 #define AGM_MATRIX_H
 
 #include "function.h"
-#include "mkl_pardiso.h"
 #include "mkl.h"
+#include "mkl_pardiso.h"
 
 namespace AGM {
-    struct pardisoParameters {
-        void *ppt[64];
-        int maxfct, mnum, mtype, phase, n, idum, nrhs, msglvl, error;
-        int iparm[64];
-        double ddum;
-    };
+struct pardisoParameters {
+  void *ppt[64];
+  int maxfct, mnum, mtype, phase, n, idum, nrhs, msglvl, error;
+  int iparm[64];
+  double ddum;
+};
 
-    template<typename pt>
-    class matrix {
-    protected:
-        int *ia{}, *ja{};
-        double *ent{};
-        std::vector<pt> *pts{};
-        pardisoParameters pPram{};
+template<typename pt>
+class matrix {
+ protected:
+  int *ia{}, *ja{};
+  double *ent{};
+  std::vector<pt> *pts{};
+  pardisoParameters pPram{};
 
-    public:
-        matrix();
+ public:
+  matrix();
 
-        explicit matrix(std::vector<pt> *pts);
+  explicit matrix(std::vector<pt> *pts);
 
-        virtual ~matrix();
+  virtual ~matrix();
 
-        auto getIa() const -> int *;
+  auto getIa() const -> int *;
 
-        void setIa(int *pInt);
+  void setIa(int *pInt);
 
-        auto getJa() const -> int *;
+  auto getJa() const -> int *;
 
-        void setJa(int *pInt);
+  void setJa(int *pInt);
 
-        auto getEnt() const -> double *;
+  auto getEnt() const -> double *;
 
-        void setEnt(double *pDouble);
+  void setEnt(double *pDouble);
 
-        auto getPts() const -> std::vector<pt> *;
+  auto getPts() const -> std::vector<pt> *;
 
-        void setPts(std::vector<pt> *vector);
+  void setPts(std::vector<pt> *vector);
 
-        virtual void makeMatrix();
+  virtual void makeMatrix();
 
-        virtual void factorizeMatrix();
+  virtual void factorizeMatrix();
 
-        virtual void calculateMatrix();
+  virtual void calculateMatrix();
 
-        void calculateResidual(const double *x, const double *rb);
+  void calculateResidual(const double *x, const double *rb);
 
-        void releaseMatrix();
-    };
+  void releaseMatrix();
+};
 
+}// namespace AGM
 
-
-}
-
-
-#endif //AGM_MATRIX_H
+#endif//AGM_MATRIX_H

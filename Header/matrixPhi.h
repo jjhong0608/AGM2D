@@ -8,22 +8,21 @@
 #include "matrixNormal.h"
 
 namespace AGM {
-    template<typename pt>
-    class matrixPhi : public matrix<pt> {
-    public:
-        matrixPhi();
+template<typename pt>
+class matrixPhi : public matrix<pt> {
+ public:
+  matrixPhi();
 
-        matrixPhi(std::vector<pt> *pts);
+  matrixPhi(std::vector<pt> *pts);
 
-        virtual ~matrixPhi();
+  virtual ~matrixPhi();
 
-        void makeMatrix() override;
+  void makeMatrix() override;
 
-        void factorizeMatrix() override;
+  void factorizeMatrix() override;
 
-        void calculateMatrix() override;
-    };
-}
+  void calculateMatrix() override;
+};
+}// namespace AGM
 
-
-#endif //AGM_MATRIXPHI_H
+#endif//AGM_MATRIXPHI_H

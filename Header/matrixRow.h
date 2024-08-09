@@ -8,28 +8,27 @@
 #include "boundaryLine.h"
 
 namespace AGM {
-    struct matrixElement {
-        int idx{};
-        double value{};
-    };
+struct matrixElement {
+  int idx{};
+  double value{};
+};
 
-    class matrixRow : public std::vector<matrixElement> {
-    public:
-        void remove(int i);
+class matrixRow : public std::vector<matrixElement> {
+ public:
+  void remove(int i);
 
-        auto operator[](int i) -> double &;
+  auto operator[](int i) -> double &;
 
-        auto operator+(const matrixRow &src) const -> matrixRow;
+  auto operator+(const matrixRow &src) const -> matrixRow;
 
-        auto operator-(const matrixRow &src) const -> matrixRow;
+  auto operator-(const matrixRow &src) const -> matrixRow;
 
-        auto operator*(double d) const -> matrixRow;
+  auto operator*(double d) const -> matrixRow;
 
-        auto operator+=(const matrixRow &src) -> matrixRow;
+  auto operator+=(const matrixRow &src) -> matrixRow;
 
-        auto operator-=(const matrixRow &src) -> matrixRow;
-    };
-}
+  auto operator-=(const matrixRow &src) -> matrixRow;
+};
+}// namespace AGM
 
-
-#endif //AGM_MATRIXROW_H
+#endif//AGM_MATRIXROW_H
